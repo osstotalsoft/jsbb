@@ -12,6 +12,9 @@
   "homepage": "https://github.com/osstotalsoft/jsbb/tree/master/packages/pure-validations",
   "repository": "https://github.com/osstotalsoft/jsbb/tree/master/packages/pure-validations",
   "license": "ISC",
+  "publishConfig": {
+    "access": "public"
+  },
   "devDependencies": {
     "@babel/cli": "^7.5.5",
     "@babel/core": "^7.5.5",
