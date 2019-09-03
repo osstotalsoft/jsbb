@@ -1,6 +1,6 @@
 {
   "name": "@osstotalsoft/pure-validations",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Validation api via functional composition",
   "main": "lib/index.js",
   "scripts": {
