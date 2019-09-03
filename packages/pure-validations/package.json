@@ -1,13 +1,16 @@
 {
-  "name": "pure-validations",
+  "name": "@jsbb/pure-validations",
   "version": "1.0.1",
-  "description": "",
-  "main": "index.js",
+  "description": "Validation api via functional composition",
+  "main": "lib/index.js",
   "scripts": {
     "build": "babel src/ -d lib/",
+    "prepare": "npm run build",
     "test": "jest --watchAll"
   },
-  "author": "",
+  "author": "TotalSoft",
+  "homepage": "https://github.com/osstotalsoft/jsbb/tree/master/packages/pure-validations",
+  "repository": "https://github.com/osstotalsoft/jsbb/tree/master/packages/pure-validations",
   "license": "ISC",
   "devDependencies": {
     "@babel/cli": "^7.5.5",
