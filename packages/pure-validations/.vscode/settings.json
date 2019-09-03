@@ -1,0 +1,5 @@
+{
+    "javascript.validate.enable": false,
+    "javascript.format.enable": false,
+    "prettier.printWidth": 150
+}
