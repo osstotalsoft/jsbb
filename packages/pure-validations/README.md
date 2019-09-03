@@ -8,11 +8,11 @@ Throughout the process of composition, you start with some simple primitive vali
 ```javascript
 fields({
     contactInfo: fields({
-        name: isMandatory,
-        email: first(isEmail, when(gdprAgreement, isMandatory)),
+        name: [isMandatory, hasLengthLessThan(50)] |> first
+        email: isMandatory |> when(gdprAgreement)
     }),
-    age: withModel(x=> isGreaterThan(x.minimumAllowedAge)),
-    assets: all(isUnique("id"), items(isMandatory))
+    age: x=> isGreaterThan(x.minimumAllowedAge) |> withModel,
+    assets: [isUnique("id"), isMandatory|> items] |> all
     
 }) |> dirtyFieldsOnly(dirtyInfo) |> debug
 ```
