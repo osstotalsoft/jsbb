@@ -12,7 +12,7 @@ fields({
         email: first(isEmail, when(gdprAgreement, isMandatory)),
     }),
     age: withModel(x=> isGreaterThan(x.minimumAllowedAge)),
-    assets: all(isUnique("id"), items(isMandatory)
+    assets: all(isUnique("id"), items(isMandatory))
     
 }) |> dirtyFieldsOnly(dirtyInfo) |> debug
 ```
