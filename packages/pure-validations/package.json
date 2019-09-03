@@ -1,6 +1,6 @@
 {
   "name": "@jsbb/pure-validations",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Validation api via functional composition",
   "main": "lib/index.js",
   "scripts": {
