@@ -57,4 +57,11 @@ function getInner(validation: ValidationType, searchKeyPath: KeyPath): Validatio
   return validation.getIn(searchKeyPath) || Success();
 }
 
-export const Validation = { Success, Failure, match, concat, getInner };
+function isSuccess(validation) {
+  return Validation.match(validation, {
+    Success: _ => true,
+    Failure: _ => false
+  });
+}
+
+export const Validation = { Success, Failure, match, concat, getInner, isSuccess };

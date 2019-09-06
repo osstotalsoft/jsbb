@@ -1,23 +1,24 @@
-// @flow
 import { Validation } from "./validation";
-import type { ValidationType } from "./validation";
+import { Validator } from "./validator";
+import { $do, chain } from "./polymorphicFns";
 import curry from "lodash.curry";
 
-type Validator<TModel> = (model: TModel, context?: { [key: string]: any }) => ValidationType;
-
-export function first<TModel>(...validators: Validator<TModel>[]): Validator<TModel> {
-  return validators.reduce((f1, f2) => (model, context) => {
-    const v1 = f1(model, context);
-    const result = Validation.match(v1, {
-      Success: _ => f2(model, context),
-      Failure: _ => v1
-    });
-
-    return result;
-  });
+export function first1(...validators) {
+  return validators.reduce((f1, f2) =>
+    $do(function*() {
+      const v1 = yield f1;
+      return Validation.isSuccess(v1) ? f2 : Validator.of(v1);
+    })
+  );
 }
 
-export function all<TModel>(...validators: Validator<TModel>[]): Validator<TModel> {
+export function first(...validators) {
+  return validators.reduce((f1, f2) =>
+  f1 |> chain(v1 => Validation.isSuccess(v1) ? f2 : Validator.of(v1))
+  );
+}
+
+export function all(...validators) {
   return validators.reduce((f1, f2) => (model, context) => {
     const v1 = f1(model, context);
     const v2 = f2(model, context);
@@ -26,7 +27,7 @@ export function all<TModel>(...validators: Validator<TModel>[]): Validator<TMode
   });
 }
 
-export function any<TModel>(...validators: Validator<TModel>[]): Validator<TModel> {
+export function any(...validators) {
   return validators.reduce((f1, f2) => (model, context) => {
     const v1 = f1(model, context);
     const result = Validation.match(v1, {
@@ -44,7 +45,7 @@ export function any<TModel>(...validators: Validator<TModel>[]): Validator<TMode
   });
 }
 
-export function when<TModel>(predicate: TModel => boolean, validator: Validator<TModel>): Validator<TModel> {
+export function when(predicate, validator) {
   return (model, context) => {
     if (!predicate(model)) {
       return Validation.Success();
@@ -54,13 +55,13 @@ export function when<TModel>(predicate: TModel => boolean, validator: Validator<
   };
 }
 
-export function withModel<TModel>(validatorFactory: TModel => Validator<TModel>): Validator<TModel> {
+export function withModel(validatorFactory) {
   return (model, context) => {
     return validatorFactory(model)(model, context);
   };
 }
 
-export function fields<TModel: { [key: string]: any }>(validatorObj: $ObjMap<TModel, <V>(V) => Validator<V>>): Validator<TModel> {
+export function fields(validatorObj) {
   return function(model, context) {
     if (typeof model !== "object" || model === null) return Validation.Success(); // TBD
 
@@ -100,7 +101,7 @@ export function fields<TModel: { [key: string]: any }>(validatorObj: $ObjMap<TMo
   };
 }
 
-export function items<TItem>(itemValidator: Validator<TItem>): Validator<TItem[]> {
+export function items(itemValidator) {
   ``;
   return function(model, context) {
     if (!Array.isArray(model)) return Validation.Success(); // TBD
@@ -139,29 +140,26 @@ export function items<TItem>(itemValidator: Validator<TItem>): Validator<TItem[]
   };
 }
 
-export const dirtyFieldsOnly = curry(function dirtyFieldsOnly<TDirtyFields: { [key: string]: any }, TModel>(
-  dirtyFields: TDirtyFields,
-  validator: Validator<TModel>
-): Validator<TModel> {
+export const dirtyFieldsOnly = curry(function dirtyFieldsOnly(dirtyFields, validator) {
   return function(model, context) {
     const dirtyFieldsContext = { ...context, fieldFilter: path => getInnerProp(path, dirtyFields) };
     return validator(model, dirtyFieldsContext);
   };
 });
 
-export function debug<TModel>(validator: Validator<TModel>): Validator<TModel> {
+export function debug(validator) {
   return function(model, context) {
     const debugContext = { ...context, debug: true, debugFn: console.log };
     return validator(model, debugContext);
   };
 }
 
-function getInnerProp(searchKeyPath: Array<string>, obj: { [key: string]: any }) {
+function getInnerProp(searchKeyPath, obj) {
   const [prop, ...rest] = searchKeyPath;
   return prop ? getInnerProp(rest, obj[prop]) : obj;
 }
 
-function debugPath(context?: { [key: string]: any }, message) {
+function debugPath(context, message) {
   if (context && context.debug && context.debugFn) {
     context.debugFn(`Validation ${message} for path ${context.fieldPath.reduce((x, y) => x + "." + y)}`);
   }
