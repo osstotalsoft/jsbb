@@ -17,12 +17,12 @@ type KeyPath =
   | [string, string, string, string, string];
 
 type Matcher<T> = {
-  Success: () => T,
+  Success: (fields: Fields) => T,
   Failure: (fields: Fields, errors: Errors) => T
 };
 
-function Success() {
-  return emptySuccess;
+function Success(fields: Fields = {}) {
+  return Object.keys(fields).length === 0 ? emptySuccess : make(true, fields, []);;
 }
 
 function Failure(errors: Errors, fields: Fields = {}) {
@@ -38,7 +38,7 @@ function make(isSuccess: boolean, fields: Fields, errors: Errors): ValidationTyp
 function match<T>(validation: ValidationType, { Success, Failure }: Matcher<T>): T {
   // $FlowFixMe
   const { [isSuccessSymbol]: isSuccess, [errorsSymbol]: errors, ...fields } = validation.toObject();
-  return isSuccess ? Success() : Failure(errors.toArray(), fields);
+  return isSuccess ? Success(fields) : Failure(errors.toArray(), fields);
 }
 
 function concat(validation1: ValidationType, validation2: ValidationType): ValidationType {

@@ -85,10 +85,7 @@ export function fields<TModel: { [key: string]: any }>(validatorObj: $ObjMap<TMo
             Failure: _ => false
           });
 
-        if (!isSuccess) {
-          fields[key] = validation;
-        }
-
+        fields[key] = validation;
         debugPath(fieldContext, isSuccess ? "succeded" : "failed");
 
         return [fields, isSuccess];
@@ -96,12 +93,11 @@ export function fields<TModel: { [key: string]: any }>(validatorObj: $ObjMap<TMo
       [{}, true]
     );
 
-    return isSuccess ? Validation.Success() : Validation.Failure([], fields);
+    return isSuccess ? Validation.Success(fields) : Validation.Failure([], fields);
   };
 }
 
 export function items<TItem>(itemValidator: Validator<TItem>): Validator<TItem[]> {
-  ``;
   return function(model, context) {
     if (!Array.isArray(model)) return Validation.Success(); // TBD
 
@@ -124,9 +120,7 @@ export function items<TItem>(itemValidator: Validator<TItem>): Validator<TItem[]
             Failure: _ => false
           });
 
-        if (!isSuccess) {
-          fields[index.toString()] = validation;
-        }
+        fields[index.toString()] = validation;
 
         debugPath(itemContext, isSuccess ? "succeded" : "failed");
 
@@ -135,7 +129,7 @@ export function items<TItem>(itemValidator: Validator<TItem>): Validator<TItem[]
       [{}, true]
     );
 
-    return isSuccess ? Validation.Success() : Validation.Failure([], fields);
+    return isSuccess ? Validation.Success(fields) : Validation.Failure([], fields);
   };
 }
 

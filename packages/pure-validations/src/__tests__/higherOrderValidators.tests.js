@@ -153,7 +153,7 @@ describe("field validators:", () => {
     const validation = validator(model);
 
     // Assert
-    expect(validation).toBe(Validation.Success());
+    expect(validation).toStrictEqual(Validation.Success({ field1: Validation.Success() }))
   });
 
   it("field validator error: ", () => {
@@ -181,7 +181,7 @@ describe("field validators:", () => {
     const validation = validator(model);
 
     // Assert
-    expect(validation).toBe(Validation.Success());
+    expect(validation).toStrictEqual(Validation.Success({ email: Validation.Success() }));
   });
 
   it("both global and field validators - fail field: ", () => {
@@ -212,7 +212,7 @@ describe("field validators:", () => {
     const validation = validator(model);
 
     // Assert
-    expect(validation).toStrictEqual(Validation.Failure(["Mandatory"]));
+    expect(validation).toStrictEqual(Validation.Failure(["Mandatory"], { email: Validation.Success() }));
   });
 
   it("disjunct filed validators success: ", () => {
@@ -231,7 +231,12 @@ describe("field validators:", () => {
     const validation = validator(obj);
 
     // Assert
-    expect(validation).toBe(Validation.Success());
+    expect(validation).toStrictEqual(
+      Validation.Success({
+        name: Validation.Success(),
+        email: Validation.Success()
+      })
+    );
   });
 
   it("disjunct filed validators failure - fail first: ", () => {
@@ -252,7 +257,8 @@ describe("field validators:", () => {
     // Assert
     expect(validation).toStrictEqual(
       Validation.Failure([], {
-        name: Validation.Failure(["Too short"])
+        name: Validation.Failure(["Too short"]),
+        email: Validation.Success()
       })
     );
   });
@@ -275,6 +281,7 @@ describe("field validators:", () => {
     // Assert
     expect(validation).toStrictEqual(
       Validation.Failure([], {
+        name: Validation.Success(),
         email: Validation.Failure(["Invalid email"])
       })
     );
@@ -316,7 +323,7 @@ describe("field validators:", () => {
     const validation = validator(model);
 
     // Assert
-    expect(validation).toBe(Validation.Success())
+    expect(validation).toMatchObject(Validation.Success({ email: Validation.Success() }));
   });
 
   it("overlapping filed validators - fail first: ", () => {
@@ -396,7 +403,7 @@ describe("field validators:", () => {
     const validation = validator(model, context);
 
     // Assert
-    expect(validation).toBe(Validation.Success());
+    expect(validation).toStrictEqual(Validation.Success({ child: Validation.Success({ name: Validation.Success() }) }));
     expect(nameValidator.mock.calls.length).toBe(0);
   });
 });
@@ -412,7 +419,7 @@ describe("items validators:", () => {
     const validation = validator(model);
 
     // Assert
-    expect(validation).toBe(Validation.Success())
+    expect(validation).toStrictEqual(Validation.Success({ ["0"]: Validation.Success() }));
   });
 
   it("items validator error: ", () => {
@@ -440,7 +447,7 @@ describe("items validators:", () => {
     const validation = validator(model);
 
     // Assert
-    expect(validation).toBe(Validation.Success());
+    expect(validation).toStrictEqual(Validation.Success({ ["0"]: Validation.Success() }));
   });
 
   it("both global and items validators - fail item: ", () => {
@@ -485,7 +492,7 @@ describe("items validators:", () => {
     const validation = validator(model);
 
     // Assert
-    expect(validation).toBe(Validation.Success());
+    expect(validation).toStrictEqual(Validation.Success({ ["0"]: Validation.Success() }))
   });
 
   it("overlapping items validators - fail first: ", () => {
@@ -547,6 +554,7 @@ describe("items validators:", () => {
     // Assert
     expect(validation).toStrictEqual(
       Validation.Failure([], {
+        ["0"]: Validation.Success(),
         ["1"]: Validation.Failure(["Wrong"])
       })
     );
@@ -567,7 +575,7 @@ describe("model validators:", () => {
     const validation = validator(model);
 
     // Assert
-    expect(validation).toBe(Validation.Success());
+    expect(validation).toStrictEqual(Validation.Success({ name: Validation.Success() }));
   });
 
   it("model validator error: ", () => {
@@ -624,7 +632,9 @@ describe("utility validators:", () => {
     const validation = validate(model);
 
     // Assert
-    expect(validation).toBe(Validation.Success());
+    expect(validation).toStrictEqual(	   
+      Validation.Success({ child: Validation.Success({ name: Validation.Success(), surname: Validation.Success() }) })	
+    );
     expect(nameValidator.mock.calls.length).toBe(0);
     expect(surnameValidator.mock.calls.length).toBe(1);
   });
@@ -677,7 +687,20 @@ describe("utility validators:", () => {
     const validation = validate(model);
 
     // Assert
-    expect(validation).toBe(Validation.Success());
+    expect(validation).toStrictEqual(
+      Validation.Success({
+        children: Validation.Success({
+          ["0"]: Validation.Success({
+            name: Validation.Success(),
+            surname: Validation.Success()
+          }),
+          ["1"]: Validation.Success({
+            name: Validation.Success(),
+            surname: Validation.Success()
+          })
+        })
+      })
+    );
 
     expect(nameValidator.mock.calls.length).toBe(0);
     expect(surnameValidator.mock.calls.length).toBe(2);
