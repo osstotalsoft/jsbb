@@ -86,10 +86,7 @@ export function fields(validatorObj) {
             Failure: _ => false
           });
 
-        if (!isSuccess) {
-          fields[key] = validation;
-        }
-
+        fields[key] = validation;
         debugPath(fieldContext, isSuccess ? "succeded" : "failed");
 
         return [fields, isSuccess];
@@ -97,12 +94,11 @@ export function fields(validatorObj) {
       [{}, true]
     );
 
-    return isSuccess ? Validation.Success() : Validation.Failure([], fields);
+    return isSuccess ? Validation.Success(fields) : Validation.Failure([], fields);
   };
 }
 
 export function items(itemValidator) {
-  ``;
   return function(model, context) {
     if (!Array.isArray(model)) return Validation.Success(); // TBD
 
@@ -125,9 +121,7 @@ export function items(itemValidator) {
             Failure: _ => false
           });
 
-        if (!isSuccess) {
-          fields[index.toString()] = validation;
-        }
+        fields[index.toString()] = validation;
 
         debugPath(itemContext, isSuccess ? "succeded" : "failed");
 
@@ -136,7 +130,7 @@ export function items(itemValidator) {
       [{}, true]
     );
 
-    return isSuccess ? Validation.Success() : Validation.Failure([], fields);
+    return isSuccess ? Validation.Success(fields) : Validation.Failure([], fields);
   };
 }
 
