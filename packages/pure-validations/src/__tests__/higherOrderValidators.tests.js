@@ -1,10 +1,9 @@
-// @flow
 import { Validation } from "../validation";
 import { Validator, validate } from "../validator";
 import { fields, items, all, any, when, first, withModel, dirtyFieldsOnly, debug } from "../higherOrderValidators";
 import flow from "lodash.flow";
 
-describe.only("boolean and shorcircuit validators:", () => {
+describe("boolean and shorcircuit validators:", () => {
   it("all validators success: ", () => {
     // Arrange
     const nameValidator = x => (x === "test" ? Validation.Success() : Validation.Failure(["Wrong"]));
@@ -81,7 +80,7 @@ describe.only("boolean and shorcircuit validators:", () => {
     expect(validation).toStrictEqual(Validation.Failure(["Wrong", "Too long"]));
   });
 
-  it.only("stop on first failure validators success: ", () => {
+  it("stop on first failure validators success: ", () => {
     // Arrange
     const nameValidator = jest.fn(x => x === "test" ? Validation.Success() : Validation.Failure(["Wrong"]));
     const minLengthValidator = jest.fn(x => x.length > 3 ? Validation.Success() : Validation.Failure(["Too short"]));
