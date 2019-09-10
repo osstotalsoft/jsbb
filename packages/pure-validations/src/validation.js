@@ -28,28 +28,28 @@ function mergerAll(value1, value2, key) {
   return key === isSuccessSymbol ? value1 && value2 : key === errorsSymbol ? merge(value1, value2) : mergeWith(mergerAll, value1, value2);
 }
 
-function all(validation1, validation2) {
+const all = curry(function all(validation1, validation2) {
   return mergeWith(mergerAll, validation1, validation2);
-}
+})
 
 function mergerAny(value1, value2, key) {
-  return key === isSuccessSymbol ? undefined : key === errorsSymbol ? undefined : any(value1, value2);
+  return key === isSuccessSymbol || key === errorsSymbol ? undefined : any(value1, value2);
 }
 
-function any(validation1, validation2) {
-  const result = mergeWith(mergerAny, validation1, validation2);
+const any = curry(function any(validation1, validation2) {
+  let result = mergeWith(mergerAny, validation1, validation2);
 
   const errors1 = _getErrors(validation1);
   const errors2 = _getErrors(validation2);
 
   const isSelfSuccess = _isEmpty(errors1) || _isEmpty(errors2);
-  const isMergedFieldSuccess = result.reduce((acc, val) => acc && _isSuccess(val), true);
+  const isMergedFieldSuccess = result.reduce((acc, val) => acc && val ? _isSuccess(val) : true, true);
 
-  result.set(isSuccessSymbol, isSelfSuccess && isMergedFieldSuccess);
-  result.set(errorsSymbol, isSelfSuccess ? Set([]) : merge(errors1, errors2));
+  result = result.set(isSuccessSymbol, isSelfSuccess && isMergedFieldSuccess);
+  result = result.set(errorsSymbol, isSelfSuccess ? Set([]) : merge(errors1, errors2));
 
   return result;
-}
+})
 
 function mergerReplace(value1, value2, key) {
   return key === isSuccessSymbol ? value2 : key === errorsSymbol ? value2 : mergeWith(mergerReplace, value1, value2);
@@ -72,7 +72,7 @@ function getInner(validation, searchKeyPath) {
   return validation.getIn(searchKeyPath) || Success();
 }
 
-function _isEmpty(errors) {
+function _isEmpty(errors) { 
   return !errors || !Set.isSet(errors) || errors.isEmpty();
 }
 

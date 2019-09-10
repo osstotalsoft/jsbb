@@ -3,17 +3,17 @@ import { Validator, validate } from "../validator";
 import { fields, items, all, any, when, first, withModel, dirtyFieldsOnly, debug } from "../higherOrderValidators";
 import flow from "lodash.flow";
 
-describe("boolean and shorcircuit validators:", () => {
+describe.only("boolean and shorcircuit validators:", () => {
   it("all validators success: ", () => {
     // Arrange
-    const nameValidator = x => (x === "test" ? Validation.Success() : Validation.Failure(["Wrong"]));
-    const minLengthValidator = x => (x.length > 3 ? Validation.Success() : Validation.Failure(["Too short"]));
+    const nameValidator = Validator(x => (x === "test" ? Validation.Success() : Validation.Failure(["Wrong"])));
+    const minLengthValidator = Validator(x => (x.length > 3 ? Validation.Success() : Validation.Failure(["Too short"])));
     const model = "test";
 
     const validator = all(nameValidator, minLengthValidator);
 
     // Act
-    const validation = validator(model);
+    const validation = model |> validate(validator);
 
     // Assert
     expect(validation).toBe(Validation.Success());
@@ -21,14 +21,14 @@ describe("boolean and shorcircuit validators:", () => {
 
   it("all validators fail: ", () => {
     // Arrange
-    const nameValidator = x => (x === "test" ? Validation.Success() : Validation.Failure(["Wrong"]));
-    const maxLengthValidator = x => (x.length < 5 ? Validation.Success() : Validation.Failure(["Too long"]));
+    const nameValidator = Validator(x => (x === "test" ? Validation.Success() : Validation.Failure(["Wrong"])));
+    const maxLengthValidator = Validator((x => (x.length < 5 ? Validation.Success() : Validation.Failure(["Too long"]))));
     const model = "testWrong";
 
     const validator = all(nameValidator, maxLengthValidator);
 
     // Act
-    const validation = validator(model);
+    const validation = model |> validate(validator);
 
     // Assert
     expect(validation).toStrictEqual(Validation.Failure(["Wrong", "Too long"]));
@@ -36,17 +36,17 @@ describe("boolean and shorcircuit validators:", () => {
 
   it("any validators success - fail first: ", () => {
     // Arrange
-    const nameValidator = x => (x === "test" ? Validation.Success() : Validation.Failure(["Wrong"]));
-    const minLengthValidator = x => (x.length > 4 ? Validation.Success() : Validation.Failure(["Too short"]));
+    const nameValidator = Validator(x => (x === "test" ? Validation.Success() : Validation.Failure(["Wrong"])));
+    const minLengthValidator = Validator(x => (x.length > 4 ? Validation.Success() : Validation.Failure(["Too short"])));
     const model = "testWrong";
 
     const validator = any(nameValidator, minLengthValidator);
 
     // Act
-    const validation = validator(model);
+    const validation = model |> validate(validator);
 
     // Assert
-    expect(validation).toBe(Validation.Success());
+    expect(validation).toEqual(Validation.Success());
   });
 
   it("any validators success - fail second: ", () => {
@@ -55,13 +55,13 @@ describe("boolean and shorcircuit validators:", () => {
     const minLengthValidator = jest.fn(x => (x.length > 4 ? Validation.Success() : Validation.Failure(["Too short"])));
     const model = "test";
 
-    const validator = any(nameValidator, minLengthValidator);
+    const validator = any(Validator(nameValidator), Validator(minLengthValidator));
 
     // Act
-    const validation = validator(model);
+    const validation = model |> validate(validator);
 
     // Assert
-    expect(validation).toBe(Validation.Success());
+    expect(validation).toEqual(Validation.Success());
     expect(minLengthValidator.mock.calls.length).toBe(0);
   });
 
@@ -74,7 +74,7 @@ describe("boolean and shorcircuit validators:", () => {
     const validator = any(nameValidator, maxLengthValidator);
 
     // Act
-    const validation = validator(model);
+    const validation = model |> validate(validator);
 
     // Assert
     expect(validation).toStrictEqual(Validation.Failure(["Wrong", "Too long"]));
@@ -89,7 +89,7 @@ describe("boolean and shorcircuit validators:", () => {
     const validator = first(Validator(nameValidator), Validator(minLengthValidator));
 
     // Act
-    const validation = validate(validator, model);
+    const validation =  model |> validate(validator);
 
     // Assert
     expect(validation).toBe(Validation.Success());
@@ -217,8 +217,8 @@ describe("field validators:", () => {
 
   it("disjunct filed validators success: ", () => {
     // Arrange
-    const nameValidator = (x: string) => (x.length > 3 ? Validation.Success() : Validation.Failure(["Too short"]));
-    const emailValdator = (x: string) => (x.includes("@") ? Validation.Success() : Validation.Failure(["Invalid email"]));
+    const nameValidator = x => (x.length > 3 ? Validation.Success() : Validation.Failure(["Too short"]));
+    const emailValdator = x => (x.includes("@") ? Validation.Success() : Validation.Failure(["Invalid email"]));
 
     const obj = {
       name: "test",
@@ -632,8 +632,8 @@ describe("utility validators:", () => {
     const validation = validate(model);
 
     // Assert
-    expect(validation).toStrictEqual(	   
-      Validation.Success({ child: Validation.Success({ name: Validation.Success(), surname: Validation.Success() }) })	
+    expect(validation).toStrictEqual(
+      Validation.Success({ child: Validation.Success({ name: Validation.Success(), surname: Validation.Success() }) })
     );
     expect(nameValidator.mock.calls.length).toBe(0);
     expect(surnameValidator.mock.calls.length).toBe(1);

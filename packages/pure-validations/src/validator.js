@@ -1,9 +1,10 @@
 import { Reader } from "./reader";
+import curry from "lodash.curry";
 
 const Validator = Reader;
 
-function validate(validator, model, ctx = null) {
+const validate = curry(function validate(validator, model, ctx = null) {
   return validator.runReader(model, ctx);
-}
+})
 
 export { Validator, validate };

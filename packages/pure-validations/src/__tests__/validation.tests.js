@@ -9,7 +9,7 @@ describe("validation tests suite:", () => {
     });
 
     // Act
-    var result = Validation.concat(success, failure);
+    var result = Validation.all(success, failure);
 
     // Assert
     expect(result).toStrictEqual(failure);
@@ -23,7 +23,7 @@ describe("validation tests suite:", () => {
     });
 
     // Act
-    var result = Validation.concat(failure, success);
+    var result = Validation.all(failure, success);
 
     // Assert
     expect(result).toStrictEqual(failure);
@@ -42,8 +42,8 @@ describe("validation tests suite:", () => {
     });
 
     // Act
-    var result1 = Validation.concat(Validation.concat(failure1, failure2), failure3);
-    var result2 = Validation.concat(failure1, Validation.concat(failure2, failure3));
+    var result1 = Validation.all(Validation.all(failure1, failure2), failure3);
+    var result2 = Validation.all(failure1, Validation.all(failure2, failure3));
 
     // Assert
     expect(result1).toStrictEqual(result2);
@@ -158,7 +158,7 @@ describe("validation tests suite:", () => {
     var success2 = Validation.Success();
 
     // Act
-    var result = Validation.concat(success1, success2);
+    var result = Validation.all(success1, success2);
 
     // Assert
     expect(result).toBe(success1);
@@ -172,7 +172,7 @@ describe("validation tests suite:", () => {
         var failure =  Validation.Failure(["Err1", "Err 2"], {a: Validation.Success()})
         
         // Act
-        var result = Validation.concat(success, failure);
+        var result = Validation.all(success, failure);
 
         // Assert
         expect(result).toBe(failure)
@@ -196,7 +196,7 @@ describe("validation tests suite:", () => {
     });
 
     // Act
-    var result = Validation.concat(failure1, failure2);
+    var result = Validation.all(failure1, failure2);
 
     // Assert
     expect(result).toBe(failure1);

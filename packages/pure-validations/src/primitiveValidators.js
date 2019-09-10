@@ -34,7 +34,7 @@ export function matches(regex) {
 }
 
 export function isInRange(min, max) {
-  return Validator(x =>
+  return Validator(value =>
     value === null || value === undefined || (value >= min && value <= max)
       ? Validation.Success()
       : Validation.Failure([translate("Validations.Generic.OutOfRange", { min, max })])
@@ -42,7 +42,7 @@ export function isInRange(min, max) {
 }
 
 export function isGreaterThan(min) {
-  return Validator(x =>
+  return Validator(value =>
     value === null || value === undefined || value > min
       ? Validation.Success()
       : Validation.Failure([translate("Validations.Generic.Greater", { min })])

@@ -34,7 +34,6 @@
     "prettier-eslint": "^9.0.0"
   },
   "dependencies": {
-    
     "i18next": "^17.0.11",
     "immutable": "^4.0.0-rc.12",
     "lodash.curry": "^4.1.1",

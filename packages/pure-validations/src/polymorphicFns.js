@@ -18,4 +18,17 @@ function $do(gen) {
   return step();
 }
 
-export { chain, $do };
+const ap = curry(function apply(fnFunctor, applicative) {
+  return fnFunctor.ap(applicative);
+});
+
+const fmap = curry(function fmap(fn, functor) {
+  return functor.map(fn);
+});
+
+const lift2 = curry(function lift2(op, applicative1, applicative2) {
+  return ap(fmap(op, applicative1), applicative2);
+});
+
+
+export { chain, $do, ap, fmap, lift2 };

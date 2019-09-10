@@ -1,4 +1,5 @@
 import { Validation } from "../validation";
+import { validate } from "../validator"
 import { isUnique, isMandatory, isEmail, isInRange, isGreaterThan, isLessThan, hasLengthGreaterThan, hasLengthLessThan, matches } from "../primitiveValidators";
 import i18next from "i18next";
 
@@ -9,7 +10,7 @@ describe("mandatory primitive validator:", () => {
     const validator = isMandatory;
 
     // Act
-    const validation = validator(model);
+    const validation = model |> validate(validator)
 
     // Assert
     expect(validation).toStrictEqual(Validation.Success());
@@ -21,7 +22,7 @@ describe("mandatory primitive validator:", () => {
     const validator = isMandatory;
 
     // Act
-    const validation = validator(model);
+    const validation = model |> validate(validator)
 
     // Assert
     expect(validation).toStrictEqual(Validation.Failure([i18next.t("Validations.Generic.Mandatory")]));
@@ -33,7 +34,7 @@ describe("mandatory primitive validator:", () => {
     const validator = isMandatory;
 
     // Act
-    const validation = validator(model);
+    const validation = model |> validate(validator)
 
     // Assert
     expect(validation).toStrictEqual(Validation.Failure([i18next.t("Validations.Generic.Mandatory")]));
@@ -45,7 +46,7 @@ describe("mandatory primitive validator:", () => {
     const validator = isMandatory;
 
     // Act
-    const validation = validator(model);
+    const validation = model |> validate(validator)
 
     // Assert
     expect(validation).toStrictEqual(Validation.Failure([i18next.t("Validations.Generic.Mandatory")]));
@@ -57,7 +58,7 @@ describe("mandatory primitive validator:", () => {
     const validator = isMandatory;
 
     // Act
-    const validation = validator(model);
+    const validation = model |> validate(validator)
 
     // Assert
     expect(validation).toStrictEqual(Validation.Failure([i18next.t("Validations.Generic.Mandatory")]));
@@ -71,7 +72,7 @@ describe("format primitive validators:", () => {
     const validator = isEmail;
 
     // Act
-    const validation = validator(model);
+    const validation = model |> validate(validator)
 
     // Assert
     expect(validation).toStrictEqual(Validation.Success());
@@ -83,7 +84,7 @@ describe("format primitive validators:", () => {
     const validator = isEmail;
 
     // Act
-    const validation = validator(model);
+    const validation = model |> validate(validator)
 
     // Assert
     expect(validation).toStrictEqual(Validation.Failure([i18next.t("Validations.Generic.Email")]));
@@ -95,7 +96,7 @@ describe("format primitive validators:", () => {
     const validator = isEmail;
 
     // Act
-    const validation = validator(model);
+    const validation = model |> validate(validator)
 
     // Assert
     expect(validation).toStrictEqual(Validation.Failure([i18next.t("Validations.Generic.Email")]));
@@ -107,7 +108,7 @@ describe("format primitive validators:", () => {
     const validator = matches(/^[a-b]*$/);
 
     // Act
-    const validation = validator(model);
+    const validation = model |> validate(validator)
 
     // Assert
     expect(validation).toStrictEqual(Validation.Success());
@@ -119,7 +120,7 @@ describe("format primitive validators:", () => {
     const validator = matches(/^[a-b]*$/);
 
     // Act
-    const validation = validator(model);
+    const validation = model |> validate(validator)
 
     // Assert
     expect(validation).toStrictEqual(Validation.Failure([i18next.t("Validations.Generic.Regex")]));
@@ -133,7 +134,7 @@ describe("comparison primitive validators:", () => {
     const validator = isInRange(3, 4);
 
     // Act
-    const validation = validator(model);
+    const validation = model |> validate(validator)
 
     // Assert
     expect(validation).toStrictEqual(Validation.Success());
@@ -145,7 +146,7 @@ describe("comparison primitive validators:", () => {
     const validator = isInRange(3, 4);
 
     // Act
-    const validation = validator(model);
+    const validation = model |> validate(validator)
 
     // Assert
     expect(validation).toStrictEqual(Validation.Failure([i18next.t("Validations.Generic.OutOfRange", { min: 3, max: 4 })]));
@@ -157,7 +158,7 @@ describe("comparison primitive validators:", () => {
     const validator = isInRange(3, 4);
 
     // Act
-    const validation = validator(model);
+    const validation = model |> validate(validator)
 
     // Assert
     expect(validation).toStrictEqual(Validation.Failure([i18next.t("Validations.Generic.OutOfRange", { min: 3, max: 4 })]));
@@ -169,7 +170,7 @@ describe("comparison primitive validators:", () => {
     const validator = isGreaterThan(4);
 
     // Act
-    const validation = validator(model);
+    const validation = model |> validate(validator)
 
     // Assert
     expect(validation).toStrictEqual(Validation.Success());
@@ -181,7 +182,7 @@ describe("comparison primitive validators:", () => {
     const validator = isGreaterThan(4);
 
     // Act
-    const validation = validator(model);
+    const validation = model |> validate(validator)
 
     // Assert
     expect(validation).toStrictEqual(Validation.Failure([i18next.t("Validations.Generic.Greater", { min: 4 })]));
@@ -193,7 +194,7 @@ describe("comparison primitive validators:", () => {
     const validator = isLessThan(5);
 
     // Act
-    const validation = validator(model);
+    const validation = model |> validate(validator)
 
     // Assert
     expect(validation).toStrictEqual(Validation.Success());
@@ -205,7 +206,7 @@ describe("comparison primitive validators:", () => {
     const validator = isLessThan(4);
 
     // Act
-    const validation = validator(model);
+    const validation = model |> validate(validator)
 
     // Assert
     expect(validation).toStrictEqual(Validation.Failure([i18next.t("Validations.Generic.Less", { max: 4 })]));
@@ -219,7 +220,7 @@ describe("length primitive validators:", () => {
     const validator = hasLengthGreaterThan(4);
 
     // Act
-    const validation = validator(model);
+    const validation = model |> validate(validator)
 
     // Assert
     expect(validation).toStrictEqual(Validation.Success());
@@ -231,7 +232,7 @@ describe("length primitive validators:", () => {
     const validator = hasLengthGreaterThan(4);
 
     // Act
-    const validation = validator(model);
+    const validation = model |> validate(validator)
 
     // Assert
     expect(validation).toStrictEqual(Validation.Failure([i18next.t("Validations.Generic.MinCharacters", { min: 4 })]));
@@ -243,7 +244,7 @@ describe("length primitive validators:", () => {
     const validator = hasLengthLessThan(5);
 
     // Act
-    const validation = validator(model);
+    const validation = model |> validate(validator)
 
     // Assert
     expect(validation).toStrictEqual(Validation.Success());
@@ -255,7 +256,7 @@ describe("length primitive validators:", () => {
     const validator = hasLengthLessThan(4);
 
     // Act
-    const validation = validator(model);
+    const validation = model |> validate(validator)
 
     // Assert
     expect(validation).toStrictEqual(Validation.Failure([i18next.t("Validations.Generic.MaxCharacters", { max: 4 })]));
@@ -269,7 +270,7 @@ describe("unique primitive validator:", () => {
     const validator = isUnique();
 
     // Act
-    const validation = validator(model);
+    const validation = model |> validate(validator)
 
     // Assert
     expect(validation).toStrictEqual(Validation.Success());
@@ -281,7 +282,7 @@ describe("unique primitive validator:", () => {
     const validator = isUnique();
 
     // Act
-    const validation = validator(model);
+    const validation = model |> validate(validator)
 
     // Assert
     expect(validation).toStrictEqual(Validation.Failure([i18next.t("Validations.Generic.Unique", { selector: "" })]));
@@ -293,7 +294,7 @@ describe("unique primitive validator:", () => {
     const validator = isUnique("item.id");
 
     // Act
-    const validation = validator(model);
+    const validation = model |> validate(validator)
 
     // Assert
     expect(validation).toStrictEqual(Validation.Success());
@@ -305,7 +306,7 @@ describe("unique primitive validator:", () => {
     const validator = isUnique("item.id");
 
     // Act
-    const validation = validator(model);
+    const validation = model |> validate(validator)
 
     // Assert
     expect(validation).toStrictEqual(Validation.Failure([i18next.t("Validations.Generic.Unique", { selector: "item.id" })]));
@@ -317,7 +318,7 @@ describe("unique primitive validator:", () => {
     const validator = isUnique(["item", "id"]);
 
     // Act
-    const validation = validator(model);
+    const validation = model |> validate(validator)
 
     // Assert
     expect(validation).toStrictEqual(Validation.Success());
@@ -329,7 +330,7 @@ describe("unique primitive validator:", () => {
     const validator = isUnique(["item", "id"]);
 
     // Act
-    const validation = validator(model);
+    const validation = model |> validate(validator)
 
     // Assert
     expect(validation).toStrictEqual(Validation.Failure([i18next.t("Validations.Generic.Unique", { selector: "item,id" })]));
@@ -341,7 +342,7 @@ describe("unique primitive validator:", () => {
     const validator = isUnique(x => x.item.id);
 
     // Act
-    const validation = validator(model);
+    const validation = model |> validate(validator)
 
     // Assert
     expect(validation).toStrictEqual(Validation.Success());
@@ -353,7 +354,7 @@ describe("unique primitive validator:", () => {
     const validator = isUnique(x => x.item.id);
 
     // Act
-    const validation = validator(model);
+    const validation = model |> validate(validator)
 
     // Assert
     expect(validation).toStrictEqual(Validation.Failure([i18next.t("Validations.Generic.Unique", { selector: "x => x.item.id" })]));
