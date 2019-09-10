@@ -86,6 +86,11 @@ describe("validation tests suite:", () => {
 
     // Act
     var isSuccess = Validation.match(validation, {
+      Success: fields =>
+        Validation.match(fields.field1, {
+          Success: _ => true,
+          Failure: _ => false
+        }),
       Success: _ => true,
       Failure: _ => false
     });
