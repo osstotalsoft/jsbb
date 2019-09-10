@@ -2,6 +2,7 @@ function Reader(computation) {
   return {
     runReader: (...props) => computation(...props),
     map: f => Reader((...props) => f(computation(...props))),
+    contramap: f => Reader((...props) => computation(...f(...props))),
     ap: other =>
       Reader((...props) => {
         const fn= computation(...props);
