@@ -77,7 +77,7 @@ function _isEmpty(errors) {
 }
 
 function _isSuccess(validation) {
-  return validation.get(isSuccessSymbol) || true;
+  return validation.get(isSuccessSymbol);
 }
 
 function _getErrors(validation) {
