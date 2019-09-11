@@ -1,30 +1,55 @@
 import { Map, Set, merge, mergeWith } from "immutable";
 import curry from "lodash.curry";
 
-const isSuccessSymbol = Symbol("_isSuccess");
+const typeSymbol = Symbol("_type");
 const errorsSymbol = Symbol("_errors");
-const emptySuccess = make(true, {}, []);
+const emptySuccess = make(successType, {}, []);
 
-function Success(fields = {}) {
-  return Object.keys(fields).length === 0 ? emptySuccess : make(true, fields, []);
-}
+const successType = 'Success';
+const failureType = 'Failure';
+const skippedType = 'Skipped';
 
-function Failure(errors, fields = {}) {
-  return make(false, fields, errors);
-}
-
-function make(isSuccess, fields, errors) {
+function make(type, fields, errors) {
   return Map(fields).withMutations(map => {
-    map.set(isSuccessSymbol, isSuccess).set(errorsSymbol, Set(errors));
+    map.set(typeSymbol, type).set(errorsSymbol, Set(errors));
   });
 }
 
-function match(validation, { Success, Failure }) {
-  const { [isSuccessSymbol]: isSuccess, [errorsSymbol]: errors, ...fields } = validation.toObject();
-  return isSuccess ? Success(fields) : Failure(errors.toArray(), fields);
+function Success(fields = {}) {
+  return Object.keys(fields).length === 0 ? emptySuccess : make(successType, fields, []);
+}
+
+function Failure(errors, fields = {}) {
+  return make(failureType, fields, errors);
+}
+
+function Skipped(errors, fields = {}) {
+  return make(skippedType, fields, errors);
+}
+
+
+
+function match(validation, { Success, Failure, Skipped }) {
+  const { [typeSymbol]: type, [errorsSymbol]: errors, ...fields } = validation.toObject();
+  switch(type){
+    case successType:
+      return Success(fields)
+    case failureType:
+      return Failure(errors.toArray(), fields)
+    case skippedType:
+        return Skipped(fields)
+
+  }
 }
 
 function mergerAll(value1, value2, key) {
+  function mergeTypes(type1, type2){
+    
+  }
+  switch(key){
+    case typeSymbol:
+
+  }
   return key === isSuccessSymbol ? value1 && value2 : key === errorsSymbol ? merge(value1, value2) : mergeWith(mergerAll, value1, value2);
 }
 
