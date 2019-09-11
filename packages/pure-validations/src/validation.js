@@ -1,13 +1,15 @@
 import { Map, Set, merge, mergeWith } from "immutable";
 import curry from "lodash.curry";
-
-const typeSymbol = Symbol("_type");
-const errorsSymbol = Symbol("_errors");
-const emptySuccess = make(successType, {}, []);
+import { fail } from "assert";
+import { type } from "os";
 
 const successType = 'Success';
 const failureType = 'Failure';
 const skippedType = 'Skipped';
+
+const typeSymbol = Symbol("_type");
+const errorsSymbol = Symbol("_errors");
+const emptySuccess = make(successType, {}, []);
 
 function make(type, fields, errors) {
   return Map(fields).withMutations(map => {
@@ -23,34 +25,54 @@ function Failure(errors, fields = {}) {
   return make(failureType, fields, errors);
 }
 
-function Skipped(errors, fields = {}) {
-  return make(skippedType, fields, errors);
+function Skipped(fields = {}) {
+  return make(skippedType, fields, []);
 }
-
-
 
 function match(validation, { Success, Failure, Skipped }) {
   const { [typeSymbol]: type, [errorsSymbol]: errors, ...fields } = validation.toObject();
-  switch(type){
+  switch (type) {
     case successType:
       return Success(fields)
     case failureType:
       return Failure(errors.toArray(), fields)
     case skippedType:
-        return Skipped(fields)
-
+      return Skipped(fields)
   }
 }
 
-function mergerAll(value1, value2, key) {
-  function mergeTypes(type1, type2){
-    
+function mergeTypes(op) {
+  return function (type1, type2, ) {
+    if (type1 === skippedType) {
+      return type2;
+    }
+    if (type2 === skippedType) {
+      return type1;
+    }
+    if (op(type1 === successType, type2 === successType)) {
+      return successType;
+    }
+    return failureType;
   }
-  switch(key){
-    case typeSymbol:
+}
 
+function and(a, b) {
+  return a && b;
+}
+
+function or(a, b) {
+  return a || b;
+}
+
+function mergerAll(value1, value2, key) {
+  switch (key) {
+    case typeSymbol:
+      return mergeTypes(and)(value1, value2)
+    case errorsSymbol:
+      return merge(value1, value2)
+    default:
+      return mergeWith(mergerAll, value1, value2)
   }
-  return key === isSuccessSymbol ? value1 && value2 : key === errorsSymbol ? merge(value1, value2) : mergeWith(mergerAll, value1, value2);
 }
 
 const all = curry(function all(validation1, validation2) {
@@ -58,7 +80,13 @@ const all = curry(function all(validation1, validation2) {
 })
 
 function mergerAny(value1, value2, key) {
-  return key === isSuccessSymbol || key === errorsSymbol ? undefined : any(value1, value2);
+  switch (key) {
+    case typeSymbol:
+    case errorsSymbol:
+      return undefined
+    default:
+      return any(value1, value2)
+  }
 }
 
 const any = curry(function any(validation1, validation2) {
@@ -68,10 +96,11 @@ const any = curry(function any(validation1, validation2) {
   const errors2 = _getErrors(validation2);
 
   const isSelfSuccess = _isEmpty(errors1) || _isEmpty(errors2);
-  const isMergedFieldSuccess = result.reduce((acc, val) => acc && val ? _isSuccess(val) : true, true);
+  const mergedFieldsType = result.map(_getType).reduce(mergeTypes(and), isSelfSuccess ? successType : failureType);
 
-  result = result.set(isSuccessSymbol, isSelfSuccess && isMergedFieldSuccess);
-  result = result.set(errorsSymbol, isSelfSuccess ? Set([]) : merge(errors1, errors2));
+  result = result
+    .set(typeSymbol, mergedFieldsType)
+    .set(errorsSymbol, isSelfSuccess ? Set([]) : merge(errors1, errors2));
 
   return result;
 })
@@ -94,19 +123,35 @@ function fields(validationObj) {
 }
 
 function getInner(validation, searchKeyPath) {
-  return validation.getIn(searchKeyPath) || Success();
+  return validation.getIn(searchKeyPath) || Skipped();
 }
 
-function _isEmpty(errors) { 
+function _isEmpty(errors) {
   return !errors || !Set.isSet(errors) || errors.isEmpty();
 }
 
 function _isSuccess(validation) {
-  return validation.get(isSuccessSymbol);
+  return validation.get(typeSymbol) == successType;
 }
+
+function _isFailure(validation) {
+  return validation.get(typeSymbol) == failureType;
+}
+
+function _isSkipped(validation) {
+  return validation.get(typeSymbol) == skippedType;
+}
+
 
 function _getErrors(validation) {
   return validation.get(errorsSymbol) || Set([]);
 }
 
-export const Validation = { Success, Failure, match, all, any, replace, field, fields, getInner, _isSuccess, _getErrors };
+function _getType(validation) {
+  if (!validation)
+    return skippedType;
+
+  return validation.get(typeSymbol) || skippedType;
+}
+
+export const Validation = { Success, Failure, Skipped, match, all, any, replace, field, fields, getInner, _isSuccess, _isFailure, _getErrors, _getType };

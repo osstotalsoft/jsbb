@@ -1,6 +1,6 @@
 import { Validation } from "../validation";
 import { Validator, validate } from "../validator";
-import { field, fields, items, all, any, when, first, withModel, dirtyFieldsOnly, debug } from "../higherOrderValidators";
+import { field, fields, items, all, any, when, first, withModel, dirtyFieldsOnly, debug, filterFields } from "../higherOrderValidators";
 import flow from "lodash.flow";
 
 describe("boolean and shorcircuit validators:", () => {
@@ -67,8 +67,8 @@ describe("boolean and shorcircuit validators:", () => {
 
   it("any validators fail: ", () => {
     // Arrange
-    const nameValidator = x => (x === "test" ? Validation.Success() : Validation.Failure(["Wrong"]));
-    const maxLengthValidator = x => (x.length < 5 ? Validation.Success() : Validation.Failure(["Too long"]));
+    const nameValidator = Validator(x => (x === "test" ? Validation.Success() : Validation.Failure(["Wrong"])));
+    const maxLengthValidator = Validator(x => (x.length < 5 ? Validation.Success() : Validation.Failure(["Too long"])));
     const model = "testWrong";
 
     const validator = any(nameValidator, maxLengthValidator);
@@ -80,49 +80,49 @@ describe("boolean and shorcircuit validators:", () => {
     expect(validation).toStrictEqual(Validation.Failure(["Wrong", "Too long"]));
   });
 
-  it("stop on first failure validators success: ", () => {
-    // Arrange
-    const nameValidator = jest.fn(x => x === "test" ? Validation.Success() : Validation.Failure(["Wrong"]));
-    const minLengthValidator = jest.fn(x => x.length > 3 ? Validation.Success() : Validation.Failure(["Too short"]));
-    const model = "test";
+  // it("stop on first failure validators success: ", () => {
+  //   // Arrange
+  //   const nameValidator = jest.fn(x => x === "test" ? Validation.Success() : Validation.Failure(["Wrong"]));
+  //   const minLengthValidator = jest.fn(x => x.length > 3 ? Validation.Success() : Validation.Failure(["Too short"]));
+  //   const model = "test";
 
-    const validator = first(Validator(nameValidator), Validator(minLengthValidator));
+  //   const validator = first(Validator(nameValidator), Validator(minLengthValidator));
 
-    // Act
-    const validation =  model |> validate(validator);
+  //   // Act
+  //   const validation =  model |> validate(validator);
 
-    // Assert
-    expect(validation).toBe(Validation.Success());
-    expect(nameValidator.mock.calls.length).toBe(1);
-    expect(minLengthValidator.mock.calls.length).toBe(1);
-  });
+  //   // Assert
+  //   expect(validation).toBe(Validation.Success());
+  //   expect(nameValidator.mock.calls.length).toBe(1);
+  //   expect(minLengthValidator.mock.calls.length).toBe(1);
+  // });
 
-  it("stop on first failure validators fail: ", () => {
-    // Arrange
-    const nameValidator = x => (x === "test" ? Validation.Success() : Validation.Failure(["Wrong"]));
-    const maxLengthValidator = jest.fn(x => (x.length < 3 ? Validation.Success() : Validation.Failure(["Too long"])));
-    const model = "testWrong";
+  // it("stop on first failure validators fail: ", () => {
+  //   // Arrange
+  //   const nameValidator = x => (x === "test" ? Validation.Success() : Validation.Failure(["Wrong"]));
+  //   const maxLengthValidator = jest.fn(x => (x.length < 3 ? Validation.Success() : Validation.Failure(["Too long"])));
+  //   const model = "testWrong";
 
-    const validator = first(nameValidator, maxLengthValidator);
+  //   const validator = first(nameValidator, maxLengthValidator);
 
-    // Act
-    const validation = validator(model);
+  //   // Act
+  //   const validation = validator(model);
 
-    // Assert
-    expect(validation).toStrictEqual(Validation.Failure(["Wrong"]));
-    expect(maxLengthValidator.mock.calls.length).toBe(0);
-  });
+  //   // Assert
+  //   expect(validation).toStrictEqual(Validation.Failure(["Wrong"]));
+  //   expect(maxLengthValidator.mock.calls.length).toBe(0);
+  // });
 });
 
 describe("conditional validators:", () => {
   it("when predicate validator - predicate true ", () => {
     // Arrange
-    const nameValidator = x => (x === "test" ? Validation.Success() : Validation.Failure(["Wrong"]));
+    const nameValidator = Validator(x => (x === "test" ? Validation.Success() : Validation.Failure(["Wrong"])));
     const model = "testWrong";
     const validator = when(x => x !== null, nameValidator);
 
     // Act
-    const validation = validator(model);
+    const validation = model |> validate(validator);
 
     // Assert
     expect(validation).toStrictEqual(Validation.Failure(["Wrong"]));
@@ -130,12 +130,12 @@ describe("conditional validators:", () => {
 
   it("when predicate validator - predicate false ", () => {
     // Arrange
-    const nameValidator = x => (x === "test" ? Validation.Success() : Validation.Failure(["Wrong"]));
+    const nameValidator = Validator(x => (x === "test" ? Validation.Success() : Validation.Failure(["Wrong"])));
     const model = "testWrong";
     const validator = when(x => x === null, nameValidator);
 
     // Act
-    const validation = validator(model);
+    const validation = model |> validate(validator);
 
     // Assert
     expect(validation).toStrictEqual(Validation.Success());
@@ -214,8 +214,8 @@ describe("fields validators:", () => {
 
   it("both global and fields validators - fail field: ", () => {
     // Arrange
-    const fieldValidator =  Validator(x => (x === "test" ? Validation.Success() : Validation.Failure(["Wrong"])));
-    const globalValidator =  Validator(x => (x !== null ? Validation.Success() : Validation.Failure(["Mandatory"])));
+    const fieldValidator = Validator(x => (x === "test" ? Validation.Success() : Validation.Failure(["Wrong"])));
+    const globalValidator = Validator(x => (x !== null ? Validation.Success() : Validation.Failure(["Mandatory"])));
 
     const model = { email: "testWrong" };
 
@@ -240,7 +240,7 @@ describe("fields validators:", () => {
     const validation = model |> validate(validator);
 
     // Assert
-    expect(validation).toStrictEqual(Validation.Failure(["Mandatory"], {}));
+    expect(validation).toStrictEqual(Validation.Failure(["Mandatory"], {email: Validation.Skipped()}));
   });
 
   it("disjunct fileds validators success: ", () => {
@@ -256,7 +256,7 @@ describe("fields validators:", () => {
     const validator = all(fields({ name: nameValidator }), fields({ email: emailValdator }));
 
     // Act
-    const validation =model |> validate(validator);
+    const validation = model |> validate(validator);
 
     // Assert
     expect(validation).toStrictEqual(
@@ -280,7 +280,7 @@ describe("fields validators:", () => {
     const validator = all(fields({ name: nameValidator }), fields({ email: emailValdator }));
 
     // Act
-    const validation =model |> validate(validator);
+    const validation = model |> validate(validator);
 
     // Assert
     expect(validation).toStrictEqual(
@@ -431,12 +431,12 @@ describe("fields validators:", () => {
     const validation = validate(validator, model, context);
 
     // Assert
-    expect(validation).toStrictEqual(Validation.Success({ child: Validation.Success() }));
+    expect(validation).toStrictEqual(Validation.Skipped({ child: Validation.Skipped({ name: Validation.Skipped() }) }));
     expect(nameValidator.mock.calls.length).toBe(0);
   });
 });
 
-describe.only("items validators:", () => {
+describe("items validators:", () => {
   it("items validator success: ", () => {
     // Arrange
     const itemValidator = Validator(x => (x === "test" ? Validation.Success() : Validation.Failure(["Wrong"])));
@@ -444,7 +444,7 @@ describe.only("items validators:", () => {
     const validator = items(itemValidator);
 
     // Act
-    const validation =  model |> validate(validator);
+    const validation = model |> validate(validator);
 
 
     // Assert
@@ -458,7 +458,7 @@ describe.only("items validators:", () => {
     const validator = items(itemValidator);
 
     // Act
-    const validation =  model |> validate(validator);
+    const validation = model |> validate(validator);
 
 
     // Assert
@@ -474,7 +474,7 @@ describe.only("items validators:", () => {
     const validator = all(globalValidator, items(itemValidator));
 
     // Act
-    const validation =  model |> validate(validator);
+    const validation = model |> validate(validator);
 
 
     // Assert
@@ -490,7 +490,7 @@ describe.only("items validators:", () => {
     const validator = all(globalValidator, items(itemValidator));
 
     // Act
-    const validation =  model |> validate(validator);
+    const validation = model |> validate(validator);
 
 
     // Assert
@@ -506,7 +506,7 @@ describe.only("items validators:", () => {
     const validator = all(globalValidator, items(itemValidator));
 
     // Act
-    const validation =  model |> validate(validator);
+    const validation = model |> validate(validator);
 
 
     // Assert
@@ -522,7 +522,7 @@ describe.only("items validators:", () => {
     const validator = all(items(nameValidator), items(minLengthValidator));
 
     // Act
-    const validation =  model |> validate(validator);
+    const validation = model |> validate(validator);
 
 
     // Assert
@@ -554,7 +554,7 @@ describe.only("items validators:", () => {
     const validator = all(items(nameValidator), items(minLengthValidator));
 
     // Act
-    const validation =  model |> validate(validator);
+    const validation = model |> validate(validator);
 
 
     // Assert
@@ -570,7 +570,7 @@ describe.only("items validators:", () => {
     const validator = all(items(nameValidator), items(minLengthValidator));
 
     // Act
-    const validation =  model |> validate(validator);
+    const validation = model |> validate(validator);
 
 
     // Assert
@@ -586,7 +586,7 @@ describe.only("items validators:", () => {
     const validator = all(items(nameValidator), items(minLengthValidator));
 
     // Act
-    const validation =  model |> validate(validator);
+    const validation = model |> validate(validator);
 
 
     // Assert
@@ -602,7 +602,7 @@ describe.only("items validators:", () => {
 describe("model validators:", () => {
   it("model validator success: ", () => {
     // Arrange
-    const maxLengthValidator = length => x => (x.length <= length ? Validation.Success() : Validation.Failure(["Too long"]));
+    const maxLengthValidator = length => Validator(x => (x.length <= length ? Validation.Success() : Validation.Failure(["Too long"])));
     const model = {
       maxLength: 4,
       name: "test"
@@ -610,7 +610,7 @@ describe("model validators:", () => {
     const validator = withModel(model => fields({ name: maxLengthValidator(model.maxLength) }));
 
     // Act
-    const validation = validator(model);
+    const validation = model |> validate(validator);
 
     // Assert
     expect(validation).toStrictEqual(Validation.Success({ name: Validation.Success() }));
@@ -618,7 +618,7 @@ describe("model validators:", () => {
 
   it("model validator error: ", () => {
     // Arrange
-    const maxLengthValidator = length => x => (x.length <= length ? Validation.Success() : Validation.Failure(["Too long"]));
+    const maxLengthValidator = length => Validator(x => (x.length <= length ? Validation.Success() : Validation.Failure(["Too long"])));
     const model = {
       maxLength: 3,
       name: "test"
@@ -626,7 +626,7 @@ describe("model validators:", () => {
     const validator = withModel(model => fields({ name: maxLengthValidator(model.maxLength) }));
 
     // Act
-    const validation = validator(model);
+    const validation = model |> validate(validator);
 
     // Assert
     expect(validation).toStrictEqual(Validation.Failure([], { name: Validation.Failure(["Too long"]) }));
@@ -654,24 +654,29 @@ describe("utility validators:", () => {
 
     const validator = fields({
       child: fields({
-        name: nameValidator,
-        surname: surnameValidator
+        name: Validator(nameValidator),
+        surname: Validator(surnameValidator)
       })
     });
+
+    function getInnerProp(searchKeyPath, obj) {
+      const [prop, ...rest] = searchKeyPath;
+      return prop ? getInnerProp(rest, obj[prop]) : obj;
+    }
 
     // Act
     //const validation = model |> (validator |> dirtyFieldsOnly(dirtyInfo) |> debug);
     //haskell: validator |> dirtyFieldsOnly(dirtyInfo) $ model
-    const validate = flow(
-      dirtyFieldsOnly(dirtyInfo),
-      debug
-    )(validator);
+    const decoratedValidator = validator
+      |> filterFields(path => getInnerProp(path, dirtyInfo))
+      |> debug(console.log)
 
-    const validation = validate(model);
+
+    const validation = model |> validate(decoratedValidator);
 
     // Assert
     expect(validation).toStrictEqual(
-      Validation.Success({ child: Validation.Success({ name: Validation.Success(), surname: Validation.Success() }) })
+      Validation.Success({ child: Validation.Success({ name: Validation.Skipped(), surname: Validation.Success() }) })
     );
     expect(nameValidator.mock.calls.length).toBe(0);
     expect(surnameValidator.mock.calls.length).toBe(1);
@@ -707,33 +712,37 @@ describe("utility validators:", () => {
       }
     };
 
+    function getInnerProp(searchKeyPath, obj) {
+      const [prop, ...rest] = searchKeyPath;
+      return prop !== undefined ? getInnerProp(rest, obj[prop]) : obj;
+    }
+
     const validator = fields({
       children: items(
         fields({
-          name: nameValidator,
-          surname: surnameValidator
+          name: Validator(nameValidator),
+          surname: Validator(surnameValidator)
         })
       )
     });
 
     // Act
-    const validate = flow(
-      dirtyFieldsOnly(dirtyInfo),
-      debug
-    )(validator);
+    const decoratedValidator = validator
+      |> filterFields(path => getInnerProp(path, dirtyInfo))
+      |> debug(console.log)
 
-    const validation = validate(model);
+    const validation = model |> validate(decoratedValidator);
 
     // Assert
     expect(validation).toStrictEqual(
       Validation.Success({
         children: Validation.Success({
-          ["0"]: Validation.Success({
-            name: Validation.Success(),
+          "0": Validation.Success({
+            name: Validation.Skipped(),
             surname: Validation.Success()
           }),
-          ["1"]: Validation.Success({
-            name: Validation.Success(),
+          "1": Validation.Success({
+            name: Validation.Skipped(),
             surname: Validation.Success()
           })
         })
