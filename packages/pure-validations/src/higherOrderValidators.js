@@ -40,8 +40,9 @@ export function withModel(validatorFactory) {
 
 export function field(key, validator) {
   return (validator |> _filterFieldPath |> _debugFieldPath)
-    .contramap((model, ctx) => [model[key], _appendToPath(ctx, key)])
-    .map(Validation.field(key))
+    .contramap((model, ctx) => [model[key], _getFieldContext(ctx, key)])
+    .map(_mapFieldToObjValidation(key))
+  //.map(Validation.field(key))
 }
 
 export function fields(validatorObj) {
@@ -65,7 +66,16 @@ export const debug = curry(function debug(debugFn, validator) {
   return validator.contramap((model, context) => [model, { ...context, debug: true, debugFn }])
 });
 
-function _appendToPath(context, key) {
+const _mapFieldToObjValidation = curry(function _mapFieldToObject(key, validation) {
+  const fields = { [key]: validation }
+  return Validation.match(validation, {
+    Success: _ => Validation.Success(fields),
+    Failure: _ => Validation.Failure([], fields),
+    Skipped: _ => Validation.Skipped(fields),
+  })
+})
+
+function _getFieldContext(context, key) {
   return { ...context, fieldPath: [...context.fieldPath, key] }
 }
 
@@ -87,6 +97,6 @@ function _debugFieldPath(validator) {
 function _filterFieldPath(validator) {
   return $do(function* () {
     const [field, fieldContext] = yield Reader.ask()
-    return (field === undefined ||  !fieldContext.fieldFilter(fieldContext.fieldPath)) ? skip : validator;
+    return (field === undefined || !fieldContext.fieldFilter(fieldContext.fieldPath)) ? skip : validator;
   })
 }
