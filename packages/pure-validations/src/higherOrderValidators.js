@@ -6,6 +6,8 @@ import curry from "lodash.curry";
 
 //export const logicalAndOperator = x => (x ? y => y : _ => x); //logical short-circuiting
 
+const skip = Validator.of(Validation.Skipped())
+
 function allReducer(f1, f2) {
   return lift2(Validation.all, f1, f2);
 }
@@ -25,7 +27,7 @@ export function any(...validators) {
 export function when(predicate, validator) {
   return $do(function* () {
     const isTrue = yield Reader(predicate);
-    return isTrue ? validator : Validator.of(Validation.Skipped());
+    return isTrue ? validator : skip;
   });
 }
 
@@ -45,13 +47,13 @@ export function field(key, validator) {
 export function fields(validatorObj) {
   return Object.entries(validatorObj)
     .map(([k, v]) => field(k, v))
-    .reduce(allReducer);
+    .reduce(allReducer, skip);
 }
 
 export function items(itemValidator) {
   return $do(function* () {
     const [model] = yield Reader.ask();
-    return model.map((_, index) => field(index, itemValidator)).reduce(allReducer, Validator.of(Validation.Skipped()));
+    return model.map((_, index) => field(index, itemValidator)).reduce(allReducer, skip);
   });
 }
 
@@ -86,7 +88,7 @@ function _filterFieldPath(validator) {
   return $do(function* () {
     const [field, fieldContext] = yield Reader.ask()
     const isMissing = field === undefined;
-    const isFiltered =  fieldContext.fieldFilter && !fieldContext.fieldFilter(fieldContext.fieldPath);
-    return (isMissing || isFiltered) ? Validator.of(Validation.Skipped()) : validator;
+    const isFiltered = fieldContext.fieldFilter && !fieldContext.fieldFilter(fieldContext.fieldPath);
+    return (isMissing || isFiltered) ? skip : validator;
   })
 }
