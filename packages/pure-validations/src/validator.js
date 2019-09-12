@@ -4,6 +4,7 @@ import curry from "lodash.curry";
 const Validator = Reader;
 const emptyContext = {
   fieldPath: [],
+  fieldFilter: _ => true,
   debug: false,
   debugFn: () => {}
 }

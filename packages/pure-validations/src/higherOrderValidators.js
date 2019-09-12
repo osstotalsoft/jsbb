@@ -66,7 +66,7 @@ export const debug = curry(function debug(debugFn, validator) {
 });
 
 function _appendToPath(context, key) {
-  return { ...context, fieldPath: [...(context.fieldPath || []), key] }
+  return { ...context, fieldPath: [...context.fieldPath, key] }
 }
 
 function _debug(context, message) {
@@ -87,8 +87,6 @@ function _debugFieldPath(validator) {
 function _filterFieldPath(validator) {
   return $do(function* () {
     const [field, fieldContext] = yield Reader.ask()
-    const isMissing = field === undefined;
-    const isFiltered = fieldContext.fieldFilter && !fieldContext.fieldFilter(fieldContext.fieldPath);
-    return (isMissing || isFiltered) ? skip : validator;
+    return (field === undefined ||  !fieldContext.fieldFilter(fieldContext.fieldPath)) ? skip : validator;
   })
 }
