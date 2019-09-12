@@ -138,7 +138,7 @@ describe("conditional validators:", () => {
     const validation = model |> validate(validator);
 
     // Assert
-    expect(validation).toStrictEqual(Validation.Success());
+    expect(validation).toBe(Validation.Skipped());
   });
 });
 

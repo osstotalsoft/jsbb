@@ -4,7 +4,7 @@ import { Validator, validate } from "./validator";
 import { $do, chain, ap, fmap, lift2 } from "./polymorphicFns";
 import curry from "lodash.curry";
 
-export const logicalAndOperator = x => (x ? y => y : _ => x); //logical short-circuiting
+//export const logicalAndOperator = x => (x ? y => y : _ => x); //logical short-circuiting
 
 function allReducer(f1, f2) {
   return lift2(Validation.all, f1, f2);
@@ -25,7 +25,7 @@ export function any(...validators) {
 export function when(predicate, validator) {
   return $do(function* () {
     const isTrue = yield Reader(predicate);
-    return isTrue ? validator : Validator.of(Validation.Success());
+    return isTrue ? validator : Validator.of(Validation.Skipped());
   });
 }
 
@@ -37,22 +37,9 @@ export function withModel(validatorFactory) {
 }
 
 export function field(key, validator) {
-  return Validator(function (model, context) {
-    const field = model[key];
-    const fieldContext = context && { ...context, fieldPath: [...(context.fieldPath || []), key] };
-
-    const validation =
-      (field === undefined || (fieldContext && fieldContext.fieldFilter && !fieldContext.fieldFilter(fieldContext.fieldPath)))
-        ? Validation.Skipped()
-        : validate(validator, field, fieldContext);
-
-    debugPath(fieldContext, validation);
-    const fields = { [key]: validation };
-
-    return Validation._isSuccess(validation) ? Validation.Success(fields)
-      : Validation._isFailure(validation) ? Validation.Failure([], fields)
-        : Validation.Skipped(fields);
-  });
+  return (validator |> _filterFieldPath |> _debugFieldPath)
+    .contramap((model, ctx) => [model[key], _appendToPath(ctx, key)])
+    .map(Validation.field(key))
 }
 
 export function fields(validatorObj) {
@@ -68,13 +55,6 @@ export function items(itemValidator) {
   });
 }
 
-export const dirtyFieldsOnly = curry(function dirtyFieldsOnly(dirtyFields, validator) {
-  return function (model, context) {
-    const dirtyFieldsContext = { ...context, fieldFilter: path => getInnerProp(path, dirtyFields) };
-    return validator(model, dirtyFieldsContext);
-  };
-});
-
 export const filterFields = curry(function filterFields(fieldFilter, validator) {
   return validator.contramap((model, context) => [model, { ...context, fieldFilter }])
 });
@@ -83,20 +63,30 @@ export const debug = curry(function debug(debugFn, validator) {
   return validator.contramap((model, context) => [model, { ...context, debug: true, debugFn }])
 });
 
-/*export function debug(validator) {
-  return function (model, context) {
-    const debugContext = { ...context, debug: true, debugFn: console.log };
-    return validator(model, debugContext);
-  };
-}*/
-
-function getInnerProp(searchKeyPath, obj) {
-  const [prop, ...rest] = searchKeyPath;
-  return prop ? getInnerProp(rest, obj[prop]) : obj;
+function _appendToPath(context, key) {
+  return { ...context, fieldPath: [...(context.fieldPath || []), key] }
 }
 
-function debugPath(context, validation) {
-  if (context && context.debug && context.debugFn) {
-    context.debugFn(`Validation ${Validation._getType(validation)} for path ${context.fieldPath.reduce((x, y) => x + "." + y)}`);
+function _debug(context, message) {
+  if (context.debug && context.debugFn) {
+    context.debugFn(message);
   }
+}
+
+function _debugFieldPath(validator) {
+  return $do(function* () {
+    const [_, fieldContext] = yield Reader.ask()
+    const validation = yield validator;
+    _debug(fieldContext, `Validation ${Validation._getType(validation)} for path ${fieldContext.fieldPath.reduce((x, y) => x + "." + y)}`)
+    return Validator.of(validation);
+  })
+}
+
+function _filterFieldPath(validator) {
+  return $do(function* () {
+    const [field, fieldContext] = yield Reader.ask()
+    const isMissing = field === undefined;
+    const isFiltered =  fieldContext.fieldFilter && !fieldContext.fieldFilter(fieldContext.fieldPath);
+    return (isMissing || isFiltered) ? Validator.of(Validation.Skipped()) : validator;
+  })
 }

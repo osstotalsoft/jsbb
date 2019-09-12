@@ -10,6 +10,7 @@ const skippedType = 'Skipped';
 const typeSymbol = Symbol("_type");
 const errorsSymbol = Symbol("_errors");
 const emptySuccess = make(successType, {}, []);
+const emptySkipped = make(skippedType, {}, []);
 
 function make(type, fields, errors) {
   return Map(fields).withMutations(map => {
@@ -26,7 +27,7 @@ function Failure(errors, fields = {}) {
 }
 
 function Skipped(fields = {}) {
-  return make(skippedType, fields, []);
+  return Object.keys(fields).length === 0 ? emptySkipped: make(skippedType, fields, []);
 }
 
 function match(validation, { Success, Failure, Skipped }) {
@@ -115,12 +116,8 @@ function replace(validation1, validation2) {
 
 //field:: string -> validation -> validation
 const field = curry(function field(key, validation) {
-  return make(_isSuccess(validation), { [key]: validation }, []);
+  return make(_getType(validation), { [key]: validation }, []);
 });
-
-function fields(validationObj) {
-  Object.entries(validationObj).reduce(([k1, v1], [k2, v2]) => all(field(k1, v1), field(k2, v2)), Success());
-}
 
 function getInner(validation, searchKeyPath) {
   return validation.getIn(searchKeyPath) || Skipped();
@@ -142,7 +139,6 @@ function _isSkipped(validation) {
   return validation.get(typeSymbol) == skippedType;
 }
 
-
 function _getErrors(validation) {
   return validation.get(errorsSymbol) || Set([]);
 }
@@ -154,4 +150,4 @@ function _getType(validation) {
   return validation.get(typeSymbol) || skippedType;
 }
 
-export const Validation = { Success, Failure, Skipped, match, all, any, replace, field, fields, getInner, _isSuccess, _isFailure, _getErrors, _getType };
+export const Validation = { Success, Failure, Skipped, match, all, any, replace, field, getInner, _isSuccess, _isFailure, _getErrors, _getType };
