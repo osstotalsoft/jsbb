@@ -6,7 +6,7 @@ import curry from "lodash.curry";
 
 //export const logicalAndOperator = x => (x ? y => y : _ => x); //logical short-circuiting
 
-const skip = Validator.of(Validation.Skipped())
+const skip = Validator.of(Validation.Success())
 
 function allReducer(f1, f2) {
   return lift2(Validation.all, f1, f2);
@@ -70,8 +70,7 @@ const _mapFieldToObjValidation = curry(function _mapFieldToObject(key, validatio
   const fields = { [key]: validation }
   return Validation.match(validation, {
     Success: _ => Validation.Success(fields),
-    Failure: _ => Validation.Failure([], fields),
-    Skipped: _ => Validation.Skipped(fields),
+    Failure: _ => Validation.Failure([], fields)
   })
 })
 
@@ -89,7 +88,7 @@ function _debugFieldPath(validator) {
   return $do(function* () {
     const [_, fieldContext] = yield Reader.ask()
     const validation = yield validator;
-    _debug(fieldContext, `Validation ${Validation._getType(validation)} for path ${fieldContext.fieldPath.reduce((x, y) => x + "." + y)}`)
+    _debug(fieldContext, `Validation ${Validation._isSuccess(validation) ? 'succeded' : 'failed'} for path ${fieldContext.fieldPath.reduce((x, y) => x + "." + y)}`)
     return Validator.of(validation);
   })
 }

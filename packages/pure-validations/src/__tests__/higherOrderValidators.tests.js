@@ -62,7 +62,7 @@ describe("boolean and shorcircuit validators:", () => {
 
     // Assert
     expect(validation).toEqual(Validation.Success());
-    
+
     //TBD: No short circuit for any
     //expect(minLengthValidator.mock.calls.length).toBe(0);
   });
@@ -140,7 +140,7 @@ describe("conditional validators:", () => {
     const validation = model |> validate(validator);
 
     // Assert
-    expect(validation).toBe(Validation.Skipped());
+    expect(validation).toBe(Validation.Success());
   });
 });
 
@@ -242,7 +242,7 @@ describe("fields validators:", () => {
     const validation = model |> validate(validator);
 
     // Assert
-    expect(validation).toStrictEqual(Validation.Failure(["Mandatory"], { email: Validation.Skipped() }));
+    expect(validation).toStrictEqual(Validation.Failure(["Mandatory"]));
   });
 
   it("disjunct fileds validators success: ", () => {
@@ -288,7 +288,6 @@ describe("fields validators:", () => {
     expect(validation).toStrictEqual(
       Validation.Failure([], {
         name: Validation.Failure(["Too short"]),
-        email: Validation.Success()
       })
     );
   });
@@ -311,7 +310,6 @@ describe("fields validators:", () => {
     // Assert
     expect(validation).toStrictEqual(
       Validation.Failure([], {
-        name: Validation.Success(),
         email: Validation.Failure(["Invalid email"])
       })
     );
@@ -433,7 +431,7 @@ describe("fields validators:", () => {
     const validation = validate(validator, model);
 
     // Assert
-    expect(validation).toStrictEqual(Validation.Skipped({ child: Validation.Skipped({ name: Validation.Skipped() }) }));
+    expect(validation).toBe(Validation.Success());
     expect(nameValidator.mock.calls.length).toBe(0);
   });
 });
@@ -594,7 +592,6 @@ describe("items validators:", () => {
     // Assert
     expect(validation).toStrictEqual(
       Validation.Failure([], {
-        ["0"]: Validation.Success(),
         ["1"]: Validation.Failure(["Wrong"])
       })
     );
@@ -679,9 +676,7 @@ describe("utility validators:", () => {
     const validation = model |> validate(decoratedValidator);
 
     // Assert
-    expect(validation).toStrictEqual(
-      Validation.Success({ child: Validation.Success({ name: Validation.Skipped(), surname: Validation.Success() }) })
-    );
+    expect(validation).toBe(Validation.Success());
     expect(nameValidator.mock.calls.length).toBe(0);
     expect(surnameValidator.mock.calls.length).toBe(1);
   });
@@ -740,20 +735,7 @@ describe("utility validators:", () => {
     const validation = model |> validate(decoratedValidator);
 
     // Assert
-    expect(validation).toStrictEqual(
-      Validation.Success({
-        children: Validation.Success({
-          "0": Validation.Success({
-            name: Validation.Skipped(),
-            surname: Validation.Success()
-          }),
-          "1": Validation.Success({
-            name: Validation.Skipped(),
-            surname: Validation.Success()
-          })
-        })
-      })
-    );
+    expect(validation).toBe(Validation.Success());
 
     expect(nameValidator.mock.calls.length).toBe(0);
     expect(surnameValidator.mock.calls.length).toBe(2);

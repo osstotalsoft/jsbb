@@ -136,7 +136,7 @@ describe("validation tests suite:", () => {
     expect(result).toBe(innerValidation);
   });
 
-  it("get inner validation should return skipped if path not found:", () => {
+  it("get inner validation should return success if path not found:", () => {
     // Arrange
     const errors = ["Err2", "Err1"];
     const innerValidation = Validation.Failure(errors);
@@ -149,7 +149,7 @@ describe("validation tests suite:", () => {
     var result = Validation.getInner(validation, ["notFoundField", "field11"]);
 
     // Assert
-    expect(result).toBe(Validation.Skipped());
+    expect(result).toBe(Validation.Success());
   });
 
   it("reference economy empty success: ", () => {
