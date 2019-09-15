@@ -1,7 +1,6 @@
 import { Validation } from "../validation";
 import { Validator, validate } from "../validator";
-import { field, fields, items, all, any, when, first, withModel, dirtyFieldsOnly, debug, filterFields } from "../higherOrderValidators";
-import flow from "lodash.flow";
+import { field, fields, items, all, any, when, withModel, debug, filterFields } from "../higherOrderValidators";
 
 describe("boolean and shorcircuit validators:", () => {
   it("all validators success: ", () => {
@@ -31,7 +30,7 @@ describe("boolean and shorcircuit validators:", () => {
     const validation = model |> validate(validator);
 
     // Assert
-    expect(validation).toStrictEqual(Validation.Failure(["Wrong", "Too long"]));
+    expect(validation.value).toStrictEqual(Validation.Failure(["Wrong", "Too long"]).value);
   });
 
   it("any validators success - fail first: ", () => {

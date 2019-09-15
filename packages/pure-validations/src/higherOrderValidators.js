@@ -1,5 +1,7 @@
 import { Reader } from "./reader";
 import { Validation } from "./validation";
+import { AllValidation } from "./allValidation";
+import { AnyValidation } from "./anyValidation";
 import { Validator, validate } from "./validator";
 import { $do, chain, ap, fmap, lift2 } from "./polymorphicFns";
 import curry from "lodash.curry";
@@ -9,7 +11,8 @@ import curry from "lodash.curry";
 const skip = Validator.of(Validation.Success())
 
 function allReducer(f1, f2) {
-  return lift2(Validation.all, f1, f2);
+  const allValidations = v1 => v2 => (AllValidation(v1)['fantasy-land/concat'](AllValidation(v2))).value
+  return lift2(allValidations, f1, f2);
 }
 
 export function all(...validators) {
@@ -17,7 +20,8 @@ export function all(...validators) {
 }
 
 function anyReducer(f1, f2) {
-  return lift2(Validation.any, f1, f2);
+  const anyValidation = v1 => v2 => (AnyValidation(v1)['fantasy-land/concat'](AnyValidation(v2))).value
+  return lift2(anyValidation, f1, f2);
 }
 
 export function any(...validators) {
