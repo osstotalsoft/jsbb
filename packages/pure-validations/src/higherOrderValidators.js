@@ -44,8 +44,8 @@ export function withModel(validatorFactory) {
 
 export function field(key, validator) {
   return (validator |> _filterFieldPath |> _debugFieldPath)
-    .contramap((model, ctx) => [model[key], _getFieldContext(ctx, key)])
-    .map(_mapFieldToObjValidation(key))
+    ['fantasy-land/contramap']((model, ctx) => [model[key], _getFieldContext(ctx, key)])
+    ['fantasy-land/map'](_mapFieldToObjValidation(key))
   //.map(Validation.field(key))
 }
 

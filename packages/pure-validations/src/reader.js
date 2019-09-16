@@ -1,27 +1,37 @@
-function Reader(computation) {
-  return {
-    runReader: (...props) => computation(...props),
-    map: f => Reader((...props) => f(computation(...props))),
-    contramap: f => Reader((...props) => computation(...f(...props))),
-    ap: other =>
-      Reader((...props) => {
-        const fn= computation(...props);
-        return fn(other.runReader(...props));
-      }),
-    chain: f => {
-      return Reader((...props) => {
-        // Get the result from original computation
-        const a = computation(...props);
+import { Monad} from './typeClasses'
 
-        // Now get the result from the computation
-        // inside the Reader `f(a)`.
-        return f(a).runReader(...props);
-      });
-    }
-  };
+Reader['fantasy-land/of'] = x => Reader(_ => x); // Monad, Applicative
+Reader.ask = () => Reader((...props) => props); // Reader
+
+const proto = {
+  'fantasy-land/chain': function(f) { return Reader((...props) => f(this.runReader(...props)).runReader(...props)) }, // Monad, Chain
+  'fantasy-land/contramap': function(f) { return Reader((...props) => this.runReader(...f(...props))) }, // Contravariant
+  ...Monad.derive(Reader)
 }
 
-Reader.of = x => Reader(_ => x);
-Reader.ask = () => Reader((...props) => props);
+function Reader(computation) {
+  return Object.assign(
+    Object.create(proto), {
+    runReader: computation // Reader
+  });
+}
+
+
+// function Reader(computation) {
+//   const self = { runReader: computation } // Reader
+
+//   self.chain = f => Reader((...props) => f(self.runReader(...props)).runReader(...props)); // Monad, Chain
+//   self.contramap = f => Reader((...props) => self.runReader(...f(...props))); // Contravariant
+
+//   deriveMonad(self, Reader)
+
+//   return self
+// }
+
+// function deriveMonad(self, typeRep) {
+//   self.map = f => self.chain(x => Reader.of(f(x))); // Functor
+//   self.ap = other => self.chain(fn => other.map(fn)); // Applicative, Apply
+// }
+
 
 export { Reader };
