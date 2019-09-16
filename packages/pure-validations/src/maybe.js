@@ -7,7 +7,7 @@ const nothingPrototype = {
   isNothing: true,
   isJust: false,
   constructor: Maybe,
-  [fl.concat]: function(other) {
+  [fl.concat]: function (other) {
     return other;
   }
 };
@@ -20,8 +20,9 @@ const justPrototype = {
 
 const justSemigroupPrototype = {
   ...justPrototype,
-  [fl.concat]: function(other) {
-    return other.isJust ? Just(this.value[fl.concat](other.value)) : this;
+  [fl.concat]: function (other) {
+    const concatValue = other.isJust ? this.value[fl.concat](other.value) : this.value
+    return concatValue !== this.value ? Just(concatValue) : this;
   }
 };
 
@@ -40,5 +41,6 @@ function Just(value) {
 
   return just;
 }
+
 
 export { Nothing, Just, Maybe };

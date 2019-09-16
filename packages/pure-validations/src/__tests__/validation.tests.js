@@ -2,20 +2,28 @@ import { Validation } from "../validation";
 import { AllValidation } from "../allValidation";
 import { concat } from "../polymorphicFns"
 import fl from 'fantasy-land'
+import { Monoid} from '../typeClasses'
+
+
+function applyLaw(law) {
+  return  (...args) => isEquivalent => law(isEquivalent)(...args)
+}
+function expectLawValid(lawEvaluator) {
+  return lawEvaluator((a, b) => expect(a).toStrictEqual(b))
+}
 
 describe("validation tests suite:", () => {
   it("monoid left identity law: ", () => {
     // Arrange
-    var identity = AllValidation[fl.empty]();
     var failure = AllValidation(Validation.Failure(["err1", "err2"], {
       a: Validation.Failure(["errA"])
     }));
 
     // Act
-    var result = concat(identity, failure);
-
+    var lawEvaluator = applyLaw(Monoid.laws.leftIdentity)(failure);
+    
     // Assert
-    expect(result).toStrictEqual(failure);
+    expectLawValid(lawEvaluator)
   });
 
   it("monoid right identity law: ", () => {
@@ -45,7 +53,7 @@ describe("validation tests suite:", () => {
     }));
 
     // Act
-    var result1 = concat(concat((failure1, failure2), failure3));
+    var result1 = concat(concat(failure1, failure2), failure3);
     var result2 = concat(failure1, concat(failure2, failure3));
 
     // Assert
@@ -90,25 +98,12 @@ describe("validation tests suite:", () => {
     var success2 = Validation.Success();
 
     // Act
-    var result = concat(AllValidation(success1),AllValidation(success2));
+    var result = concat(AllValidation(success1), AllValidation(success2));
 
     // Assert
     expect(result.value).toBe(success1);
     expect(result.value).toBe(success2);
   });
-
-  /*it("reference economy second failure: ", () => {
-
-        // Arrange
-        var success =  Validation.Success()
-        var failure =  Validation.Failure(["Err1", "Err 2"], {a: Validation.Success()})
-        
-        // Act
-        var result = Validation.all(success, failure);
-
-        // Assert
-        expect(result).toBe(failure)
-    });  */
 
   it("reference economy full: ", () => {
     // Arrange
@@ -128,9 +123,9 @@ describe("validation tests suite:", () => {
     });
 
     // Act
-    var result = concat(AllValidation(failure1),AllValidation(failure2));
+    var result = concat(AllValidation(failure1), AllValidation(failure2)).value;
 
     // Assert
-    expect(result.value).toBe(failure1);
+    expect(result).toBe(failure1);
   });
 });

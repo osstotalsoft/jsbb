@@ -9,12 +9,15 @@ function Failure(errors, fields) {
   return Just(ValidationError(errors, fields));
 }
 
-function match(validation, { Success, Failure }) {
-  return validation.isNothing ? Success() : Failure(validation.value);
-}
-
 function isValid(validation) {
-  return match(validation, { Success: () => true, Failure: _ => false });
+  return validation.isNothing;
 }
 
-export const Validation = { Success, Failure, isValid };
+function getInner(validation, path) {
+  if (isValid(validation))
+    return validation;
+
+  return path.reduce((acc, key) => acc === undefined ? Success() : acc.value.getField(key), validation)
+}
+
+export const Validation = { Success, Failure, isValid, getInner };

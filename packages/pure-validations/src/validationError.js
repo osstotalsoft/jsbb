@@ -12,13 +12,16 @@ function mergerAll(value1, value2, key) {
 }
 
 const validationErrorPrototype = {
-  "fantasy-land/concat": function(other) {
-    const mergedErrors =  mergeWith(mergerAll, this, other);
+  "fantasy-land/concat": function (other) {
+    const mergedErrors = mergeWith(mergerAll, this, other);
     return Object.assign(mergedErrors, validationErrorPrototype)
   },
-  getErrors: function() {
-    return this.getErrors(errorsSymbol).toArray();
+  getErrors: function () {
+    return this.get(errorsSymbol).toArray();
   },
+  getField: function (key) {
+    return this.get(key)
+  }
 };
 
 export function ValidationError(errors, fields) {
