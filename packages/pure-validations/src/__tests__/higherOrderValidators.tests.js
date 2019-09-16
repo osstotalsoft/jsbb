@@ -1,6 +1,7 @@
 import { Validation } from "../validation";
 import { Validator, validate } from "../validator";
 import { field, fields, items, all, any, when, withModel, debug, filterFields } from "../higherOrderValidators";
+import fl from 'fantasy-land'
 
 describe("boolean and shorcircuit validators:", () => {
   it("all validators success: ", () => {
@@ -232,7 +233,7 @@ describe("fields validators:", () => {
   it("both global and fields validators - fail global: ", () => {
     // Arrange
     const fieldValidator = Validator(x => (x === "test" ? Validation.Success() : Validation.Failure(["Wrong"])));
-    const globalValidator = Validator.of(Validation.Failure(["Mandatory"]));
+    const globalValidator = Validator[fl.of](Validation.Failure(["Mandatory"]));
     const model = {};
 
     const validator = all(globalValidator, fields({ email: fieldValidator }));

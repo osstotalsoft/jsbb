@@ -1,7 +1,7 @@
 import { Monad} from './typeClasses'
 import fl from 'fantasy-land'
 
-Reader['fantasy-land/of'] = x => Reader(_ => x); // Monad, Applicative
+Reader[fl.of] = x => Reader(_ => x); // Monad, Applicative
 Reader.ask = () => Reader((...props) => props); // Reader
 
 const proto = {

@@ -27,6 +27,10 @@ const fmap = curry(function fmap(fn, functor) {
   return functor[fl.map](fn);
 });
 
+const contramap = curry(function contramap(fn, contravariant) {
+  return contravariant[fl.contramap](fn);
+});
+
 const lift2 = curry(function lift2(op, applicative1, applicative2) {
   return ap(fmap(op, applicative1), applicative2);
 });
@@ -36,4 +40,4 @@ const concat = curry(function concat(s1, s2) {
 })
 
 
-export { chain, $do, ap, fmap, lift2, concat };
+export { chain, $do, ap, fmap, lift2, concat, contramap };

@@ -3,16 +3,16 @@ import { Validation } from "./validation";
 import { AllValidation } from "./allValidation";
 import { AnyValidation } from "./anyValidation";
 import { Validator } from "./validator";
-import { $do, lift2 } from "./polymorphicFns";
+import { $do, lift2, concat, fmap, contramap } from "./polymorphicFns";
 import curry from "lodash.curry";
-import fl from 'fantasy-land'
+import fl from "fantasy-land"
 
 //export const logicalAndOperator = x => (x ? y => y : _ => x); //logical short-circuiting
 
-const skip = Validator.of(Validation.Success())
+const skip = Validator[fl.of](Validation.Success())
 
 function allReducer(f1, f2) {
-  const allValidations = v1 => v2 => (AllValidation(v1)['fantasy-land/concat'](AllValidation(v2))).value
+  const allValidations = v1 => v2 => concat(AllValidation(v1), AllValidation(v2)).value
   return lift2(allValidations, f1, f2);
 }
 
@@ -21,7 +21,7 @@ export function all(...validators) {
 }
 
 function anyReducer(f1, f2) {
-  const anyValidation = v1 => v2 => (AnyValidation(v1)['fantasy-land/concat'](AnyValidation(v2))).value
+  const anyValidation = v1 => v2 => concat(AnyValidation(v1), AnyValidation(v2)).value
   return lift2(anyValidation, f1, f2);
 }
 
@@ -44,9 +44,9 @@ export function withModel(validatorFactory) {
 }
 
 export function field(key, validator) {
-  return (validator |> _filterFieldPath |> _debugFieldPath)[
-    fl.contramap]((model, ctx) => [model[key], _getFieldContext(ctx, key)])[
-    fl.map](_mapFieldToObjValidation(key))
+  return (validator |> _filterFieldPath |> _debugFieldPath) 
+    |> contramap((model, ctx) => [model[key], _getFieldContext(ctx, key)])
+    |> fmap(_mapFieldToObjValidation(key))
   //.map(Validation.field(key))
 }
 
@@ -64,11 +64,11 @@ export function items(itemValidator) {
 }
 
 export const filterFields = curry(function filterFields(fieldFilter, validator) {
-  return validator.contramap((model, context) => [model, { ...context, fieldFilter }])
+  return validator |> contramap((model, context) => [model, { ...context, fieldFilter }])
 });
 
 export const debug = curry(function debug(debugFn, validator) {
-  return validator.contramap((model, context) => [model, { ...context, debug: true, debugFn }])
+  return validator |> contramap((model, context) => [model, { ...context, debug: true, debugFn }])
 });
 
 const _mapFieldToObjValidation = curry(function _mapFieldToObject(key, validation) {
@@ -94,7 +94,7 @@ function _debugFieldPath(validator) {
     const [_, fieldContext] = yield Reader.ask()
     const validation = yield validator;
     _debug(fieldContext, `Validation ${Validation._isSuccess(validation) ? 'succeded' : 'failed'} for path ${fieldContext.fieldPath.reduce((x, y) => x + "." + y)}`)
-    return Validator.of(validation);
+    return Validator[fl.of](validation);
   })
 }
 
