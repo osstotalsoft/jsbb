@@ -1,11 +1,12 @@
 import { Monad} from './typeClasses'
+import fl from 'fantasy-land'
 
 Reader['fantasy-land/of'] = x => Reader(_ => x); // Monad, Applicative
 Reader.ask = () => Reader((...props) => props); // Reader
 
 const proto = {
-  'fantasy-land/chain': function(f) { return Reader((...props) => f(this.runReader(...props)).runReader(...props)) }, // Monad, Chain
-  'fantasy-land/contramap': function(f) { return Reader((...props) => this.runReader(...f(...props))) }, // Contravariant
+  [fl.chain]: function(f) { return Reader((...props) => f(this.runReader(...props)).runReader(...props)) }, // Monad, Chain
+  [fl.contramap]: function(f) { return Reader((...props) => this.runReader(...f(...props))) }, // Contravariant
   ...Monad.derive(Reader)
 }
 

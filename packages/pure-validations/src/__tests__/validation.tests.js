@@ -1,16 +1,18 @@
 import { Validation } from "../validation";
 import { AllValidation } from "../allValidation";
+import { concat } from "../polymorphicFns"
+import fl from 'fantasy-land'
 
 describe("validation tests suite:", () => {
   it("monoid left identity law: ", () => {
     // Arrange
-    var identity = AllValidation["fantasy-land/empty"]();
+    var identity = AllValidation[fl.empty]();
     var failure = AllValidation(Validation.Failure(["err1", "err2"], {
       a: Validation.Failure(["errA"])
     }));
 
     // Act
-    var result = identity['fantasy-land/concat'](failure);
+    var result = concat(identity, failure);
 
     // Assert
     expect(result).toStrictEqual(failure);
@@ -18,13 +20,13 @@ describe("validation tests suite:", () => {
 
   it("monoid right identity law: ", () => {
     // Arrange
-    var identity = AllValidation["fantasy-land/empty"]();
+    var identity = AllValidation[fl.empty]();
     var failure = AllValidation(Validation.Failure(["err1", "err2"], {
       a: Validation.Failure(["errA"])
     }));
 
     // Act
-    var result = identity['fantasy-land/concat'](failure);
+    var result = concat(failure, identity);
 
     // Assert
     expect(result).toStrictEqual(failure);
@@ -43,8 +45,8 @@ describe("validation tests suite:", () => {
     }));
 
     // Act
-    var result1 = (failure1['fantasy-land/concat'](failure2))['fantasy-land/concat'](failure3);
-    var result2 = failure1['fantasy-land/concat'](failure2['fantasy-land/concat'](failure3))
+    var result1 = concat(concat((failure1, failure2), failure3));
+    var result2 = concat(failure1, concat(failure2, failure3));
 
     // Assert
     expect(result1).toStrictEqual(result2);
@@ -159,7 +161,7 @@ describe("validation tests suite:", () => {
     var success2 = Validation.Success();
 
     // Act
-    var result = AllValidation(success1)['fantasy-land/concat'](AllValidation(success2));
+    var result = concat(AllValidation(success1),AllValidation(success2));
 
     // Assert
     expect(result.value).toBe(success1);
@@ -197,7 +199,7 @@ describe("validation tests suite:", () => {
     });
 
     // Act
-    var result = AllValidation(failure1)['fantasy-land/concat'](AllValidation(failure2));
+    var result = concat(AllValidation(failure1),AllValidation(failure2));
 
     // Assert
     expect(result.value).toBe(failure1);

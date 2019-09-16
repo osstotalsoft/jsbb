@@ -1,4 +1,5 @@
 import { Semigroup } from "./typeClasses";
+import fl from 'fantasy-land'
 
 const Maybe = {};
 
@@ -6,7 +7,7 @@ const nothingPrototype = {
   isNothing: true,
   isJust: false,
   constructor: Maybe,
-  "fantasy-land/concat": function(other) {
+  [fl.concat]: function(other) {
     return other;
   }
 };
@@ -19,8 +20,8 @@ const justPrototype = {
 
 const justSemigroupPrototype = {
   ...justPrototype,
-  "fantasy-land/concat": function(other) {
-    return other.isJust ? Just(this.value["fantasy-land/concat"](other.value)) : this;
+  [fl.concat]: function(other) {
+    return other.isJust ? Just(this.value[fl.concat](other.value)) : this;
   }
 };
 

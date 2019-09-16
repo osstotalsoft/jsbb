@@ -1,7 +1,8 @@
 import curry from "lodash.curry";
+import fl from 'fantasy-land'
 
 const chain = curry(function chain(fn, ma) {
-  return ma['fantasy-land/chain'](fn);
+  return ma[fl.chain](fn);
 });
 
 function $do(gen) {
@@ -19,16 +20,20 @@ function $do(gen) {
 }
 
 const ap = curry(function apply(fnFunctor, applicative) {
-  return fnFunctor['fantasy-land/ap'](applicative);
+  return fnFunctor[fl.ap](applicative);
 });
 
 const fmap = curry(function fmap(fn, functor) {
-  return functor['fantasy-land/map'](fn);
+  return functor[fl.map](fn);
 });
 
 const lift2 = curry(function lift2(op, applicative1, applicative2) {
   return ap(fmap(op, applicative1), applicative2);
 });
 
+const concat = curry(function concat(s1, s2) {
+  return s1[fl.concat](s2);
+})
 
-export { chain, $do, ap, fmap, lift2 };
+
+export { chain, $do, ap, fmap, lift2, concat };

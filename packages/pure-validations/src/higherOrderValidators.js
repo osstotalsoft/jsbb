@@ -2,9 +2,10 @@ import { Reader } from "./reader";
 import { Validation } from "./validation";
 import { AllValidation } from "./allValidation";
 import { AnyValidation } from "./anyValidation";
-import { Validator, validate } from "./validator";
-import { $do, chain, ap, fmap, lift2 } from "./polymorphicFns";
+import { Validator } from "./validator";
+import { $do, lift2 } from "./polymorphicFns";
 import curry from "lodash.curry";
+import fl from 'fantasy-land'
 
 //export const logicalAndOperator = x => (x ? y => y : _ => x); //logical short-circuiting
 
@@ -43,9 +44,9 @@ export function withModel(validatorFactory) {
 }
 
 export function field(key, validator) {
-  return (validator |> _filterFieldPath |> _debugFieldPath)
-    ['fantasy-land/contramap']((model, ctx) => [model[key], _getFieldContext(ctx, key)])
-    ['fantasy-land/map'](_mapFieldToObjValidation(key))
+  return (validator |> _filterFieldPath |> _debugFieldPath)[
+    fl.contramap]((model, ctx) => [model[key], _getFieldContext(ctx, key)])[
+    fl.map](_mapFieldToObjValidation(key))
   //.map(Validation.field(key))
 }
 

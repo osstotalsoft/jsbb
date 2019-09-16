@@ -1,36 +1,38 @@
+import fl from 'fantasy-land'
+
 export const Semigroup = {
     check: function (t) {
-        return t['fantasy-land/concat'] !== undefined
+        return t[fl.concat] !== undefined
     }
 }
 
 export const Monoid = {
     check: function (t) {
-        return t['fantasy-land/empty'] !== undefined && Semigroup.check(t)
+        return t[fl.empty] !== undefined && Semigroup.check(t)
     }
 }
 
 export const Functor = {
     check: function (t) {
-        return t['fantasy-land/map'] !== undefined
+        return t[fl.map] !== undefined
     }
 }
 
 export const Apply = {
     check: function (t) {
-        return t['fantasy-land/ap'] !== undefined && Functor.check(t)
+        return t[fl.ap] !== undefined && Functor.check(t)
     }
 }
 
 export const Applicative = {
     check: function (t) {
-        return t['fantasy-land/of'] !== undefined && Apply.check(t)
+        return t[fl.of] !== undefined && Apply.check(t)
     }
 }
 
 export const Chain = {
     check: function (t) {
-        return t['fantasy-land/chain'] !== undefined && Apply.check(t)
+        return t[fl.chain] !== undefined && Apply.check(t)
     }
 }
 
@@ -41,14 +43,14 @@ export const Monad = {
 
     derive: function (M) {
         return {
-            map(f) { return this['fantasy-land/chain'](x => M['fantasy-land/of'](f(x))) }, // Functor
-            ap(other) { return this['fantasy-land/chain'](fn => other['fantasy-land/map'](fn)) } // Applicative, Apply
+            [fl.map]: function (f) { return this[fl.chain](x => M[fl.of](f(x))) }, // Functor
+            [fl.ap]: function(other) { return this[fl.chain](fn => other[fl.map](fn)) } // Applicative, Apply
         }
     }
 }
 
 export const Contravariant = {
     check: function (t) {
-        return t['fantasy-land/contramap'] !== undefined
+        return t[fl.contramap] !== undefined
     }
 }
