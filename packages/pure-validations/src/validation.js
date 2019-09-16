@@ -13,8 +13,8 @@ function match(validation, { Success, Failure }) {
   return validation.isNothing ? Success() : Failure(validation.value);
 }
 
-function _isSuccess(validation) {
+function isValid(validation) {
   return match(validation, { Success: () => true, Failure: _ => false });
 }
 
-export const Validation = { Success, Failure, match, _isSuccess };
+export const Validation = { Success, Failure, isValid };

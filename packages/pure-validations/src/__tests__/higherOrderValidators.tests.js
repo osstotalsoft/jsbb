@@ -64,7 +64,7 @@ describe("boolean and shorcircuit validators:", () => {
     expect(validation).toEqual(Validation.Success());
 
     //TBD: No short circuit for any
-    //expect(minLengthValidator.mock.calls.length).toBe(0);
+    expect(minLengthValidator.mock.calls.length).toBe(0);
   });
 
   it("any validators fail: ", () => {
