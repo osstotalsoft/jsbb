@@ -44,7 +44,7 @@ export const Monad = {
     derive: function (M) {
         return {
             [fl.map]: function (f) { return this[fl.chain](x => M[fl.of](f(x))) }, // Functor
-            [fl.ap]: function(other) { return this[fl.chain](fn => other[fl.map](fn)) } // Applicative, Apply
+            [fl.ap]: function(other) { return other[fl.chain](fn => this[fl.map](fn)) } // Applicative, Apply
         }
     }
 }

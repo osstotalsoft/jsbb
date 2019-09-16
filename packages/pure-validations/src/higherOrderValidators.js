@@ -1,6 +1,5 @@
 import { Reader } from "./reader";
 import { Validation } from "./validation";
-import { AllValidation } from "./allValidation";
 import { AnyValidation } from "./anyValidation";
 import { Validator } from "./validator";
 import { $do, lift2, concat, fmap, contramap } from "./polymorphicFns";
@@ -12,8 +11,7 @@ import fl from "fantasy-land"
 const skip = Validator[fl.of](Validation.Success())
 
 function allReducer(f1, f2) {
-  const allValidations = v1 => v2 => concat(AllValidation(v1), AllValidation(v2)).value
-  return lift2(allValidations, f1, f2);
+  return lift2(concat, f1, f2);
 }
 
 export function all(...validators) {
@@ -91,7 +89,7 @@ function _debug(context, message) {
 
 function _debugFieldPath(validator) {
   return $do(function* () {
-    const [_, fieldContext] = yield Reader.ask()
+    const [, fieldContext] = yield Reader.ask()
     const validation = yield validator;
     _debug(fieldContext, `Validation ${Validation._isSuccess(validation) ? 'succeded' : 'failed'} for path ${fieldContext.fieldPath.reduce((x, y) => x + "." + y)}`)
     return Validator[fl.of](validation);

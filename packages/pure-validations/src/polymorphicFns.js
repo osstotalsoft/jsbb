@@ -20,7 +20,7 @@ function $do(gen) {
 }
 
 const ap = curry(function apply(fnFunctor, applicative) {
-  return fnFunctor[fl.ap](applicative);
+  return applicative[fl.ap](fnFunctor);
 });
 
 const fmap = curry(function fmap(fn, functor) {
@@ -39,5 +39,10 @@ const concat = curry(function concat(s1, s2) {
   return s1[fl.concat](s2);
 })
 
+// fold :: Monoid m => (a -> m) -> [a] -> m
+const fold = M => xs => xs.reduce(
+  (acc, x) => acc[fl.concat](M(x)),
+  M[fl.empty]())
 
-export { chain, $do, ap, fmap, lift2, concat, contramap };
+
+export { chain, $do, ap, fmap, lift2, concat, contramap, fold };

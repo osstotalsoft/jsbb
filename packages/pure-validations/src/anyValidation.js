@@ -18,7 +18,7 @@ function AnyValidation(validation) {
 }
 
 AnyValidation["fantasy-land/empty"] = function() {
-  return Validation.Success();
+  return Validation.Failure();
 };
 
 export { AnyValidation };
