@@ -637,6 +637,7 @@ describe("utility validators:", () => {
     // Arrange
     const nameValidator = jest.fn(_ => Validation.Failure(["Wrong"]));
     const surnameValidator = jest.fn(_ => Validation.Success());
+    const debugField = jest.fn(_ => {});
     const model = {
       child: {
         name: "testWrong",
@@ -666,11 +667,9 @@ describe("utility validators:", () => {
     }
 
     // Act
-    //const validation = model |> (validator |> dirtyFieldsOnly(dirtyInfo) |> debug);
-    //haskell: validator |> dirtyFieldsOnly(dirtyInfo) $ model
     const decoratedValidator = validator
       |> filterFields(getInnerProp(dirtyInfo))
-      |> debug(console.log)
+      |> debug(debugField)
 
 
     const validation = model |> validate(decoratedValidator);
@@ -685,6 +684,7 @@ describe("utility validators:", () => {
     // Arrange
     const nameValidator = jest.fn(_ => Validation.Failure(["Wrong"]));
     const surnameValidator = jest.fn(_ => Validation.Success());
+    const debugField = jest.fn(_ => {});
     const model = {
       children: [
         {
@@ -730,7 +730,7 @@ describe("utility validators:", () => {
     // Act
     const decoratedValidator = validator
       |> filterFields(getInnerProp(dirtyInfo))
-      |> debug(console.log)
+      |> debug(debugField)
 
     const validation = model |> validate(decoratedValidator);
 
@@ -739,5 +739,6 @@ describe("utility validators:", () => {
 
     expect(nameValidator.mock.calls.length).toBe(0);
     expect(surnameValidator.mock.calls.length).toBe(2);
+    expect(debugField.mock.calls.length).toBe(5);
   });
 });

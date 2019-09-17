@@ -2,13 +2,15 @@ import { Reader } from "./reader";
 import { Validation } from "./validation";
 import { AnyValidation } from "./anyValidation";
 import { Validator } from "./validator";
-import { $do, lift2, concat, fmap, contramap } from "./polymorphicFns";
+import { $do, lift2, concat, fmap, contramap, merge } from "./polymorphicFns";
 import curry from "lodash.curry";
 import fl from "fantasy-land";
 
 //export const logicalAndOperator = x => (x ? y => y : _ => x); //logical short-circuiting
 
-const skip = Validator[fl.of](Validation.Success());
+function skip() {
+  return Validator.of(Validation.Success())
+}
 
 function allReducer(f1, f2) {
   return lift2(concat, f1, f2);
@@ -19,8 +21,7 @@ export function all(...validators) {
 }
 
 function anyReducer(f1, f2) {
-  const anyValidation = v1 => v2 => concat(AnyValidation(v1), AnyValidation(v2)).value;
-  return lift2(anyValidation, f1, f2);
+  return lift2(merge(AnyValidation.mergeStrategy), f1, f2);
 }
 
 export function any(...validators) {
@@ -28,14 +29,14 @@ export function any(...validators) {
 }
 
 export function when(predicate, validator) {
-  return $do(function*() {
+  return $do(function* () {
     const isTrue = yield Reader(predicate);
-    return isTrue ? validator : skip;
+    return isTrue ? validator : skip();
   });
 }
 
 export function withModel(validatorFactory) {
-  return $do(function*() {
+  return $do(function* () {
     const [model] = yield Reader.ask();
     return validatorFactory(model);
   });
@@ -44,24 +45,23 @@ export function withModel(validatorFactory) {
 export function field(key, validator) {
   return (
     validator
-    |> _filterFieldPath
     |> _debugFieldPath
+    |> _filterFieldPath
     |> contramap((model, ctx) => [model[key], _getFieldContext(ctx, key)])
     |> fmap(_mapFieldToObjValidation(key))
   );
-  //.map(Validation.field(key))
 }
 
 export function fields(validatorObj) {
   return Object.entries(validatorObj)
     .map(([k, v]) => field(k, v))
-    .reduce(allReducer, skip);
+    .reduce(allReducer, skip());
 }
 
 export function items(itemValidator) {
-  return $do(function*() {
+  return $do(function* () {
     const [model] = yield Reader.ask();
-    return model.map((_, index) => field(index, itemValidator)).reduce(allReducer, skip);
+    return model.map((_, index) => field(index, itemValidator)).reduce(allReducer, skip());
   });
 }
 
@@ -89,20 +89,17 @@ function _debug(context, message) {
 }
 
 function _debugFieldPath(validator) {
-  return $do(function*() {
+  return $do(function* () {
     const [, fieldContext] = yield Reader.ask();
     const validation = yield validator;
-    _debug(
-      fieldContext,
-      `Validation ${Validation.isValid(validation) ? "succeded" : "failed"} for path ${fieldContext.fieldPath.reduce((x, y) => x + "." + y)}`
-    );
+    _debug(fieldContext, `Validation ${Validation.isValid(validation) ? "succeded" : "failed"} for path ${fieldContext.fieldPath.join(".")}`);
     return Validator[fl.of](validation);
   });
 }
 
 function _filterFieldPath(validator) {
-  return $do(function*() {
+  return $do(function* () {
     const [field, fieldContext] = yield Reader.ask();
-    return field === undefined || !fieldContext.fieldFilter(fieldContext.fieldPath) ? skip : validator;
+    return field === undefined || !fieldContext.fieldFilter(fieldContext.fieldPath) ? skip() : validator;
   });
 }

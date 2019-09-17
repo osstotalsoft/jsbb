@@ -16,4 +16,9 @@ AnyValidation[fl.empty] = function() {
   return AnyValidation(Validation.Failure());
 };
 
+AnyValidation.mergeStrategy = {
+  from: x => x.value,
+  to: x => AnyValidation(x)
+}
+
 export { AnyValidation };
