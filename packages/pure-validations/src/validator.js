@@ -9,7 +9,8 @@ const emptyContext = {
   fieldPath: [],
   fieldFilter: _ => true,
   debug: false,
-  debugFn: () => {}
+  debugFn: () => {},
+  abortEarly: false
 };
 
 const validate = curry(function validate(validator, model, ctx = emptyContext) {

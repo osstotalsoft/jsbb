@@ -18,22 +18,4 @@ function Reader(computation) {
   });
 }
 
-
-// function Reader(computation) {
-//   const self = { runReader: computation } // Reader
-
-//   self.chain = f => Reader((...props) => f(self.runReader(...props)).runReader(...props)); // Monad, Chain
-//   self.contramap = f => Reader((...props) => self.runReader(...f(...props))); // Contravariant
-
-//   deriveMonad(self, Reader)
-
-//   return self
-// }
-
-// function deriveMonad(self, typeRep) {
-//   self.map = f => self.chain(x => Reader.of(f(x))); // Functor
-//   self.ap = other => self.chain(fn => other.map(fn)); // Applicative, Apply
-// }
-
-
 export { Reader };

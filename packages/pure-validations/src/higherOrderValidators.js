@@ -17,15 +17,37 @@ function allReducer(f1, f2) {
 }
 
 export function all(...validators) {
-  return validators.reduce(allReducer);
+  return validators.reduce(allReducerWithOptions);
+}
+
+function allReducerWithOptions(f1, f2) {
+  return $do(function* () {
+    const [, ctx] = yield Reader.ask()
+    if (ctx.abortEarly) {
+      const v1 = yield f1;
+      return !Validation.isValid(v1) ? Validator.of(v1) : allReducer(Validator.of(v1), f2)
+    }
+    return allReducer(f1, f2)
+  })
 }
 
 function anyReducer(f1, f2) {
   return lift2(merge(AnyValidation.mergeStrategy), f1, f2);
 }
 
+function anyReducerWithOptions(f1, f2) {
+  return $do(function* () {
+    const [, ctx] = yield Reader.ask()
+    if (ctx.abortEarly) {
+      const v1 = yield f1;
+      return Validation.isValid(v1) ? Validator.of(v1) : anyReducer(Validator.of(v1), f2)
+    }
+    return anyReducer(f1, f2)
+  })
+}
+
 export function any(...validators) {
-  return validators.reduce(anyReducer);
+  return validators.reduce(anyReducerWithOptions);
 }
 
 export function when(predicate, validator) {
@@ -40,6 +62,10 @@ export function withModel(validatorFactory) {
     const [model] = yield Reader.ask();
     return validatorFactory(model);
   });
+}
+
+export function abortEarly(validator) {
+  return validator |> contramap((model, ctx) => [model, { ...ctx, abortEarly: true }])
 }
 
 export function field(key, validator) {

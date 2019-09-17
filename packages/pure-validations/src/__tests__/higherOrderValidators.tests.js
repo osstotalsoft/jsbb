@@ -1,14 +1,13 @@
 import { Validation } from "../validation";
 import { Validator, validate } from "../validator";
-import { field, fields, items, all, any, when, withModel, debug, filterFields } from "../higherOrderValidators";
-import fl from 'fantasy-land'
+import { field, fields, items, all, any, when, withModel, debug, filterFields, abortEarly } from "../higherOrderValidators";
 
 describe("boolean and shorcircuit validators:", () => {
   it("all validators success: ", () => {
     // Arrange
-    const nameValidator = Validator(x => (x === "test" ? Validation.Success() : Validation.Failure(["Wrong"])));
-    const minLengthValidator = Validator(x => (x.length > 3 ? Validation.Success() : Validation.Failure(["Too short"])));
-    const model = "test";
+    const nameValidator = Validator.of(Validation.Success());
+    const minLengthValidator = Validator.of(Validation.Success());
+    const model = "";
 
     const validator = all(nameValidator, minLengthValidator);
 
@@ -21,9 +20,9 @@ describe("boolean and shorcircuit validators:", () => {
 
   it("all validators fail: ", () => {
     // Arrange
-    const nameValidator = Validator(x => (x === "test" ? Validation.Success() : Validation.Failure(["Wrong"])));
-    const maxLengthValidator = Validator((x => (x.length < 5 ? Validation.Success() : Validation.Failure(["Too long"]))));
-    const model = "testWrong";
+    const nameValidator = Validator.of(Validation.Failure(["Wrong"]));
+    const maxLengthValidator = Validator.of(Validation.Failure(["Too long"]));
+    const model = "";
 
     const validator = all(nameValidator, maxLengthValidator);
 
@@ -36,9 +35,9 @@ describe("boolean and shorcircuit validators:", () => {
 
   it("any validators success - fail first: ", () => {
     // Arrange
-    const nameValidator = Validator(x => (x === "test" ? Validation.Success() : Validation.Failure(["Wrong"])));
-    const minLengthValidator = Validator(x => (x.length > 4 ? Validation.Success() : Validation.Failure(["Too short"])));
-    const model = "testWrong";
+    const nameValidator = Validator.of(Validation.Failure(["Wrong"]));
+    const minLengthValidator = Validator.of(Validation.Success());
+    const model = "";
 
     const validator = any(nameValidator, minLengthValidator);
 
@@ -51,11 +50,12 @@ describe("boolean and shorcircuit validators:", () => {
 
   it("any validators success - fail second: ", () => {
     // Arrange
-    const nameValidator = x => (x === "test" ? Validation.Success() : Validation.Failure(["Wrong"]));
-    const minLengthValidator = jest.fn(x => (x.length > 4 ? Validation.Success() : Validation.Failure(["Too short"])));
-    const model = "test";
+    const nameValidator = Validator.of(Validation.Success());
+    const secondFn = jest.fn(_ => Validation.Failure(["Too short"]));
+    const minLengthValidator = Validator(secondFn);
+    const model = "";
 
-    const validator = any(Validator(nameValidator), Validator(minLengthValidator));
+    const validator = any(nameValidator, minLengthValidator) |> abortEarly;
 
     // Act
     const validation = model |> validate(validator);
@@ -64,14 +64,14 @@ describe("boolean and shorcircuit validators:", () => {
     expect(validation).toEqual(Validation.Success());
 
     //TBD: No short circuit for any
-    //expect(minLengthValidator.mock.calls.length).toBe(0);
+    expect(secondFn.mock.calls.length).toBe(0);
   });
 
   it("any validators fail: ", () => {
     // Arrange
-    const nameValidator = Validator(x => (x === "test" ? Validation.Success() : Validation.Failure(["Wrong"])));
-    const maxLengthValidator = Validator(x => (x.length < 5 ? Validation.Success() : Validation.Failure(["Too long"])));
-    const model = "testWrong";
+    const nameValidator = Validator.of(Validation.Failure(["Wrong"]));
+    const maxLengthValidator = Validator.of(Validation.Failure(["Too long"]));
+    const model = "";
 
     const validator = any(nameValidator, maxLengthValidator);
 
@@ -82,44 +82,44 @@ describe("boolean and shorcircuit validators:", () => {
     expect(validation).toStrictEqual(Validation.Failure(["Wrong", "Too long"]));
   });
 
-  // it("stop on first failure validators success: ", () => {
-  //   // Arrange
-  //   const nameValidator = jest.fn(x => x === "test" ? Validation.Success() : Validation.Failure(["Wrong"]));
-  //   const minLengthValidator = jest.fn(x => x.length > 3 ? Validation.Success() : Validation.Failure(["Too short"]));
-  //   const model = "test";
+  it("stop on first failure validators success: ", () => {
+    // Arrange
+    const nameValidator = jest.fn(_ => Validation.Success());
+    const minLengthValidator = jest.fn(_ => Validation.Success());
+    const model = "test";
 
-  //   const validator = first(Validator(nameValidator), Validator(minLengthValidator));
+    const validator = all(Validator(nameValidator), Validator(minLengthValidator)) |> abortEarly;
 
-  //   // Act
-  //   const validation =  model |> validate(validator);
+    // Act
+    const validation = model |> validate(validator);
 
-  //   // Assert
-  //   expect(validation).toBe(Validation.Success());
-  //   expect(nameValidator.mock.calls.length).toBe(1);
-  //   expect(minLengthValidator.mock.calls.length).toBe(1);
-  // });
+    // Assert
+    expect(validation).toBe(Validation.Success());
+    expect(nameValidator.mock.calls.length).toBe(1);
+    expect(minLengthValidator.mock.calls.length).toBe(1);
+  });
 
-  // it("stop on first failure validators fail: ", () => {
-  //   // Arrange
-  //   const nameValidator = x => (x === "test" ? Validation.Success() : Validation.Failure(["Wrong"]));
-  //   const maxLengthValidator = jest.fn(x => (x.length < 3 ? Validation.Success() : Validation.Failure(["Too long"])));
-  //   const model = "testWrong";
+  it("stop on first failure validators fail: ", () => {
+    // Arrange
+    const nameValidator = _ => Validation.Failure(["Wrong"]);
+    const maxLengthValidator = jest.fn(_ => Validation.Failure(["Too long"]));
+    const model = "testWrong";
 
-  //   const validator = first(nameValidator, maxLengthValidator);
+    const validator = all(Validator(nameValidator), Validator(maxLengthValidator)) |> abortEarly;
 
-  //   // Act
-  //   const validation = validator(model);
+    // Act
+    const validation = model |> validate(validator);
 
-  //   // Assert
-  //   expect(validation).toStrictEqual(Validation.Failure(["Wrong"]));
-  //   expect(maxLengthValidator.mock.calls.length).toBe(0);
-  // });
+    // Assert
+    expect(validation).toStrictEqual(Validation.Failure(["Wrong"]));
+    expect(maxLengthValidator.mock.calls.length).toBe(0);
+  });
 });
 
 describe("conditional validators:", () => {
   it("when predicate validator - predicate true ", () => {
     // Arrange
-    const nameValidator = Validator(x => (x === "test" ? Validation.Success() : Validation.Failure(["Wrong"])));
+    const nameValidator = Validator.of(Validation.Failure(["Wrong"]));
     const model = "testWrong";
     const validator = when(x => x !== null, nameValidator);
 
@@ -132,7 +132,7 @@ describe("conditional validators:", () => {
 
   it("when predicate validator - predicate false ", () => {
     // Arrange
-    const nameValidator = Validator(x => (x === "test" ? Validation.Success() : Validation.Failure(["Wrong"])));
+    const nameValidator = Validator.of(Validation.Failure(["Wrong"]));
     const model = "testWrong";
     const validator = when(x => x === null, nameValidator);
 
@@ -147,7 +147,7 @@ describe("conditional validators:", () => {
 describe("single field validator:", () => {
   it("single field validator success: ", () => {
     // Arrange
-    const fieldValidator = Validator(x => (x === "test" ? Validation.Success() : Validation.Failure(["Wrong"])));
+    const fieldValidator = Validator.of(Validation.Success());
     const model = { field1: "test" };
     const validator = field("field1", fieldValidator);
 
@@ -160,7 +160,7 @@ describe("single field validator:", () => {
 
   it("single field validator error: ", () => {
     // Arrange
-    const fieldValidator = Validator(x => (x === "test" ? Validation.Success() : Validation.Failure(["Wrong"])));
+    const fieldValidator = Validator.of(Validation.Failure(["Wrong"]));
     const model = { field1: "testWrong" };
     const validator = field("field1", fieldValidator);
 
@@ -175,7 +175,7 @@ describe("single field validator:", () => {
 describe("fields validators:", () => {
   it("fields validator success: ", () => {
     // Arrange
-    const fieldValidator = Validator(x => (x === "test" ? Validation.Success() : Validation.Failure(["Wrong"])));
+    const fieldValidator = Validator.of(Validation.Success());
     const model = { field1: "test" };
     const validator = fields({ field1: fieldValidator });
 
@@ -188,7 +188,7 @@ describe("fields validators:", () => {
 
   it("fields validator error: ", () => {
     // Arrange
-    const fieldValidator = Validator(x => (x === "test" ? Validation.Success() : Validation.Failure(["Wrong"])));
+    const fieldValidator = Validator.of(Validation.Failure(["Wrong"]));
     const model = { field1: "testWrong" };
     const validator = fields({ field1: fieldValidator });
 
@@ -201,8 +201,8 @@ describe("fields validators:", () => {
 
   it("both global and fields validators success: ", () => {
     // Arrange
-    const fieldValidator = Validator(x => (x === "test" ? Validation.Success() : Validation.Failure(["Wrong"])));
-    const globalValidator = Validator(x => (x !== null ? Validation.Success() : Validation.Failure(["Mandatory"])));
+    const fieldValidator = Validator.of(Validation.Success());
+    const globalValidator = Validator.of(Validation.Success());
     const model = { email: "test" };
 
     const validator = all(globalValidator, fields({ email: fieldValidator }));
@@ -216,8 +216,8 @@ describe("fields validators:", () => {
 
   it("both global and fields validators - fail field: ", () => {
     // Arrange
-    const fieldValidator = Validator(x => (x === "test" ? Validation.Success() : Validation.Failure(["Wrong"])));
-    const globalValidator = Validator(x => (x !== null ? Validation.Success() : Validation.Failure(["Mandatory"])));
+    const fieldValidator = Validator.of(Validation.Failure(["Wrong"]));
+    const globalValidator = Validator.of(Validation.Success());
 
     const model = { email: "testWrong" };
 
@@ -232,8 +232,8 @@ describe("fields validators:", () => {
 
   it("both global and fields validators - fail global: ", () => {
     // Arrange
-    const fieldValidator = Validator(x => (x === "test" ? Validation.Success() : Validation.Failure(["Wrong"])));
-    const globalValidator = Validator[fl.of](Validation.Failure(["Mandatory"]));
+    const fieldValidator = Validator.of(Validation.Success());
+    const globalValidator = Validator.of(Validation.Failure(["Mandatory"]));
     const model = {};
 
     const validator = all(globalValidator, fields({ email: fieldValidator }));
@@ -247,8 +247,8 @@ describe("fields validators:", () => {
 
   it("disjunct fileds validators success: ", () => {
     // Arrange
-    const nameValidator = Validator(x => (x.length > 3 ? Validation.Success() : Validation.Failure(["Too short"])));
-    const emailValdator = Validator(x => (x.includes("@") ? Validation.Success() : Validation.Failure(["Invalid email"])));
+    const nameValidator = Validator.of(Validation.Success());
+    const emailValdator = Validator.of(Validation.Success());
 
     const model = {
       name: "test",
@@ -271,8 +271,8 @@ describe("fields validators:", () => {
 
   it("disjunct fields validators failure - fail first: ", () => {
     // Arrange
-    const nameValidator = Validator(x => (x.length > 3 ? Validation.Success() : Validation.Failure(["Too short"])));
-    const emailValdator = Validator(x => (x.includes("@") ? Validation.Success() : Validation.Failure(["Invalid email"])));
+    const nameValidator = Validator.of(Validation.Failure(["Too short"]));
+    const emailValdator = Validator.of(Validation.Success());
 
     const model = {
       name: "t",
@@ -294,8 +294,8 @@ describe("fields validators:", () => {
 
   it("disjunct fields validators failure - fail second: ", () => {
     // Arrange
-    const nameValidator = Validator(x => (x.length > 3 ? Validation.Success() : Validation.Failure(["Too short"])));
-    const emailValdator = Validator(x => (x.includes("@") ? Validation.Success() : Validation.Failure(["Invalid email"])));
+    const nameValidator = Validator.of(Validation.Success());
+    const emailValdator = Validator.of(Validation.Failure(["Invalid email"]));
 
     const model = {
       name: "test",
@@ -317,8 +317,8 @@ describe("fields validators:", () => {
 
   it("disjunct fields validators failure - fail both: ", () => {
     // Arrange
-    const nameValidator = Validator(x => (x.length > 3 ? Validation.Success() : Validation.Failure(["Too short"])));
-    const emailValdator = Validator(x => (x.includes("@") ? Validation.Success() : Validation.Failure(["Invalid email"])));
+    const nameValidator = Validator.of(Validation.Failure(["Too short"]));
+    const emailValdator = Validator.of(Validation.Failure(["Invalid email"]));
 
     const model = {
       name: "t",
@@ -341,8 +341,8 @@ describe("fields validators:", () => {
 
   it("overlapping fields validators success: ", () => {
     // Arrange
-    const lengthValidator = Validator(x => (x.length > 3 ? Validation.Success() : Validation.Failure(["Too short"])));
-    const emailValdator = Validator(x => (x.includes("@") ? Validation.Success() : Validation.Failure(["Invalid email"])));
+    const lengthValidator = Validator.of(Validation.Success());
+    const emailValdator = Validator.of(Validation.Success());
     const model = { email: "test@mail.com" };
 
     const validator = all(fields({ email: lengthValidator }), fields({ email: emailValdator }));
@@ -356,8 +356,8 @@ describe("fields validators:", () => {
 
   it("overlapping fields validators - fail first: ", () => {
     // Arrange
-    const lengthValidator = Validator(x => (x.length > 5 ? Validation.Success() : Validation.Failure(["Too short"])));
-    const emailValdator = Validator(x => (x.includes("@") ? Validation.Success() : Validation.Failure(["Invalid email"])));
+    const lengthValidator = Validator.of(Validation.Failure(["Too short"]));
+    const emailValdator = Validator.of(Validation.Success());
     const model = { email: "t@b.c" };
 
     const validator = all(fields({ email: lengthValidator }), fields({ email: emailValdator }));
@@ -371,8 +371,8 @@ describe("fields validators:", () => {
 
   it("overlapping fields validators failure - fail second: ", () => {
     // Arrange
-    const lengthValidator = Validator(x => (x.length > 3 ? Validation.Success() : Validation.Failure(["Too short"])));
-    const emailValdator = Validator(x => (x.includes("@") ? Validation.Success() : Validation.Failure(["Invalid email"])));
+    const lengthValidator = Validator.of(Validation.Success());
+    const emailValdator = Validator.of(Validation.Failure(["Invalid email"]));
     const model = { email: "testmail.com" };
 
     const validator = all(fields({ email: lengthValidator }), fields({ email: emailValdator }));
@@ -386,8 +386,8 @@ describe("fields validators:", () => {
 
   it("overlapping fields validators failure - fail both: ", () => {
     // Arrange
-    const lengthValidator = Validator(x => (x.length > 3 ? Validation.Success() : Validation.Failure(["Too short"])));
-    const emailValdator = Validator(x => (x.includes("@") ? Validation.Success() : Validation.Failure(["Invalid email"])));
+    const lengthValidator = Validator.of(Validation.Failure(["Too short"]));
+    const emailValdator = Validator.of(Validation.Failure(["Invalid email"]));
     const model = { email: "t" };
 
     const validator = all(fields({ email: lengthValidator }), fields({ email: emailValdator }));
@@ -401,7 +401,7 @@ describe("fields validators:", () => {
 
   it("fields validator with path predicate - predicate false ", () => {
     // Arrange
-    const nameValidator = jest.fn(x => (x === "test" ? Validation.Success() : Validation.Failure(["Wrong"])));
+    const nameValidator = jest.fn(_ => Validation.Failure(["Wrong"]));
     const model = {
       child: {
         name: "testWrong"
@@ -439,7 +439,7 @@ describe("fields validators:", () => {
 describe("items validators:", () => {
   it("items validator success: ", () => {
     // Arrange
-    const itemValidator = Validator(x => (x === "test" ? Validation.Success() : Validation.Failure(["Wrong"])));
+    const itemValidator = Validator.of(Validation.Success());
     const model = ["test"];
     const validator = items(itemValidator);
 
@@ -453,7 +453,7 @@ describe("items validators:", () => {
 
   it("items validator error: ", () => {
     // Arrange
-    const itemValidator = Validator(x => (x === "test" ? Validation.Success() : Validation.Failure(["Wrong"])));
+    const itemValidator = Validator.of(Validation.Failure(["Wrong"]));
     const model = ["testWrong"];
     const validator = items(itemValidator);
 
@@ -467,8 +467,8 @@ describe("items validators:", () => {
 
   it("both global and items validators success: ", () => {
     // Arrange
-    const itemValidator = Validator(x => (x === "test" ? Validation.Success() : Validation.Failure(["Wrong"])));
-    const globalValidator = Validator(x => (x.length > 0 ? Validation.Success() : Validation.Failure(["Empty"])));
+    const itemValidator = Validator.of(Validation.Success());
+    const globalValidator = Validator.of(Validation.Success());
     const model = ["test"];
 
     const validator = all(globalValidator, items(itemValidator));
@@ -483,8 +483,8 @@ describe("items validators:", () => {
 
   it("both global and items validators - fail item: ", () => {
     // Arrange
-    const itemValidator = Validator(x => (x === "test" ? Validation.Success() : Validation.Failure(["Wrong"])));
-    const globalValidator = Validator(x => (x.length > 0 ? Validation.Success() : Validation.Failure(["Empty"])));
+    const itemValidator = Validator.of(Validation.Failure(["Wrong"]));
+    const globalValidator = Validator.of(Validation.Success());
     const model = ["testWrong"];
 
     const validator = all(globalValidator, items(itemValidator));
@@ -499,8 +499,8 @@ describe("items validators:", () => {
 
   it("both global and items validators - fail global: ", () => {
     // Arrange
-    const itemValidator = Validator(x => (x === "test" ? Validation.Success() : Validation.Failure(["Wrong"])));
-    const globalValidator = Validator(x => (x.length > 0 ? Validation.Success() : Validation.Failure(["Empty"])));
+    const itemValidator = Validator.of(Validation.Success());
+    const globalValidator = Validator.of(Validation.Failure(["Empty"]));
     const model = [];
 
     const validator = all(globalValidator, items(itemValidator));
@@ -515,8 +515,8 @@ describe("items validators:", () => {
 
   it("overlapping items validators success: ", () => {
     // Arrange
-    const nameValidator = Validator(x => (x === "test" ? Validation.Success() : Validation.Failure(["Wrong"])));
-    const minLengthValidator = Validator(x => (x.length > 3 ? Validation.Success() : Validation.Failure(["Too short"])));
+    const nameValidator = Validator.of(Validation.Success());
+    const minLengthValidator = Validator.of(Validation.Success());
     const model = ["test"];
 
     const validator = all(items(nameValidator), items(minLengthValidator));
@@ -531,8 +531,8 @@ describe("items validators:", () => {
 
   it("overlapping items validators - fail first: ", () => {
     // Arrange
-    const nameValidator = Validator(x => (x === "testWrong" ? Validation.Success() : Validation.Failure(["Wrong"])));
-    const minLengthValidator = Validator(x => (x.length > 3 ? Validation.Success() : Validation.Failure(["Too short"])));
+    const nameValidator = Validator.of(Validation.Failure(["Wrong"]));
+    const minLengthValidator = Validator.of(Validation.Success());
     const model = ["test"];
 
     const validator = all(items(nameValidator), items(minLengthValidator));
@@ -547,8 +547,8 @@ describe("items validators:", () => {
 
   it("overlapping items validators failure - fail second: ", () => {
     // Arrange
-    const nameValidator = Validator(x => (x === "test" ? Validation.Success() : Validation.Failure(["Wrong"])));
-    const minLengthValidator = Validator(x => (x.length > 4 ? Validation.Success() : Validation.Failure(["Too short"])));
+    const nameValidator = Validator.of(Validation.Success());
+    const minLengthValidator = Validator.of(Validation.Failure(["Too short"]));
     const model = ["test"];
 
     const validator = all(items(nameValidator), items(minLengthValidator));
@@ -563,8 +563,8 @@ describe("items validators:", () => {
 
   it("overlapping items validators failure - fail both: ", () => {
     // Arrange
-    const nameValidator = Validator(x => (x === "test" ? Validation.Success() : Validation.Failure(["Wrong"])));
-    const minLengthValidator = Validator(x => (x.length > 4 ? Validation.Success() : Validation.Failure(["Too short"])));
+    const nameValidator = Validator.of(Validation.Failure(["Wrong"]));
+    const minLengthValidator = Validator.of(Validation.Failure(["Too short"]));
     const model = ["t"];
 
     const validator = all(items(nameValidator), items(minLengthValidator));
@@ -579,15 +579,14 @@ describe("items validators:", () => {
 
   it("items validator - fail only one item", () => {
     // Arrange
-    const nameValidator = Validator(x => (x === "test" ? Validation.Success() : Validation.Failure(["Wrong"])));
-    const minLengthValidator = Validator(x => (x.length > 3 ? Validation.Success() : Validation.Failure(["Too short"])));
+    const nameValidator = Validator(m => m == "test" ? Validation.Success() : Validation.Failure(["Wrong"]));
+    const minLengthValidator = Validator.of(Validation.Success());
     const model = ["test", "testWrong"];
 
     const validator = all(items(nameValidator), items(minLengthValidator));
 
     // Act
     const validation = model |> validate(validator);
-
 
     // Assert
     expect(validation).toStrictEqual(
@@ -637,7 +636,7 @@ describe("utility validators:", () => {
     // Arrange
     const nameValidator = jest.fn(_ => Validation.Failure(["Wrong"]));
     const surnameValidator = jest.fn(_ => Validation.Success());
-    const debugField = jest.fn(_ => {});
+    const debugField = jest.fn(_ => { });
     const model = {
       child: {
         name: "testWrong",
@@ -684,7 +683,7 @@ describe("utility validators:", () => {
     // Arrange
     const nameValidator = jest.fn(_ => Validation.Failure(["Wrong"]));
     const surnameValidator = jest.fn(_ => Validation.Success());
-    const debugField = jest.fn(_ => {});
+    const debugField = jest.fn(_ => { });
     const model = {
       children: [
         {
