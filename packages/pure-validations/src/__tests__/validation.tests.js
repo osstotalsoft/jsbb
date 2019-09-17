@@ -4,7 +4,6 @@ import { concat } from "../polymorphicFns"
 import fl from 'fantasy-land'
 import { Monoid} from '../typeClasses'
 
-
 function applyLaw(law) {
   return  (...args) => isEquivalent => law(isEquivalent)(...args)
 }
@@ -90,6 +89,27 @@ describe("validation tests suite:", () => {
 
     // Assert
     expect(result).toBe(Validation.Success());
+  });
+
+  it("get errors on success should return empty array:", () => {
+    // Arrange
+    const validation = Validation.Success();
+
+    var result = Validation.getErrors(validation);
+
+    // Assert
+    expect(result).toStrictEqual([]);
+  });
+
+  it("get errors:", () => {
+    // Arrange
+    const errors = ["Err2", "Err1"];
+    const validation = Validation.Failure(errors);
+
+    var result = Validation.getErrors(validation);
+
+    // Assert
+    expect(result).toStrictEqual(errors);
   });
 
   it("reference economy empty success: ", () => {
