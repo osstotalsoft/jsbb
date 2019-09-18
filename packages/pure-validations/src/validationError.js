@@ -12,15 +12,27 @@ function mergerAll(value1, value2, key) {
 }
 
 const validationErrorPrototype = {
-  "fantasy-land/concat": function (other) {
+  "fantasy-land/concat": function(other) {
     const mergedErrors = mergeWith(mergerAll, this, other);
-    return Object.assign(mergedErrors, validationErrorPrototype)
+    return Object.assign(mergedErrors, validationErrorPrototype);
   },
-  getErrors: function () {
+  getErrors: function() {
     return this.get(errorsSymbol).toArray();
   },
-  getField: function (key) {
-    return this.get(key)
+  getField: function(key) {
+    return this.get(key);
+  },
+  getFields: function() {
+    // eslint-disable-next-line no-unused-vars
+    const { [errorsSymbol]: _, ...fields } = this.toObject();
+    return fields;
+  },
+  toString: function() {
+    const errors = this.getErrors();
+    const fields = Object.entries(this.getFields())
+      .reduce((acc, [k, v]) => `${acc} \n ${k}: ${v}`, "");
+
+    return `errors: ${errors} \n fields: {${fields}\n}`;
   }
 };
 
