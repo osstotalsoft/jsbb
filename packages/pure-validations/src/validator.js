@@ -8,8 +8,8 @@ Validator.of = Validator[fl.of];
 const emptyContext = {
   fieldPath: [],
   fieldFilter: _ => true,
-  debug: false,
-  debugFn: () => {},
+  log: false,
+  logger: { log: () => {} },
   abortEarly: false
 };
 

@@ -1,5 +1,5 @@
 import { Semigroup } from "./typeClasses";
-import fl from 'fantasy-land'
+import fl from "fantasy-land";
 
 const Maybe = {};
 
@@ -7,21 +7,27 @@ const nothingPrototype = {
   isNothing: true,
   isJust: false,
   constructor: Maybe,
-  [fl.concat]: function (other) {
+  [fl.concat]: function(other) {
     return other;
+  },
+  toString: function() {
+    return `Nothing`;
   }
 };
 
 const justPrototype = {
   isNothing: false,
   isJust: true,
-  constructor: Maybe
+  constructor: Maybe,
+  toString: function() {
+    return `Just(${this.value})`;
+  }
 };
 
 const justSemigroupPrototype = {
   ...justPrototype,
-  [fl.concat]: function (other) {
-    const concatValue = other.isJust ? this.value[fl.concat](other.value) : this.value
+  [fl.concat]: function(other) {
+    const concatValue = other.isJust ? this.value[fl.concat](other.value) : this.value;
     return concatValue !== this.value ? Just(concatValue) : this;
   }
 };
@@ -41,6 +47,5 @@ function Just(value) {
 
   return just;
 }
-
 
 export { Nothing, Just, Maybe };

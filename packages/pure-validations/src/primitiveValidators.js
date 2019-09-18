@@ -4,6 +4,7 @@ import i18next from "i18next";
 
 const defaultMessages = {
   "Validations.Generic.Mandatory": "The value is mandatory",
+  "Validations.Generic.AtLeastOne": "There should be at least one item.",
   "Validations.Generic.Regex": "The value has an invalid format",
   "Validations.Generic.Email": "The value is not a valid email address",
   "Validations.Generic.OutOfRange": "The value must be between {{min}} and {{max}}",
@@ -18,13 +19,19 @@ function translate(key, args) {
   return i18next.t(key, { defaultValue: defaultMessages[key], ...args }) || defaultMessages[key];
 }
 
-export const isMandatory = Validator(x =>
-  x !== null && x !== undefined && (typeof x === "string" ? x !== "" : true) && (Array.isArray(x) ? x.length : true)
+export const required = Validator(x =>
+  x !== null && x !== undefined && (typeof x === "string" ? x !== "" : true)
     ? Validation.Success()
     : Validation.Failure([translate("Validations.Generic.Mandatory")])
 );
 
-export const isEmail = Validator(x => {
+export const atLeastOne = Validator(x =>
+  Array.isArray(x) && x.length
+    ? Validation.Success()
+    : Validation.Failure([translate("Validations.Generic.AtLeastOne")])
+);
+
+export const email = Validator(x => {
   const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
   return re.test(String(x).toLowerCase()) ? Validation.Success() : Validation.Failure([translate("Validations.Generic.Email")]);
 });
@@ -33,7 +40,7 @@ export function matches(regex) {
   return Validator(x => (regex.test(String(x)) ? Validation.Success() : Validation.Failure([translate("Validations.Generic.Regex")])));
 }
 
-export function isInRange(min, max) {
+export function between(min, max) {
   return Validator(value =>
     value === null || value === undefined || (value >= min && value <= max)
       ? Validation.Success()
@@ -41,7 +48,7 @@ export function isInRange(min, max) {
   );
 }
 
-export function isGreaterThan(min) {
+export function greaterThan(min) {
   return Validator(value =>
     value === null || value === undefined || value > min
       ? Validation.Success()
@@ -49,13 +56,13 @@ export function isGreaterThan(min) {
   );
 }
 
-export function isLessThan(max) {
+export function lessThan(max) {
   return Validator(value =>
     value === null || value === undefined || value < max ? Validation.Success() : Validation.Failure([translate("Validations.Generic.Less", { max })])
   );
 }
 
-export function hasLengthGreaterThan(min) {
+export function minLength(min) {
   return Validator(value =>
     value === null || value === undefined || value.length > min
       ? Validation.Success()
@@ -63,7 +70,7 @@ export function hasLengthGreaterThan(min) {
   );
 }
 
-export function hasLengthLessThan(max) {
+export function maxLength(max) {
   return Validator(value =>
     value === null || value === undefined || value.length < max
       ? Validation.Success()
@@ -71,7 +78,7 @@ export function hasLengthLessThan(max) {
   );
 }
 
-export function isUnique(selector) {
+export function unique(selector) {
   return Validator(list => {
     let selectorFn;
 
