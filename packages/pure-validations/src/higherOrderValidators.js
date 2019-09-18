@@ -1,162 +1,157 @@
-// @flow
+import { Reader } from "./reader";
 import { Validation } from "./validation";
-import type { ValidationType } from "./validation";
+import { AnyValidation } from "./anyValidation";
+import { Validator } from "./validator";
+import { $do, lift2, concat, fmap, contramap, merge } from "./polymorphicFns";
 import curry from "lodash.curry";
 
-type Validator<TModel> = (model: TModel, context?: { [key: string]: any }) => ValidationType;
+const successValidator = Validator.of(Validation.Success());
 
-export function first<TModel>(...validators: Validator<TModel>[]): Validator<TModel> {
-  return validators.reduce((f1, f2) => (model, context) => {
-    const v1 = f1(model, context);
-    const result = Validation.match(v1, {
-      Success: _ => f2(model, context),
-      Failure: _ => v1
-    });
-
-    return result;
-  });
+function allReducer(f1, f2) {
+  return lift2(concat, f1, f2);
 }
 
-export function all<TModel>(...validators: Validator<TModel>[]): Validator<TModel> {
-  return validators.reduce((f1, f2) => (model, context) => {
-    const v1 = f1(model, context);
-    const v2 = f2(model, context);
-
-    return Validation.concat(v1, v2);
-  });
-}
-
-export function any<TModel>(...validators: Validator<TModel>[]): Validator<TModel> {
-  return validators.reduce((f1, f2) => (model, context) => {
-    const v1 = f1(model, context);
-    const result = Validation.match(v1, {
-      Success: _ => v1,
-      Failure: _ => {
-        const v2 = f2(model, context);
-        return Validation.match(v2, {
-          Success: _ => v2,
-          Failure: _ => Validation.concat(v1, v2)
-        });
-      }
-    });
-
-    return result;
-  });
-}
-
-export function when<TModel>(predicate: TModel => boolean, validator: Validator<TModel>): Validator<TModel> {
-  return (model, context) => {
-    if (!predicate(model)) {
-      return Validation.Success();
+function variadicApply(variadicFn) {
+  const res = function(...args) {
+    if (args.length === 1 && Array.isArray(args[0])) {
+      return variadicFn(...args[0]);
     }
 
-    return validator(model, context);
+    return variadicFn(...args);
   };
+  res.toString = function() {
+    return variadicFn.toString();
+  };
+  return res;
 }
 
-export function withModel<TModel>(validatorFactory: TModel => Validator<TModel>): Validator<TModel> {
-  return (model, context) => {
-    return validatorFactory(model)(model, context);
-  };
-}
-
-export function fields<TModel: { [key: string]: any }>(validatorObj: $ObjMap<TModel, <V>(V) => Validator<V>>): Validator<TModel> {
-  return function(model, context) {
-    if (typeof model !== "object" || model === null) return Validation.Success(); // TBD
-
-    const [fields, isSuccess] = Object.keys(validatorObj).reduce(
-      function([fields, isSuccess], key) {
-        const field = model[key];
-        const fieldContext = context && { ...context, fieldPath: [...(context.fieldPath || []), key] };
-
-        if (field === undefined || (fieldContext && fieldContext.fieldFilter && !fieldContext.fieldFilter(fieldContext.fieldPath))) {
-          debugPath(fieldContext, "skipped");
-
-          fields[key] = Validation.Success();
-          return [fields, isSuccess]; // TBD
-        }
-
-        const validation = validatorObj[key](field, fieldContext);
-
-        isSuccess =
-          isSuccess &&
-          Validation.match(validation, {
-            Success: _ => true,
-            Failure: _ => false
-          });
-
-        fields[key] = validation;
-        debugPath(fieldContext, isSuccess ? "succeded" : "failed");
-
-        return [fields, isSuccess];
-      },
-      [{}, true]
-    );
-
-    return isSuccess ? Validation.Success(fields) : Validation.Failure([], fields);
-  };
-}
-
-export function items<TItem>(itemValidator: Validator<TItem>): Validator<TItem[]> {
-  return function(model, context) {
-    if (!Array.isArray(model)) return Validation.Success(); // TBD
-
-    const [fields, isSuccess] = model.reduce(
-      function([fields, isSuccess], item, index) {
-        const itemContext = context && { ...context, fieldPath: [...(context.fieldPath || []), index.toString()] };
-
-        if (itemContext && itemContext.fieldFilter && !itemContext.fieldFilter(itemContext.fieldPath)) {
-          debugPath(itemContext, "skipped");
-
-          fields[index.toString()] = Validation.Success();
-          return [fields, isSuccess];
-        }
-
-        const validation = itemValidator(item, itemContext);
-        isSuccess =
-          isSuccess &&
-          Validation.match(validation, {
-            Success: _ => true,
-            Failure: _ => false
-          });
-
-        fields[index.toString()] = validation;
-
-        debugPath(itemContext, isSuccess ? "succeded" : "failed");
-
-        return [fields, isSuccess];
-      },
-      [{}, true]
-    );
-
-    return isSuccess ? Validation.Success(fields) : Validation.Failure([], fields);
-  };
-}
-
-export const dirtyFieldsOnly = curry(function dirtyFieldsOnly<TDirtyFields: { [key: string]: any }, TModel>(
-  dirtyFields: TDirtyFields,
-  validator: Validator<TModel>
-): Validator<TModel> {
-  return function(model, context) {
-    const dirtyFieldsContext = { ...context, fieldFilter: path => getInnerProp(path, dirtyFields) };
-    return validator(model, dirtyFieldsContext);
-  };
+export const all = variadicApply(function all(...validators) {
+  return validators.reduce(allReducerWithOptions);
 });
 
-export function debug<TModel>(validator: Validator<TModel>): Validator<TModel> {
-  return function(model, context) {
-    const debugContext = { ...context, debug: true, debugFn: console.log };
-    return validator(model, debugContext);
-  };
+export function allWithArray(validators) {
+  return validators.reduce(allReducerWithOptions);
 }
 
-function getInnerProp(searchKeyPath: Array<string>, obj: { [key: string]: any }) {
-  const [prop, ...rest] = searchKeyPath;
-  return prop ? getInnerProp(rest, obj[prop]) : obj;
+function allReducerWithOptions(f1, f2) {
+  return $do(function*() {
+    const [, ctx] = yield Reader.ask();
+    if (ctx.abortEarly) {
+      const v1 = yield f1;
+      return !Validation.isValid(v1) ? Validator.of(v1) : allReducer(Validator.of(v1), f2);
+    }
+    return allReducer(f1, f2);
+  });
 }
 
-function debugPath(context?: { [key: string]: any }, message) {
-  if (context && context.debug && context.debugFn) {
-    context.debugFn(`Validation ${message} for path ${context.fieldPath.reduce((x, y) => x + "." + y)}`);
+function anyReducer(f1, f2) {
+  return lift2(merge(AnyValidation.mergeStrategy), f1, f2);
+}
+
+function anyReducerWithOptions(f1, f2) {
+  return $do(function*() {
+    const [, ctx] = yield Reader.ask();
+    if (ctx.abortEarly) {
+      const v1 = yield f1;
+      return Validation.isValid(v1) ? Validator.of(v1) : anyReducer(Validator.of(v1), f2);
+    }
+    return anyReducer(f1, f2);
+  });
+}
+
+export const any = variadicApply(function any(...validators) {
+  return validators.reduce(anyReducerWithOptions);
+});
+
+export const when = curry(function when(predicate, validator) {
+  return $do(function*() {
+    const isTrue = yield Reader(predicate);
+    return isTrue ? validator : successValidator;
+  });
+});
+
+export function fromModel(validatorFactory) {
+  return $do(function*() {
+    const [model] = yield Reader.ask();
+    if (model === null || model === undefined) {
+      return successValidator;
+    }
+    return validatorFactory(model);
+  });
+}
+
+export function abortEarly(validator) {
+  return validator |> contramap((model, ctx) => [model, { ...ctx, abortEarly: true }]);
+}
+
+export function field(key, validator) {
+  return (
+    validator
+    |> _logFieldPath
+    |> _filterFieldPath
+    |> contramap((model, ctx) => [model[key], _getFieldContext(ctx, key)])
+    |> fmap(_mapFieldToObjValidation(key))
+  );
+}
+
+export function shape(validatorObj) {
+  return $do(function*() {
+    const [model] = yield Reader.ask();
+    if (model === null || model === undefined) {
+      return successValidator;
+    }
+
+    return Object.entries(validatorObj)
+      .map(([k, v]) => field(k, v))
+      .reduce(allReducer, successValidator);
+  });
+}
+
+export function items(itemValidator) {
+  return $do(function*() {
+    const [items] = yield Reader.ask();
+    if (items === null || items === undefined) {
+      return successValidator;
+    }
+    return items.map((_, index) => field(index, itemValidator)).reduce(allReducer, successValidator);
+  });
+}
+
+export const filterFields = curry(function filterFields(fieldFilter, validator) {
+  return validator |> contramap((model, context) => [model, { ...context, fieldFilter }]);
+});
+
+export const logTo = curry(function logTo(logger, validator) {
+  return validator |> contramap((model, context) => [model, { ...context, log: true, logger }]);
+});
+
+const _mapFieldToObjValidation = curry(function _mapFieldToObject(key, validation) {
+  const fields = { [key]: validation };
+  return Validation.isValid(validation) ? Validation.Success(fields) : Validation.Failure([], fields);
+});
+
+function _getFieldContext(context, key) {
+  return { ...context, fieldPath: [...context.fieldPath, key] };
+}
+
+function _log(context, message) {
+  if (context.log) {
+    context.logger.log(message);
   }
+}
+
+function _logFieldPath(validator) {
+  return $do(function*() {
+    const [, fieldContext] = yield Reader.ask();
+    const validation = yield validator;
+    _log(fieldContext, `Validation ${Validation.isValid(validation) ? "succeded" : "failed"} for path ${fieldContext.fieldPath.join(".")}`);
+    return Validator.of(validation);
+  });
+}
+
+function _filterFieldPath(validator) {
+  return $do(function*() {
+    const [, fieldContext] = yield Reader.ask();
+    return !fieldContext.fieldFilter(fieldContext.fieldPath) ? successValidator : validator;
+  });
 }

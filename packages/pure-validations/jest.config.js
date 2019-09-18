@@ -1,3 +1,4 @@
 module.exports = {
-    "verbose": true   
+    "verbose": true,
+    testPathIgnorePatterns: ["<rootDir>/lib/"]
 }

@@ -25,21 +25,22 @@
     "@babel/plugin-proposal-optional-chaining": "^7.2.0",
     "@babel/plugin-proposal-pipeline-operator": "^7.5.0",
     "@babel/preset-env": "^7.5.5",
-    "@babel/preset-flow": "^7.0.0",
     "babel-eslint": "^10.0.2",
     "babel-jest": "^24.9.0",
     "eslint": "^6.2.0",
     "eslint-plugin-babel": "^5.3.0",
-    "eslint-plugin-flowtype": "^4.2.0",
-    "flow-bin": "^0.106.2",
+    "eslint-plugin-jest": "^22.16.0",
     "jest": "^24.9.0",
-    "prettier-eslint": "^9.0.0"
+    "prettier-eslint": "^9.0.0",
+    "i18next": "^17.0.11"
   },
   "dependencies": {
-    "eslint-plugin-jest": "^22.16.0",
-    "i18next": "^17.0.11",
+    "fantasy-land": "^4.0.1",
     "immutable": "^4.0.0-rc.12",
     "lodash.curry": "^4.1.1",
     "lodash.flow": "^3.5.0"
+  },
+  "peerDependencies": {
+    "i18next": "^17.0.11"
   }
 }

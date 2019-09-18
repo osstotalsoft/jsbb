@@ -5,13 +5,11 @@
     },
     "extends": [
         "eslint:recommended",
-        "plugin:flowtype/recommended",
         "plugin:jest/recommended"
     ],
     "parser": "babel-eslint",
     "plugins": [
         "babel",
-        "flowtype",
         "jest"
     ],
     "globals": {

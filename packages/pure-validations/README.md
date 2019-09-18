@@ -6,15 +6,18 @@ Composition means you have a category of objects, and some means of combining th
 
 Throughout the process of composition, you start with some simple primitive validators, compose those using some combinators or higher order validators and you get some prety powerful validation pipelines.
 ```javascript
-fields({
-    contactInfo: fields({
-        name: [isMandatory, hasLengthLessThan(50)] |> first
-        email: isMandatory |> when(gdprAgreement)
+shape({
+    contactInfo: shape({
+        name: [required, maxLength(50)] |> all |> abortEarly,
+        email: required |> when(gdprAgreement)
     }),
-    age: x=> isGreaterThan(x.minimumAllowedAge) |> withModel,
-    assets: [isUnique("id"), isMandatory|> items] |> all
-    
-}) |> dirtyFieldsOnly(dirtyInfo) |> debug
+    personalInfo: fromModel(x =>
+        shape({
+            age: greaterThan(x.minimumAllowedAge)
+        })
+    ),
+    assets: [unique("id"), required |> items] |> all
+}) |> logTo(console);
 ```
 
 ## Installation and Usage
@@ -28,7 +31,7 @@ import * as validations from 'pure-validations';
 or...
 
 ```javascript
-import { isMandatory, isEmail } from 'pure-validations';
+import { required, email } from 'pure-validations';
 ```
 
 ## Concepts
@@ -52,15 +55,15 @@ const isInteger = x => Number.isInteger(x) ? Validation.Success() : Validation.F
 ```
 
 The library provides some out of the box primitive validators that you can use in the composition process.
- - isMandatory
- - isEmail
+ - required
+ - email
  - matches
- - isInRange
- - isGreaterThan
- - isLessThan
- - hasLengthGreaterThan
- - hasLengthLessThan
- - isUnique
+ - between
+ - greaterThan
+ - lessThan
+ - minLength
+ - maxLength
+ - unique
 
 ### Higher order validators
 
