@@ -9,7 +9,7 @@ Throughout the process of composition, you start with some simple primitive vali
 shape({
     contactInfo: shape({
         name: [required, maxLength(50)] |> all |> abortEarly,
-        email: required |> when(gdprAgreement)
+        email: [required |> when(gdprAgreement), email] |> all,
     }),
     personalInfo: fromModel(x =>
         shape({
