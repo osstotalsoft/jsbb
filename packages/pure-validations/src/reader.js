@@ -3,6 +3,9 @@ import fl from "fantasy-land";
 
 Reader[fl.of] = x => Reader(_ => x); // Monad, Applicative
 Reader.ask = () => Reader((...props) => props); // Reader
+Reader.check = function(x) {
+  return Object.getPrototypeOf(x) === proto;
+};
 
 const proto = {
   constructor: Reader,

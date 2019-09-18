@@ -26,6 +26,7 @@ function variadicApply(variadicFn) {
 }
 
 export const all = variadicApply(function all(...validators) {
+  checkValidators(...validators);
   return validators.reduce(allReducerWithOptions);
 });
 
@@ -60,10 +61,12 @@ function anyReducerWithOptions(f1, f2) {
 }
 
 export const any = variadicApply(function any(...validators) {
+  checkValidators(...validators);
   return validators.reduce(anyReducerWithOptions);
 });
 
 export const when = curry(function when(predicate, validator) {
+  checkValidators(validator);
   return $do(function*() {
     const isTrue = yield Reader(predicate);
     return isTrue ? validator : successValidator;
@@ -76,15 +79,19 @@ export function fromModel(validatorFactory) {
     if (model === null || model === undefined) {
       return successValidator;
     }
-    return validatorFactory(model);
+    const v = validatorFactory(model);
+    checkValidators(v);
+    return v;
   });
 }
 
 export function abortEarly(validator) {
+  checkValidators(validator);
   return validator |> contramap((model, ctx) => [model, { ...ctx, abortEarly: true }]);
 }
 
 export function field(key, validator) {
+  checkValidators(validator);
   return (
     validator
     |> _logFieldPath
@@ -108,6 +115,7 @@ export function shape(validatorObj) {
 }
 
 export function items(itemValidator) {
+  checkValidators(itemValidator);
   return $do(function*() {
     const [items] = yield Reader.ask();
     if (items === null || items === undefined) {
@@ -118,10 +126,12 @@ export function items(itemValidator) {
 }
 
 export const filterFields = curry(function filterFields(fieldFilter, validator) {
+  checkValidators(validator);
   return validator |> contramap((model, context) => [model, { ...context, fieldFilter }]);
 });
 
 export const logTo = curry(function logTo(logger, validator) {
+  checkValidators(validator);
   return validator |> contramap((model, context) => [model, { ...context, log: true, logger }]);
 });
 
@@ -154,4 +164,16 @@ function _filterFieldPath(validator) {
     const [, fieldContext] = yield Reader.ask();
     return !fieldContext.fieldFilter(fieldContext.fieldPath) ? successValidator : validator;
   });
+}
+
+function checkValidators(...validators) {
+  validators.forEach(function(validator) {
+    if (!Validator.check(validator)) {
+      throw new Error(`Value ${prettyPrint(validator)} is not a validator!`);
+    }
+  });
+}
+
+function prettyPrint(obj){
+  return typeof obj === 'function' ? obj.toString() : JSON.stringify(obj)
 }
