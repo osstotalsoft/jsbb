@@ -73,6 +73,9 @@ export const when = curry(function when(predicate, validator) {
 export function fromModel(validatorFactory) {
   return $do(function*() {
     const [model] = yield Reader.ask();
+    if (model === null || model === undefined) {
+      return successValidator;
+    }
     return validatorFactory(model);
   });
 }
@@ -92,15 +95,25 @@ export function field(key, validator) {
 }
 
 export function shape(validatorObj) {
-  return Object.entries(validatorObj)
-    .map(([k, v]) => field(k, v))
-    .reduce(allReducer, successValidator);
+  return $do(function*() {
+    const [model] = yield Reader.ask();
+    if (model === null || model === undefined) {
+      return successValidator;
+    }
+
+    return Object.entries(validatorObj)
+      .map(([k, v]) => field(k, v))
+      .reduce(allReducer, successValidator);
+  });
 }
 
 export function items(itemValidator) {
   return $do(function*() {
-    const [model] = yield Reader.ask();
-    return model.map((_, index) => field(index, itemValidator)).reduce(allReducer, successValidator);
+    const [items] = yield Reader.ask();
+    if (items === null || items === undefined) {
+      return successValidator;
+    }
+    return items.map((_, index) => field(index, itemValidator)).reduce(allReducer, successValidator);
   });
 }
 
@@ -138,7 +151,7 @@ function _logFieldPath(validator) {
 
 function _filterFieldPath(validator) {
   return $do(function*() {
-    const [field, fieldContext] = yield Reader.ask();
-    return field === undefined || !fieldContext.fieldFilter(fieldContext.fieldPath) ? successValidator : validator;
+    const [, fieldContext] = yield Reader.ask();
+    return !fieldContext.fieldFilter(fieldContext.fieldPath) ? successValidator : validator;
   });
 }

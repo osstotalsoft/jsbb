@@ -170,6 +170,19 @@ describe("single field validator:", () => {
     // Assert
     expect(validation).toStrictEqual(Validation.Failure([], { field1: Validation.Failure(["Wrong"]) }));
   });
+
+  it("single field validator when field not exists: ", () => {
+    // Arrange
+    const fieldValidator = Validator.of(Validation.Failure(["Wrong"]));
+    const model = {};
+    const validator = field("field1", fieldValidator);
+
+    // Act
+    const validation = model |> validate(validator);
+
+    // Assert
+    expect(validation).toStrictEqual(Validation.Failure([], { field1: Validation.Failure(["Wrong"]) }));
+  });
 });
 
 describe("fields validators:", () => {

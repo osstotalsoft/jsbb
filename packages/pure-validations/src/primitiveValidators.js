@@ -26,9 +26,7 @@ export const required = Validator(x =>
 );
 
 export const atLeastOne = Validator(x =>
-  Array.isArray(x) && x.length
-    ? Validation.Success()
-    : Validation.Failure([translate("Validations.Generic.AtLeastOne")])
+  Array.isArray(x) && x.length ? Validation.Success() : Validation.Failure([translate("Validations.Generic.AtLeastOne")])
 );
 
 export const email = Validator(x => {
@@ -80,6 +78,10 @@ export function maxLength(max) {
 
 export function unique(selector) {
   return Validator(list => {
+    if (list === null || list === undefined) {
+      return Validation.Success();
+    }
+
     let selectorFn;
 
     function buildSelectorFn(propArray) {

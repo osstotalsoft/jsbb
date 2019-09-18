@@ -8,15 +8,16 @@ Throughout the process of composition, you start with some simple primitive vali
 ```javascript
 shape({
     contactInfo: shape({
-        name: [ required, maxLength(50) ] |> first
+        name: [required, maxLength(50)] |> all |> abortEarly,
         email: required |> when(gdprAgreement)
     }),
-    personalInfo: x=> shape({
-        age: greaterThan(x.minimumAllowedAge)
-    }) |> fromModel
-    assets: [unique("id"), required|> items] |> all
-    
-}) |> dirtyFieldsOnly(dirtyInfo) |> logTo(console)
+    personalInfo: fromModel(x =>
+        shape({
+            age: greaterThan(x.minimumAllowedAge)
+        })
+    ),
+    assets: [unique("id"), required |> items] |> all
+}) |> logTo(console);
 ```
 
 ## Installation and Usage

@@ -22,8 +22,14 @@ describe("combo validators:", () => {
       }) |> logTo({ log: () => {} });
 
     const model = {
-      maxLength: 4,
-      name: "test"
+      contactInfo: {
+        name: "name",
+        email:"rpopovici@gmai.com"
+      },
+      personalInfo: {
+        age: 19,
+        minimumAllowedAge: 18
+      }
     };
 
     // Act
