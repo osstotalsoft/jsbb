@@ -8,7 +8,7 @@ Throughout the process of composition, you start with some simple primitive vali
 ```javascript
 shape({
     contactInfo: shape({
-        name: [required, maxLength(50)] |> all |> abortEarly,
+        name: [required, maxLength(50)] |> all,
         email: [required |> when(gdprAgreement), email] |> all,
     }),
     personalInfo: fromModel(x =>
@@ -16,7 +16,7 @@ shape({
             age: greaterThan(x.minimumAllowedAge)
         })
     ),
-    assets: [unique("id"), required |> items] |> all
+    assets: [unique("id"), required |> items] |> concat
 }) |> logTo(console);
 ```
 

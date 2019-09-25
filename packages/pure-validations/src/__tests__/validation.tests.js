@@ -1,5 +1,4 @@
 import { Validation } from "../validation";
-import { AllValidation } from "../allValidation";
 import { concat } from "../fantasy/prelude";
 import fl from "fantasy-land";
 
@@ -13,11 +12,9 @@ function expectLawValid(lawEvaluator) {
 describe("validation tests suite:", () => {
   it("monoid left identity law: ", () => {
     // Arrange
-    var failure = AllValidation(
-      Validation.Failure(["err1", "err2"], {
-        a: Validation.Failure(["errA"])
-      })
-    );
+    var failure = Validation.Failure(["err1", "err2"], {
+      a: Validation.Failure(["errA"])
+    });
 
     // Act
     const leftIdentityLaw = isEquivalent =>
@@ -32,12 +29,10 @@ describe("validation tests suite:", () => {
 
   it("monoid right identity law: ", () => {
     // Arrange
-    var identity = AllValidation[fl.empty]();
-    var failure = AllValidation(
-      Validation.Failure(["err1", "err2"], {
-        a: Validation.Failure(["errA"])
-      })
-    );
+    var identity = Validation.Success();
+    var failure = Validation.Failure(["err1", "err2"], {
+      a: Validation.Failure(["errA"])
+    });
 
     // Act
     var result = concat(failure, identity);
@@ -48,21 +43,15 @@ describe("validation tests suite:", () => {
 
   it("monoid associativity law: ", () => {
     // Arrange
-    var failure1 = AllValidation(
-      Validation.Failure(["err1"], {
-        a: Validation.Failure(["errA1"])
-      })
-    );
-    var failure2 = AllValidation(
-      Validation.Failure(["err2"], {
-        a: Validation.Failure(["errA2"])
-      })
-    );
-    var failure3 = AllValidation(
-      Validation.Failure(["err3"], {
-        a: Validation.Failure(["errA3"])
-      })
-    );
+    var failure1 = Validation.Failure(["err1"], {
+      a: Validation.Failure(["errA1"])
+    });
+    var failure2 = Validation.Failure(["err2"], {
+      a: Validation.Failure(["errA2"])
+    });
+    var failure3 = Validation.Failure(["err3"], {
+      a: Validation.Failure(["errA3"])
+    });
 
     // Act
     var result1 = concat(concat(failure1, failure2), failure3);
@@ -131,11 +120,11 @@ describe("validation tests suite:", () => {
     var success2 = Validation.Success();
 
     // Act
-    var result = concat(AllValidation(success1), AllValidation(success2));
+    var result = concat(success1, success2);
 
     // Assert
-    expect(result.value).toBe(success1);
-    expect(result.value).toBe(success2);
+    expect(result).toBe(success1);
+    expect(result).toBe(success2);
   });
 
   // it("reference economy full: ", () => {

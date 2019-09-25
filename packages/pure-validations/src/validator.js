@@ -9,8 +9,7 @@ const emptyContext = {
   fieldPath: [],
   fieldFilter: _ => true,
   log: false,
-  logger: { log: () => {} },
-  abortEarly: false
+  logger: { log: () => {} }
 };
 
 const validate = curry(function validate(validator, model, ctx = emptyContext) {
