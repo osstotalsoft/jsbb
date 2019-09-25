@@ -1,4 +1,4 @@
-import { Reader } from "./reader";
+import Reader from "./fantasy/data/reader";
 import curry from "lodash.curry";
 import fl from "fantasy-land";
 

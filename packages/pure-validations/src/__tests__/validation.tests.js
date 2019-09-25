@@ -1,36 +1,43 @@
 import { Validation } from "../validation";
 import { AllValidation } from "../allValidation";
-import { concat } from "../polymorphicFns"
-import fl from 'fantasy-land'
-import { Monoid} from '../typeClasses'
+import { concat } from "../fantasy/prelude";
+import fl from "fantasy-land";
 
 function applyLaw(law) {
-  return  (...args) => isEquivalent => law(isEquivalent)(...args)
+  return (...args) => isEquivalent => law(isEquivalent)(...args);
 }
 function expectLawValid(lawEvaluator) {
-  return lawEvaluator((a, b) => expect(a).toStrictEqual(b))
+  return lawEvaluator((a, b) => expect(a).toStrictEqual(b));
 }
 
 describe("validation tests suite:", () => {
   it("monoid left identity law: ", () => {
     // Arrange
-    var failure = AllValidation(Validation.Failure(["err1", "err2"], {
-      a: Validation.Failure(["errA"])
-    }));
+    var failure = AllValidation(
+      Validation.Failure(["err1", "err2"], {
+        a: Validation.Failure(["errA"])
+      })
+    );
 
     // Act
-    var lawEvaluator = applyLaw(Monoid.laws.leftIdentity)(failure);
-    
+    const leftIdentityLaw = isEquivalent =>
+      function(m) {
+        return isEquivalent(m.constructor[fl.empty]()[fl.concat](m), m);
+      };
+    var lawEvaluator = applyLaw(leftIdentityLaw)(failure);
+
     // Assert
-    expectLawValid(lawEvaluator)
+    expectLawValid(lawEvaluator);
   });
 
   it("monoid right identity law: ", () => {
     // Arrange
     var identity = AllValidation[fl.empty]();
-    var failure = AllValidation(Validation.Failure(["err1", "err2"], {
-      a: Validation.Failure(["errA"])
-    }));
+    var failure = AllValidation(
+      Validation.Failure(["err1", "err2"], {
+        a: Validation.Failure(["errA"])
+      })
+    );
 
     // Act
     var result = concat(failure, identity);
@@ -41,15 +48,21 @@ describe("validation tests suite:", () => {
 
   it("monoid associativity law: ", () => {
     // Arrange
-    var failure1 = AllValidation(Validation.Failure(["err1"], {
-      a: Validation.Failure(["errA1"])
-    }));
-    var failure2 = AllValidation(Validation.Failure(["err2"], {
-      a: Validation.Failure(["errA2"])
-    }));
-    var failure3 = AllValidation(Validation.Failure(["err3"], {
-      a: Validation.Failure(["errA3"])
-    }));
+    var failure1 = AllValidation(
+      Validation.Failure(["err1"], {
+        a: Validation.Failure(["errA1"])
+      })
+    );
+    var failure2 = AllValidation(
+      Validation.Failure(["err2"], {
+        a: Validation.Failure(["errA2"])
+      })
+    );
+    var failure3 = AllValidation(
+      Validation.Failure(["err3"], {
+        a: Validation.Failure(["errA3"])
+      })
+    );
 
     // Act
     var result1 = concat(concat(failure1, failure2), failure3);
@@ -125,27 +138,27 @@ describe("validation tests suite:", () => {
     expect(result.value).toBe(success2);
   });
 
-  it("reference economy full: ", () => {
-    // Arrange
-    var failure1 = Validation.Failure(["err1"], {
-      a: Validation.Failure(["errA1"], {
-        aa: Validation.Failure(["errAA1", "errAA2"]),
-        ab: Validation.Success()
-      }),
-      b: Validation.Success()
-    });
-    var failure2 = Validation.Failure(["err1"], {
-      a: Validation.Failure(["errA1"], {
-        aa: Validation.Failure(["errAA1", "errAA2"]),
-        ab: Validation.Success()
-      }),
-      b: Validation.Success()
-    });
+  // it("reference economy full: ", () => {
+  //   // Arrange
+  //   var failure1 = Validation.Failure(["err1"], {
+  //     a: Validation.Failure(["errA1"], {
+  //       aa: Validation.Failure(["errAA1", "errAA2"]),
+  //       ab: Validation.Success()
+  //     }),
+  //     b: Validation.Success()
+  //   });
+  //   var failure2 = Validation.Failure(["err1"], {
+  //     a: Validation.Failure(["errA1"], {
+  //       aa: Validation.Failure(["errAA1", "errAA2"]),
+  //       ab: Validation.Success()
+  //     }),
+  //     b: Validation.Success()
+  //   });
 
-    // Act
-    var result = concat(AllValidation(failure1), AllValidation(failure2)).value;
+  //   // Act
+  //   var result = concat(AllValidation(failure1), AllValidation(failure2)).value;
 
-    // Assert
-    expect(result).toBe(failure1);
-  });
+  //   // Assert
+  //   expect(result).toBe(failure1);
+  // });
 });

@@ -1,14 +1,14 @@
-import { Reader } from "./reader";
+import Reader from "./fantasy/data/reader";
 import { Validation } from "./validation";
 import { AnyValidation } from "./anyValidation";
 import { Validator } from "./validator";
-import { $do, lift2, concat, fmap, contramap, merge } from "./polymorphicFns";
+import { $do, lift2, concat, map, contramap, merge } from "./fantasy/prelude";
 import curry from "lodash.curry";
 
 const successValidator = Validator.of(Validation.Success());
 
 function allReducer(f1, f2) {
-  return lift2(concat, f1, f2);
+  return concat(f1, f2);
 }
 
 function variadicApply(variadicFn) {
@@ -97,7 +97,7 @@ export function field(key, validator) {
     |> _logFieldPath
     |> _filterFieldPath
     |> contramap((model, ctx) => [model[key], _getFieldContext(ctx, key)])
-    |> fmap(_mapFieldToObjValidation(key))
+    |> map(_mapFieldToObjValidation(key))
   );
 }
 
@@ -135,9 +135,9 @@ export const logTo = curry(function logTo(logger, validator) {
   return validator |> contramap((model, context) => [model, { ...context, log: true, logger }]);
 });
 
-const _mapFieldToObjValidation = curry(function _mapFieldToObject(key, validation) {
+const _mapFieldToObjValidation = curry(function _mapFieldToObjValidation(key, validation) {
   const fields = { [key]: validation };
-  return Validation.isValid(validation) ? Validation.Success(fields) : Validation.Failure([], fields);
+  return Validation.isValid(validation) ? Validation.Success() : Validation.Failure([], fields);
 });
 
 function _getFieldContext(context, key) {
@@ -168,12 +168,12 @@ function _filterFieldPath(validator) {
 
 function checkValidators(...validators) {
   validators.forEach(function(validator) {
-    if (!Validator.check(validator)) {
+    if (!Validator.is(validator)) {
       throw new Error(`Value ${prettyPrint(validator)} is not a validator!`);
     }
   });
 }
 
-function prettyPrint(obj){
-  return typeof obj === 'function' ? obj.toString() : JSON.stringify(obj)
+function prettyPrint(obj) {
+  return typeof obj === "function" ? obj.toString() : JSON.stringify(obj);
 }

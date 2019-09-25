@@ -1,10 +1,11 @@
 import { Validation } from "./validation";
 import fl from "fantasy-land";
+import { concat } from "./fantasy/prelude";
 
 const allPrototype = {
   constructor: AllValidation,
   [fl.concat]: function(other) {
-    return Validation.isValid(this.value) ? other : Validation.isValid(other.value) ? this : AllValidation(this.value[fl.concat](other.value));
+    return AllValidation(concat(this.value, other.value));
   }
 };
 

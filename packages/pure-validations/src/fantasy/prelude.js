@@ -26,7 +26,7 @@ const ap = curry(function apply(fnFunctor, applicative) {
 });
 
 // map :: Functor f => (a -> b) -> f a -> f b
-const map = curry(function fmap(fn, functor) {
+const map = curry(function map(fn, functor) {
   return functor[fl.map](fn);
 });
 
@@ -57,4 +57,4 @@ const merge = curry(function merge(strategy, a, b) {
   )
 })
 
-export { chain, $do, ap, map as fmap, lift2, concat, contramap, fold, merge };
+export { chain, $do, ap, map, lift2, concat, contramap, fold, merge };

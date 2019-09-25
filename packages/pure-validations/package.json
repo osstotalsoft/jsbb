@@ -35,10 +35,12 @@
     "i18next": "^17.0.11"
   },
   "dependencies": {
+    "daggy": "^1.4.0",
     "fantasy-land": "^4.0.1",
     "immutable": "^4.0.0-rc.12",
     "lodash.curry": "^4.1.1",
-    "lodash.flow": "^3.5.0"
+    "lodash.flow": "^3.5.0",
+    "wi-jit": "^2.0.1"
   },
   "peerDependencies": {
     "i18next": "^17.0.11"
