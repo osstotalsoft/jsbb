@@ -1,6 +1,6 @@
-import { Validation } from "../validation";
-import { validate } from "../validator"
-import { unique, required, email, between, greaterThan, lessThan, minLength, maxLength, matches, atLeastOne } from "../primitiveValidators";
+import { Validation } from "../../validation";
+import { validate } from "../../validator"
+import { unique, required, email, between, greaterThan, lessThan, minLength, maxLength, matches, atLeastOne } from "../index";
 import i18next from "i18next";
 
 describe("mandatory primitive validator:", () => {

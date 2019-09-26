@@ -1,51 +1,45 @@
-import { Map, Set, merge, mergeWith } from "immutable";
-import { Semigroup } from "./typeClasses";
-const errorsSymbol = Symbol("_errors");
-
-function mergerAll(value1, value2, key) {
-  switch (key) {
-    case errorsSymbol:
-      return merge(value1, value2);
-    default:
-      return mergeWith(mergerAll, value1, value2);
-  }
-}
+import fl from "fantasy-land";
+import { concat } from "./fantasy/prelude";
 
 const validationErrorPrototype = {
-  "fantasy-land/concat": function(other) {
-    const mergedErrors = mergeWith(mergerAll, this, other);
-    return Object.assign(mergedErrors, validationErrorPrototype);
-  },
-  getErrors: function() {
-    return this.get(errorsSymbol).toArray();
+  [fl.concat]: function(other) {
+    const errors = [...this.errors, ...other.errors];
+    const fields = merge(this.fields, other.fields);
+
+    return ValidationError(errors, fields);
   },
   getField: function(key) {
-    return this.get(key);
-  },
-  getFields: function() {
-    // eslint-disable-next-line no-unused-vars
-    const { [errorsSymbol]: _, ...fields } = this.toObject();
-    return fields;
-  },
-  toString: function() {
-    const errors = this.getErrors();
-    const fields = Object.entries(this.getFields())
-      .reduce((acc, [k, v]) => `${acc} \n ${k}: ${v}`, "");
-
-    return `errors: ${errors} \n fields: {${fields}\n}`;
+    return this.fields[key];
   }
 };
 
-export function ValidationError(errors, fields) {
-  //const validationError = Object.create(validationErrorPrototype);
+export function ValidationError(errors = [], fields = {}) {
+  const self = Object.create(validationErrorPrototype);
+  self.errors = errors;
+  self.fields = fields;
 
-  const map = Map(fields).withMutations(map => {
-    map.set(errorsSymbol, Set(errors));
-  });
-
-  return Object.assign(map, validationErrorPrototype);
+  return self;
 }
 
-if (!Semigroup.check(validationErrorPrototype)) {
-  throw "Validation error is not a semigroup";
+function notIsNullOrUndefined(val) {
+  return val !== null && val !== undefined;
+}
+
+function merge(leftObj, rightObj) {
+  const fields = [...new Set([...Object.keys(leftObj), ...Object.keys(rightObj)])];
+  var result = {};
+  for (let f of fields) {
+    const leftValue = leftObj[f];
+    const rightValue = rightObj[f];
+
+    if (notIsNullOrUndefined(leftValue) && notIsNullOrUndefined(rightValue)) {
+      result[f] = concat(leftValue, rightValue);
+    } else if (notIsNullOrUndefined(leftValue)) {
+      result[f] = leftValue;
+    } else {
+      result[f] = rightValue;
+    }
+  }
+
+  return result;
 }
