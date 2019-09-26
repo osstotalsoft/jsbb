@@ -1,7 +1,6 @@
 import { tagged } from "daggy";
 import fl from "fantasy-land";
-import { $do } from "../prelude";
-import { concat } from "../Prelude";
+import { $do, concat } from "../prelude";
 
 const Reader = tagged("Reader", ["computation"]);
 Reader[fl.of] = x => Reader(_ => x); // Monad, Applicative
