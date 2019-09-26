@@ -8,15 +8,15 @@ Throughout the process of composition, you start with some simple primitive vali
 ```javascript
 shape({
     contactInfo: shape({
-        name: [required, maxLength(50)] |> all,
-        email: [required |> when(gdprAgreement), email] |> all,
+        name: [required, maxLength(50)] |> stopOnFirstFailure,
+        email: [required |> when(gdprAgreement), email] |> stopOnFirstFailure,
     }),
     personalInfo: fromModel(x =>
         shape({
             age: greaterThan(x.minimumAllowedAge)
         })
     ),
-    assets: [unique("id"), required |> items] |> concat
+    assets: [unique("id"), required |> items] |> concatFailure
 }) |> logTo(console);
 ```
 
