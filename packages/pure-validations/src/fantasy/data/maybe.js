@@ -2,7 +2,7 @@ import { taggedSum } from "daggy";
 import fl from "fantasy-land";
 
 import { Loop, Done } from "./step";
-import { eq, lte, concat } from "../prelude";
+import { eq, lte, concat, map } from "../prelude";
 
 //- The `Maybe` type is used to model "nullable" values in a type-
 //- safe way. Instead of returning a value OR null, return a Just
@@ -112,8 +112,8 @@ const { Just, Nothing } = Maybe;
 /* Traversable Maybe */ {
   Maybe.prototype[fl.traverse] = function(T, f) {
     return this.cata({
-      Just: x => f(x).map(Just),
-      Nothing: () => T.of(this)
+      Just: x => f(x) |> map(Just),
+      Nothing: () => T[fl.of](this)
     });
   };
 }

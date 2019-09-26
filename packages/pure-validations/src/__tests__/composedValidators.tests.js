@@ -24,7 +24,7 @@ describe("composed validators:", () => {
     const model = {
       contactInfo: {
         name: "name",
-        email:"rpopovici@gmai.com"
+        email: "rpopovici@gmai.com"
       },
       personalInfo: {
         age: 19,
@@ -101,9 +101,7 @@ describe("composed validators:", () => {
     const validation = model |> validate(validator);
 
     // Assert
-    expect(validation).toStrictEqual(
-      Validation.Success()
-    );
+    expect(validation).toStrictEqual(Validation.Success());
   });
 
   it("all and shape validators disjunct fields validators failure - fail first: ", () => {
@@ -359,8 +357,4 @@ describe("composed validators:", () => {
     // Assert
     expect(validation).toStrictEqual(Validation.Failure([], { ["0"]: Validation.Failure(["Wrong", "Too short"]) }));
   });
-
-  
-
-
 });

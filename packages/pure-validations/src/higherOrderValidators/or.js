@@ -1,18 +1,12 @@
-import { Validation } from "../validation";
 import { Validator } from "../validator";
-import { $do } from "../fantasy/prelude";
-//import { chain } from "fantasy-land";
-
-export default function Or(f1, f2) {
+import { $do, concat, map} from "../fantasy/prelude";
+export default function or(f1, f2) {
   return $do(function*() {
     const v1 = yield f1;
-    if (Validation.isValid(v1)) {
-      return Validator.of(v1);
-    }
-    return f2;
+
+    return v1.cata({
+      Just: err1 => f2 |> map(map(concat(err1))),
+      Nothing: _ => Validator.of(v1)
+    });
   });
 }
-
-// function anyValidation(v1, v2) {
-//   return v1 |> chain(_=> v2)
-// }

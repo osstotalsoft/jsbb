@@ -99,7 +99,7 @@ describe("any validator:", () => {
     const validation = model |> validate(validator);
 
     // Assert
-    expect(validation).toStrictEqual(Validation.Failure(["Too long"]));
+    expect(validation).toStrictEqual(Validation.Failure(["Wrong", "Too long"]));
   });
 });
 

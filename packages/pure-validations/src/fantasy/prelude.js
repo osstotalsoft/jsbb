@@ -1,5 +1,5 @@
 import curry from "lodash.curry";
-import fl from 'fantasy-land'
+import fl from "fantasy-land";
 
 function $do(gen) {
   let g = gen(); // Will need to re-bind generator when done.
@@ -21,7 +21,7 @@ const chain = curry(function chain(fn, ma) {
 });
 
 // ap :: Apply f => f (a -> b) -> f a -> f b
-const ap = curry(function apply(fnFunctor, applicative) {
+const ap = curry(function ap(fnFunctor, applicative) {
   return applicative[fl.ap](fnFunctor);
 });
 
@@ -37,24 +37,26 @@ const contramap = curry(function contramap(fn, contravariant) {
 
 // lift2 :: Apply f => (a -> b) -> f a -> f b ->
 const lift2 = curry(function lift2(op, applicative1, applicative2) {
-  return ap(map(op, applicative1), applicative2);
+  return ap(applicative1 |> map(op), applicative2);
 });
 
 // concat :: Semigroup s => s -> s -> s
 const concat = curry(function concat(s1, s2) {
   return s1[fl.concat](s2);
-})
+});
 
 // fold :: Monoid m => (a -> m) -> [a] -> m
-const fold = M => xs => xs.reduce(
-  (acc, x) => acc[fl.concat](M(x)),
-  M[fl.empty]())
+const fold = M => xs => xs.reduce((acc, x) => acc[fl.concat](M(x)), M[fl.empty]());
 
 // merge :: Semigroup s => { to: a -> s a, from: s a -> a} -> a -> a -> a
 const merge = curry(function merge(strategy, a, b) {
-  return strategy.from(
-    strategy.to(a)[fl.concat](strategy.to(b))
-  )
-})
+  return strategy.from(strategy.to(a)[fl.concat](strategy.to(b)));
+});
 
-export { chain, $do, ap, map, lift2, concat, contramap, fold, merge };
+//+ traverse :: Traversable t => Applicative f
+//+          => TypeRep f -> (a -> f b) -> t a -> f (t b)
+const traverse = curry(function traverse(T, f, xs) {
+  return xs[fl.traverse](T, f);
+});
+
+export { chain, $do, ap, map, lift2, concat, contramap, fold, merge, traverse };
