@@ -1,27 +1,28 @@
-import { Just, Nothing } from "./maybe";
+import Maybe from "./fantasy/data/maybe";
 import { ValidationError } from "./validationError";
+import { chain } from "./fantasy/prelude";
 
 function Success() {
-  return Nothing();
+  return Maybe.Nothing;
 }
 
 function Failure(errors, fields) {
-  return Just(ValidationError(errors, fields));
+  return Maybe.Just(ValidationError(errors, fields));
 }
 
 function isValid(validation) {
-  return validation.isNothing;
+  return Maybe.Nothing.is(validation);
 }
 
 function getErrors(validation) {
-  return isValid(validation) ? [] : validation.value.getErrors()
+  return validation.cata({
+    Just: x => x.errors,
+    Nothing: () => []
+  });
 }
 
 function getInner(validation, path) {
-  if (isValid(validation))
-    return validation;
-
-  return path.reduce((acc, key) => (!isValid(acc) && acc.value.getField(key)) || Success(), validation)
+  return path.reduce((acc, key) => acc |> chain(err => err.getField(key) || Maybe.Nothing), validation);
 }
 
 export const Validation = { Success, Failure, isValid, getErrors, getInner };

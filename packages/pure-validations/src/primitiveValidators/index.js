@@ -1,5 +1,5 @@
-import { Validation } from "./validation";
-import { Validator } from "./validator";
+import { Validation } from "../validation";
+import { Validator } from "../validator";
 import i18next from "i18next";
 
 const defaultMessages = {
