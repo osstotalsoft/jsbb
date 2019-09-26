@@ -1,7 +1,7 @@
 import { Validation } from "../validation";
 import { validate, Validator } from "../validator";
 import { required, maxLength, greaterThan, unique } from "../primitiveValidators";
-import { shape, items, all, when, fromModel, logTo, concat } from "../higherOrderValidators";
+import { shape, items, stopOnFirstFailure, when, fromModel, logTo, concatFailure } from "../higherOrderValidators";
 
 describe("composed validators:", () => {
   it("readme validator: ", () => {
@@ -10,7 +10,7 @@ describe("composed validators:", () => {
     const validator =
       shape({
         contactInfo: shape({
-          name: [required, maxLength(50)] |> all,
+          name: [required, maxLength(50)] |> stopOnFirstFailure,
           email: required |> when(gdprAgreement)
         }),
         personalInfo: fromModel(x =>
@@ -18,7 +18,7 @@ describe("composed validators:", () => {
             age: greaterThan(x.minimumAllowedAge)
           })
         ),
-        assets: [unique("id"), required |> items] |> concat
+        assets: [unique("id"), required |> items] |> concatFailure
       }) |> logTo({ log: () => {} });
 
     const model = {
@@ -39,14 +39,14 @@ describe("composed validators:", () => {
     expect(validation).toBe(Validation.Success());
   });
 
-  it("all and shape validator failure : ", () => {
+  it("stopOnFirstFailure and shape validator failure : ", () => {
     // Arrange
     const fieldValidator = Validator.of(Validation.Failure(["Wrong"]));
     const globalValidator = Validator.of(Validation.Success());
 
     const model = { email: "testWrong" };
 
-    const validator = all(globalValidator, shape({ email: fieldValidator }));
+    const validator = stopOnFirstFailure(globalValidator, shape({ email: fieldValidator }));
 
     // Act
     const validation = model |> validate(validator);
@@ -55,13 +55,13 @@ describe("composed validators:", () => {
     expect(validation).toStrictEqual(Validation.Failure([], { email: Validation.Failure(["Wrong"]) }));
   });
 
-  it("all and shape validator success: ", () => {
+  it("stopOnFirstFailure and shape validator success: ", () => {
     // Arrange
     const fieldValidator = Validator.of(Validation.Success());
     const globalValidator = Validator.of(Validation.Success());
     const model = { email: "test" };
 
-    const validator = all(globalValidator, shape({ email: fieldValidator }));
+    const validator = stopOnFirstFailure(globalValidator, shape({ email: fieldValidator }));
 
     // Act
     const validation = model |> validate(validator);
@@ -70,13 +70,13 @@ describe("composed validators:", () => {
     expect(validation).toStrictEqual(Validation.Success());
   });
 
-  it("all and shape validator both global and fields validators - fail global: ", () => {
+  it("alstopOnFirstFailurel and shape validator both global and fields validators - fail global: ", () => {
     // Arrange
     const fieldValidator = Validator.of(Validation.Success());
     const globalValidator = Validator.of(Validation.Failure(["Mandatory"]));
     const model = {};
 
-    const validator = all(globalValidator, shape({ email: fieldValidator }));
+    const validator = stopOnFirstFailure(globalValidator, shape({ email: fieldValidator }));
 
     // Act
     const validation = model |> validate(validator);
@@ -85,7 +85,7 @@ describe("composed validators:", () => {
     expect(validation).toStrictEqual(Validation.Failure(["Mandatory"]));
   });
 
-  it("all and shape validators disjunct fields validators success: ", () => {
+  it("stopOnFirstFailure and shape validators disjunct fields validators success: ", () => {
     // Arrange
     const nameValidator = Validator.of(Validation.Success());
     const emailValdator = Validator.of(Validation.Success());
@@ -95,7 +95,7 @@ describe("composed validators:", () => {
       email: "test@mail.com"
     };
 
-    const validator = all(shape({ name: nameValidator }), shape({ email: emailValdator }));
+    const validator = stopOnFirstFailure(shape({ name: nameValidator }), shape({ email: emailValdator }));
 
     // Act
     const validation = model |> validate(validator);
@@ -104,7 +104,7 @@ describe("composed validators:", () => {
     expect(validation).toStrictEqual(Validation.Success());
   });
 
-  it("all and shape validators disjunct fields validators failure - fail first: ", () => {
+  it("stopOnFirstFailure and shape validators disjunct fields validators failure - fail first: ", () => {
     // Arrange
     const nameValidator = Validator.of(Validation.Failure(["Too short"]));
     const emailValdator = Validator.of(Validation.Success());
@@ -114,7 +114,7 @@ describe("composed validators:", () => {
       email: "test@mail.com"
     };
 
-    const validator = all(shape({ name: nameValidator }), shape({ email: emailValdator }));
+    const validator = stopOnFirstFailure(shape({ name: nameValidator }), shape({ email: emailValdator }));
 
     // Act
     const validation = model |> validate(validator);
@@ -127,7 +127,7 @@ describe("composed validators:", () => {
     );
   });
 
-  it("all and shape validators disjunct fields validators failure - fail second: ", () => {
+  it("stopOnFirstFailure and shape validators disjunct fields validators failure - fail second: ", () => {
     // Arrange
     const nameValidator = Validator.of(Validation.Success());
     const emailValdator = Validator.of(Validation.Failure(["Invalid email"]));
@@ -137,7 +137,7 @@ describe("composed validators:", () => {
       email: "testmail.com"
     };
 
-    const validator = all(shape({ name: nameValidator }), shape({ email: emailValdator }));
+    const validator = stopOnFirstFailure(shape({ name: nameValidator }), shape({ email: emailValdator }));
 
     // Act
     const validation = model |> validate(validator);
@@ -150,7 +150,7 @@ describe("composed validators:", () => {
     );
   });
 
-  it("all and shape validators disjunct fields validators failure - fail both: ", () => {
+  it("concatFailure and shape validators disjunct fields validators failure - fail both: ", () => {
     // Arrange
     const nameValidator = Validator.of(Validation.Failure(["Too short"]));
     const emailValdator = Validator.of(Validation.Failure(["Invalid email"]));
@@ -160,7 +160,7 @@ describe("composed validators:", () => {
       email: "testmail.com"
     };
 
-    const validator = concat(shape({ name: nameValidator }), shape({ email: emailValdator }));
+    const validator = concatFailure(shape({ name: nameValidator }), shape({ email: emailValdator }));
 
     // Act
     const validation = model |> validate(validator);
@@ -174,13 +174,13 @@ describe("composed validators:", () => {
     );
   });
 
-  it("all and shape validators overlapping fields validators success: ", () => {
+  it("stopOnFirstFailure and shape validators overlapping fields validators success: ", () => {
     // Arrange
     const lengthValidator = Validator.of(Validation.Success());
     const emailValdator = Validator.of(Validation.Success());
     const model = { email: "test@mail.com" };
 
-    const validator = all(shape({ email: lengthValidator }), shape({ email: emailValdator }));
+    const validator = stopOnFirstFailure(shape({ email: lengthValidator }), shape({ email: emailValdator }));
 
     // Act
     const validation = model |> validate(validator);
@@ -189,13 +189,13 @@ describe("composed validators:", () => {
     expect(validation).toMatchObject(Validation.Success({ email: Validation.Success() }));
   });
 
-  it("all and shape validators overlapping fields validators - fail first: ", () => {
+  it("stopOnFirstFailure and shape validators overlapping fields validators - fail first: ", () => {
     // Arrange
     const lengthValidator = Validator.of(Validation.Failure(["Too short"]));
     const emailValdator = Validator.of(Validation.Success());
     const model = { email: "t@b.c" };
 
-    const validator = all(shape({ email: lengthValidator }), shape({ email: emailValdator }));
+    const validator = stopOnFirstFailure(shape({ email: lengthValidator }), shape({ email: emailValdator }));
 
     // Act
     const validation = model |> validate(validator);
@@ -204,13 +204,13 @@ describe("composed validators:", () => {
     expect(validation).toStrictEqual(Validation.Failure([], { email: Validation.Failure(["Too short"]) }));
   });
 
-  it("all and shape validators overlapping fields validators failure - fail second: ", () => {
+  it("stopOnFirstFailure and shape validators overlapping fields validators failure - fail second: ", () => {
     // Arrange
     const lengthValidator = Validator.of(Validation.Success());
     const emailValdator = Validator.of(Validation.Failure(["Invalid email"]));
     const model = { email: "testmail.com" };
 
-    const validator = all(shape({ email: lengthValidator }), shape({ email: emailValdator }));
+    const validator = stopOnFirstFailure(shape({ email: lengthValidator }), shape({ email: emailValdator }));
 
     // Act
     const validation = model |> validate(validator);
@@ -219,13 +219,13 @@ describe("composed validators:", () => {
     expect(validation).toStrictEqual(Validation.Failure([], { email: Validation.Failure(["Invalid email"]) }));
   });
 
-  it("concat and shape validators overlapping fields validators failure - fail both: ", () => {
+  it("concatFailure and shape validators overlapping fields validators failure - fail both: ", () => {
     // Arrange
     const lengthValidator = Validator.of(Validation.Failure(["Too short"]));
     const emailValdator = Validator.of(Validation.Failure(["Invalid email"]));
     const model = { email: "t" };
 
-    const validator = concat(shape({ email: lengthValidator }), shape({ email: emailValdator }));
+    const validator = concatFailure(shape({ email: lengthValidator }), shape({ email: emailValdator }));
 
     // Act
     const validation = model |> validate(validator);
@@ -234,13 +234,13 @@ describe("composed validators:", () => {
     expect(validation).toStrictEqual(Validation.Failure([], { email: Validation.Failure(["Too short", "Invalid email"]) }));
   });
 
-  it("all and items validators success: ", () => {
+  it("stopOnFirstFailure and items validators success: ", () => {
     // Arrange
     const itemValidator = Validator.of(Validation.Success());
     const globalValidator = Validator.of(Validation.Success());
     const model = ["test"];
 
-    const validator = all(globalValidator, items(itemValidator));
+    const validator = stopOnFirstFailure(globalValidator, items(itemValidator));
 
     // Act
     const validation = model |> validate(validator);
@@ -249,13 +249,13 @@ describe("composed validators:", () => {
     expect(validation).toStrictEqual(Validation.Success({ ["0"]: Validation.Success() }));
   });
 
-  it("all and items validators - fail item: ", () => {
+  it("stopOnFirstFailure and items validators - fail item: ", () => {
     // Arrange
     const itemValidator = Validator.of(Validation.Failure(["Wrong"]));
     const globalValidator = Validator.of(Validation.Success());
     const model = ["testWrong"];
 
-    const validator = all(globalValidator, items(itemValidator));
+    const validator = stopOnFirstFailure(globalValidator, items(itemValidator));
 
     // Act
     const validation = model |> validate(validator);
@@ -264,13 +264,13 @@ describe("composed validators:", () => {
     expect(validation).toStrictEqual(Validation.Failure([], { ["0"]: Validation.Failure(["Wrong"]) }));
   });
 
-  it("all and items validators - fail only one item", () => {
+  it("stopOnFirstFailure and items validators - fail only one item", () => {
     // Arrange
     const nameValidator = Validator(m => (m == "test" ? Validation.Success() : Validation.Failure(["Wrong"])));
     const minLengthValidator = Validator.of(Validation.Success());
     const model = ["test", "testWrong"];
 
-    const validator = all(items(nameValidator), items(minLengthValidator));
+    const validator = stopOnFirstFailure(items(nameValidator), items(minLengthValidator));
 
     // Act
     const validation = model |> validate(validator);
@@ -283,13 +283,13 @@ describe("composed validators:", () => {
     );
   });
 
-  it("all and items validators - fail global: ", () => {
+  it("stopOnFirstFailure and items validators - fail global: ", () => {
     // Arrange
     const itemValidator = Validator.of(Validation.Success());
     const globalValidator = Validator.of(Validation.Failure(["Empty"]));
     const model = [];
 
-    const validator = all(globalValidator, items(itemValidator));
+    const validator = stopOnFirstFailure(globalValidator, items(itemValidator));
 
     // Act
     const validation = model |> validate(validator);
@@ -298,13 +298,13 @@ describe("composed validators:", () => {
     expect(validation).toStrictEqual(Validation.Failure(["Empty"]));
   });
 
-  it("all and items validators overlapping items validators success: ", () => {
+  it("stopOnFirstFailure and items validators overlapping items validators success: ", () => {
     // Arrange
     const nameValidator = Validator.of(Validation.Success());
     const minLengthValidator = Validator.of(Validation.Success());
     const model = ["test"];
 
-    const validator = all(items(nameValidator), items(minLengthValidator));
+    const validator = stopOnFirstFailure(items(nameValidator), items(minLengthValidator));
 
     // Act
     const validation = model |> validate(validator);
@@ -313,13 +313,13 @@ describe("composed validators:", () => {
     expect(validation).toStrictEqual(Validation.Success({ ["0"]: Validation.Success() }));
   });
 
-  it("all and items validators overlapping items validators - fail first: ", () => {
+  it("stopOnFirstFailure and items validators overlapping items validators - fail first: ", () => {
     // Arrange
     const nameValidator = Validator.of(Validation.Failure(["Wrong"]));
     const minLengthValidator = Validator.of(Validation.Success());
     const model = ["test"];
 
-    const validator = all(items(nameValidator), items(minLengthValidator));
+    const validator = stopOnFirstFailure(items(nameValidator), items(minLengthValidator));
 
     // Act
     const validation = model |> validate(validator);
@@ -328,13 +328,13 @@ describe("composed validators:", () => {
     expect(validation).toStrictEqual(Validation.Failure([], { ["0"]: Validation.Failure(["Wrong"]) }));
   });
 
-  it("all and items validators overlapping items validators failure - fail second: ", () => {
+  it("stopOnFirstFailure and items validators overlapping items validators failure - fail second: ", () => {
     // Arrange
     const nameValidator = Validator.of(Validation.Success());
     const minLengthValidator = Validator.of(Validation.Failure(["Too short"]));
     const model = ["test"];
 
-    const validator = all(items(nameValidator), items(minLengthValidator));
+    const validator = stopOnFirstFailure(items(nameValidator), items(minLengthValidator));
 
     // Act
     const validation = model |> validate(validator);
@@ -343,13 +343,13 @@ describe("composed validators:", () => {
     expect(validation).toStrictEqual(Validation.Failure([], { ["0"]: Validation.Failure(["Too short"]) }));
   });
 
-  it("concat and items validators overlapping items validators failure - fail both: ", () => {
+  it("concatFailure and items validators overlapping items validators failure - fail both: ", () => {
     // Arrange
     const nameValidator = Validator.of(Validation.Failure(["Wrong"]));
     const minLengthValidator = Validator.of(Validation.Failure(["Too short"]));
     const model = ["t"];
 
-    const validator = concat(items(nameValidator), items(minLengthValidator));
+    const validator = concatFailure(items(nameValidator), items(minLengthValidator));
 
     // Act
     const validation = model |> validate(validator);

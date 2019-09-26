@@ -1,15 +1,15 @@
 import { Validation } from "../../validation";
 import { Validator, validate } from "../../validator";
-import { field, shape, items, all, any, concat, when, fromModel, logTo, filterFields } from "../index";
+import { field, shape, items, stopOnFirstFailure, concatFailure, when, fromModel, logTo, filterFields } from "../index";
 
-describe("all validator:", () => {
+describe("stopOnFirstFailure validator:", () => {
   it("returns success when all return success: ", () => {
     // Arrange
     const nameValidator = Validator.of(Validation.Success());
     const minLengthValidator = Validator.of(Validation.Success());
     const model = "";
 
-    const validator = all(nameValidator, minLengthValidator);
+    const validator = stopOnFirstFailure(nameValidator, minLengthValidator);
 
     // Act
     const validation = model |> validate(validator);
@@ -24,7 +24,7 @@ describe("all validator:", () => {
     const maxLengthValidator = jest.fn(_ => Validation.Failure(["Too long"]));
     const model = "testWrong";
 
-    const validator = all(Validator(nameValidator), Validator(maxLengthValidator));
+    const validator = stopOnFirstFailure(Validator(nameValidator), Validator(maxLengthValidator));
 
     // Act
     const validation = model |> validate(validator);
@@ -35,14 +35,14 @@ describe("all validator:", () => {
   });
 })
 
-describe("concat validator:", () => {
+describe("concatFailure validator:", () => {
   it("returns failure when all return failure: ", () => {
     // Arrange
     const nameValidator = Validator.of(Validation.Failure(["Wrong"]));
     const maxLengthValidator = Validator.of(Validation.Failure(["Too long"]));
     const model = "";
 
-    const validator = concat(nameValidator, maxLengthValidator);
+    const validator = concatFailure(nameValidator, maxLengthValidator);
 
     // Act
     const validation = model |> validate(validator);
@@ -51,57 +51,6 @@ describe("concat validator:", () => {
     expect(validation.value).toStrictEqual(Validation.Failure(["Wrong", "Too long"]).value);
   });
 })
-
-describe("any validator:", () => {
-  it("returns success when first returns failure and second returns success: ", () => {
-    // Arrange
-    const nameValidator = Validator.of(Validation.Failure(["Wrong"]));
-    const minLengthValidator = Validator.of(Validation.Success());
-    const model = "";
-
-    const validator = any(nameValidator, minLengthValidator);
-
-    // Act
-    const validation = model |> validate(validator);
-
-    // Assert
-    expect(validation).toEqual(Validation.Success());
-  });
-
-  it("returns success when first returns success and second returns failure: ", () => {
-    // Arrange
-    const nameValidator = Validator.of(Validation.Success());
-    const secondFn = jest.fn(_ => Validation.Failure(["Too short"]));
-    const minLengthValidator = Validator(secondFn);
-    const model = "";
-
-    const validator = any(nameValidator, minLengthValidator);
-
-    // Act
-    const validation = model |> validate(validator);
-
-    // Assert
-    expect(validation).toEqual(Validation.Success());
-
-    //TBD: No short circuit for any
-    expect(secondFn.mock.calls.length).toBe(0);
-  });
-
-  it("returns failure when both return failure: ", () => {
-    // Arrange
-    const nameValidator = Validator.of(Validation.Failure(["Wrong"]));
-    const maxLengthValidator = Validator.of(Validation.Failure(["Too long"]));
-    const model = "";
-
-    const validator = any(nameValidator, maxLengthValidator);
-
-    // Act
-    const validation = model |> validate(validator);
-
-    // Assert
-    expect(validation).toStrictEqual(Validation.Failure(["Wrong", "Too long"]));
-  });
-});
 
 describe("when validator:", () => {
   it("returns failure when predicate returns true and inner validator returns failure:", () => {
