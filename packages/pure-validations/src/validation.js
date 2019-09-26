@@ -1,6 +1,7 @@
 import Maybe from "./fantasy/data/maybe";
 import { ValidationError } from "./validationError";
 import { chain } from "./fantasy/prelude";
+import curry from "lodash.curry";
 
 function Success() {
   return Maybe.Nothing;
@@ -21,8 +22,10 @@ function getErrors(validation) {
   });
 }
 
-function getInner(validation, path) {
+const getInner = curry(function getInner(path, validation) {
   return path.reduce((acc, key) => acc |> chain(err => err.getField(key) || Maybe.Nothing), validation);
-}
+})
 
-export const Validation = { Success, Failure, isValid, getErrors, getInner };
+const Validation = { Success, Failure };
+
+export { Validation, isValid, getErrors, getInner };

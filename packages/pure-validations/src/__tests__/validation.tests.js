@@ -1,4 +1,4 @@
-import { Validation } from "../validation";
+import { Validation, getErrors, getInner } from "../validation";
 import { concat } from "../fantasy/prelude";
 import fl from "fantasy-land";
 
@@ -71,7 +71,7 @@ describe("validation tests suite:", () => {
       })
     });
 
-    var result = Validation.getInner(validation, ["field1", "field11"]);
+    var result = validation |> getInner(["field1", "field11"]);
 
     // Assert
     expect(result).toBe(innerValidation);
@@ -87,7 +87,7 @@ describe("validation tests suite:", () => {
       })
     });
 
-    var result = Validation.getInner(validation, ["notFoundField", "field11"]);
+    var result = validation |> getInner(["notFoundField", "field11"]);
 
     // Assert
     expect(result).toBe(Validation.Success());
@@ -97,7 +97,7 @@ describe("validation tests suite:", () => {
     // Arrange
     const validation = Validation.Success();
 
-    var result = Validation.getErrors(validation);
+    var result = getErrors(validation);
 
     // Assert
     expect(result).toStrictEqual([]);
@@ -108,7 +108,7 @@ describe("validation tests suite:", () => {
     const errors = ["Err2", "Err1"];
     const validation = Validation.Failure(errors);
 
-    var result = Validation.getErrors(validation);
+    var result = getErrors(validation);
 
     // Assert
     expect(result).toStrictEqual(errors);
