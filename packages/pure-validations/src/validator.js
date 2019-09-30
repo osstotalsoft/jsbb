@@ -12,8 +12,8 @@ const emptyContext = {
   logger: { log: () => {} }
 };
 
-const validate = curry(function validate(validator, model, ctx = emptyContext) {
-  return validator.runReader(model, ctx);
+const validate = curry(function validate(validator, model, ctx = undefined) {
+  return validator.runReader(model, { ...emptyContext, ...ctx });
 });
 
 export { Validator, validate };

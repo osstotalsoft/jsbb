@@ -28,7 +28,7 @@ function _logFieldPath(validator) {
 function _filterFieldPath(validator) {
   return $do(function*() {
     const [, fieldContext] = yield Reader.ask();
-    return !fieldContext.fieldFilter(fieldContext.fieldPath) ? Validator.of(Validation.Success()) : validator;
+    return !fieldContext.fieldFilter(fieldContext) ? Validator.of(Validation.Success()) : validator;
   });
 }
 

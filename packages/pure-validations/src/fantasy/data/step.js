@@ -1,6 +1,6 @@
 import { taggedSum } from 'daggy'
 import fl from 'fantasy-land'
-import { eq, lte } from '../Prelude'
+import { eq, lte } from '../prelude'
 
 const Step = taggedSum('Step', {
   Loop: ['value'],

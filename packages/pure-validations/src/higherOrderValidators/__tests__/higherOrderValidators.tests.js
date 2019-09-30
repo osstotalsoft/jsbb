@@ -17,7 +17,7 @@ describe("stopOnFirstFailure validator:", () => {
     // Assert
     expect(validation).toBe(Validation.Success());
   });
-  
+
   it("return failure when all return failure: ", () => {
     // Arrange
     const nameValidator = _ => Validation.Failure(["Wrong"]);
@@ -163,11 +163,13 @@ describe("shape validator:", () => {
       }
     };
 
-    function getInnerProp(obj) {
-      return function(searchKeyPath) {
+    function getInnerProp(context) {
+      function inner(obj, searchKeyPath) {
         const [prop, ...rest] = searchKeyPath;
-        return prop !== undefined ? getInnerProp(obj[prop])(rest) : obj;
-      };
+        return prop !== undefined ? inner(obj[prop], rest) : obj;
+      }
+
+      return inner(context.dirtyInfo, context.fieldPath) ? true : false;
     }
 
     const validator =
@@ -175,10 +177,10 @@ describe("shape validator:", () => {
         child: shape({
           name: Validator(nameValidator)
         })
-      }) |> filterFields(getInnerProp(dirtyInfo));
+      }) |> filterFields(getInnerProp);
 
     // Act
-    const validation = validate(validator, model);
+    const validation = validate(validator, model, { dirtyInfo });
 
     // Assert
     expect(validation).toBe(Validation.Success());
@@ -253,7 +255,7 @@ describe("utility validators:", () => {
     // Arrange
     const nameValidator = jest.fn(_ => Validation.Failure(["Wrong"]));
     const surnameValidator = jest.fn(_ => Validation.Success());
-    const logger = { log: jest.fn(_ => {}) };
+    const logger = { log: jest.fn(_ => { }) };
     const model = {
       child: {
         name: "testWrong",
@@ -275,17 +277,19 @@ describe("utility validators:", () => {
       })
     });
 
-    function getInnerProp(obj) {
-      return function(searchKeyPath) {
+    function getInnerProp(context) {
+      function inner(obj, searchKeyPath) {
         const [prop, ...rest] = searchKeyPath;
-        return prop !== undefined ? getInnerProp(obj[prop])(rest) : obj;
-      };
+        return prop !== undefined ? inner(obj[prop], rest) : obj;
+      }
+
+      return inner(context.dirtyInfo, context.fieldPath) ? true : false;
     }
 
     // Act
-    const decoratedValidator = validator |> filterFields(getInnerProp(dirtyInfo)) |> logTo(logger);
+    const decoratedValidator = validator |> filterFields(getInnerProp) |> logTo(logger);
 
-    const validation = model |> validate(decoratedValidator);
+    const validation = validate(decoratedValidator, model, { dirtyInfo });
 
     // Assert
     expect(validation).toBe(Validation.Success());
@@ -297,7 +301,7 @@ describe("utility validators:", () => {
     // Arrange
     const nameValidator = jest.fn(_ => Validation.Failure(["Wrong"]));
     const surnameValidator = jest.fn(_ => Validation.Success());
-    const logger = { log: jest.fn(_ => {}) };
+    const logger = { log: jest.fn(_ => { }) };
     const model = {
       children: [
         {
@@ -324,11 +328,13 @@ describe("utility validators:", () => {
       }
     };
 
-    function getInnerProp(obj) {
-      return function(searchKeyPath) {
+    function getInnerProp(context) {
+      function inner(obj, searchKeyPath) {
         const [prop, ...rest] = searchKeyPath;
-        return prop !== undefined ? getInnerProp(obj[prop])(rest) : obj;
-      };
+        return prop !== undefined ? inner(obj[prop], rest) : obj;
+      }
+
+      return inner(context.dirtyInfo, context.fieldPath) ? true : false;
     }
 
     const validator = shape({
@@ -341,9 +347,9 @@ describe("utility validators:", () => {
     });
 
     // Act
-    const decoratedValidator = validator |> filterFields(getInnerProp(dirtyInfo)) |> logTo(logger);
+    const decoratedValidator = validator |> filterFields(getInnerProp) |> logTo(logger);
 
-    const validation = model |> validate(decoratedValidator);
+    const validation = validate(decoratedValidator, model, { dirtyInfo });
 
     // Assert
     expect(validation).toBe(Validation.Success());
