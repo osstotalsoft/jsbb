@@ -2,7 +2,7 @@ import { useState, useCallback, useMemo } from 'react';
 import { Validation, validate, isValid, logTo, filterFields } from '@totalsoft/pure-validations';
 
 
-export function useValidation(rules, { useDebug: isLogEnabled = true, logger = console, fieldFilterFunc = undefined } = {}, deps = []) {
+export function useValidation(rules, { isLogEnabled = true, logger = console, fieldFilterFunc = undefined } = {}, deps = []) {
     const [validation, setValidation] = useState(Validation.Success());
     const validator = useMemo(() => {
         let newValidator = rules;

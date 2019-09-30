@@ -116,7 +116,7 @@ describe("useValidation hook", () => {
         const model = {}
 
         // Act
-        const { result } = renderHook(() => useValidation(validator, { useDebug: true, logger }))
+        const { result } = renderHook(() => useValidation(validator, { isLogEnabled: true, logger }))
         act(() => {
             const [, validate] = result.current;
             validate(model);
@@ -195,10 +195,10 @@ describe("useValidation hook", () => {
     it("changes the validation function when the logging flag changes", () => {
         // Arrange
         const validator = Validator.of(Validation.Success());
-        let useDebug = true;
+        let isLogEnabled = true;
         function callback() {
-            useDebug = !useDebug
-            return useValidation(validator, { useDebug: !useDebug })
+            isLogEnabled = !isLogEnabled
+            return useValidation(validator, { isLogEnabled: !isLogEnabled })
         }
 
         // Act
