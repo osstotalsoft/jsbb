@@ -59,4 +59,11 @@ const traverse = curry(function traverse(T, f, xs) {
   return xs[fl.traverse](T, f);
 });
 
-export { chain, $do, ap, map, lift2, concat, contramap, fold, merge, traverse };
+const empty = M => M[fl.empty]();
+
+//+ reduce :: Foldable f => (b -> a -> b) -> b -> f a -> b
+const reduce = curry(function reduce(reducer, acc, xs) {
+  return xs[fl.reduce](reducer, acc);
+});
+
+export { chain, $do, ap, map, lift2, concat, contramap, fold, merge, traverse, empty, reduce };

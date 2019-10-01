@@ -1,45 +1,12 @@
-import fl from "fantasy-land";
-import { concat } from "./fantasy/prelude";
+import RoseTree from "./fantasy/data/roseTree";
+import { Just, Nothing } from "./fantasy/data/maybe";
+import KeyValuePair from "./fantasy/data/keyValuePair";
+import Map from "./fantasy/data/map";
 
-const validationErrorPrototype = {
-  [fl.concat]: function(other) {
-    const errors = [...this.errors, ...other.errors];
-    const fields = merge(this.fields, other.fields);
-
-    return ValidationError(errors, fields);
-  },
-  getField: function(key) {
-    return this.fields[key];
-  }
-};
-
-export function ValidationError(errors = [], fields = {}) {
-  const self = Object.create(validationErrorPrototype);
-  self.errors = errors;
-  self.fields = fields;
-
-  return self;
+function ValidationError(errors, fields) {
+  const value = errors && errors.length > 0 ? Just(errors) : Nothing;
+  const children = Map.fromList(Object.entries(fields).map(([k, v]) => KeyValuePair(k, v)));
+  return RoseTree(value, children);
 }
 
-function notIsNullOrUndefined(val) {
-  return val !== null && val !== undefined;
-}
-
-function merge(leftObj, rightObj) {
-  const fields = [...new Set([...Object.keys(leftObj), ...Object.keys(rightObj)])];
-  var result = {};
-  for (let f of fields) {
-    const leftValue = leftObj[f];
-    const rightValue = rightObj[f];
-
-    if (notIsNullOrUndefined(leftValue) && notIsNullOrUndefined(rightValue)) {
-      result[f] = concat(leftValue, rightValue);
-    } else if (notIsNullOrUndefined(leftValue)) {
-      result[f] = leftValue;
-    } else {
-      result[f] = rightValue;
-    }
-  }
-
-  return result;
-}
+export default ValidationError;
