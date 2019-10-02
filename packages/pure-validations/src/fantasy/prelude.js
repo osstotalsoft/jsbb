@@ -15,6 +15,17 @@ function $do(gen) {
   return step();
 }
 
+//+ eq :: Setoid a => a -> a -> Bool
+const eq = curry(function eq(x, y) {
+  if (typeof x === typeof y && ["string", "number"].includes(typeof x)) {
+    return x === y;
+  }
+  if (typeof x[fl.equals] !== "function") {
+    console.log(x);
+  }
+  return x[fl.equals](y);
+});
+
 // chain :: Monad m => (a -> m b) -> m a -> m b
 const chain = curry(function chain(fn, ma) {
   return ma[fl.chain](fn);
@@ -66,4 +77,12 @@ const reduce = curry(function reduce(reducer, acc, xs) {
   return xs[fl.reduce](reducer, acc);
 });
 
-export { chain, $do, ap, map, lift2, concat, contramap, fold, merge, traverse, empty, reduce };
+function id(x) {
+  return x;
+}
+
+function constant(k) {
+  return _ => k;
+}
+
+export { eq, chain, $do, ap, map, lift2, concat, contramap, fold, merge, traverse, empty, reduce, id, constant };

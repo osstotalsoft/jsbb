@@ -1,6 +1,8 @@
 import { tagged } from "daggy";
 import fl from "fantasy-land";
-import { map, equals, concat, empty } from "../prelude";
+import { map, eq, concat, empty } from "../prelude";
+import curry from "lodash.curry";
+import Map from './map';
 
 //data RoseTree a b :: Maybe a * Map b (RoseTree a)
 const RoseTree = tagged("RoseTree", ["value", "children"]);
@@ -9,9 +11,18 @@ RoseTree.Leaf = function(value) {
   return RoseTree(value, empty(Map));
 };
 
+RoseTree.getValue = curry(function getValue(tree) {
+  return tree.value;
+})
+
+RoseTree.getChildAt = curry(function getChildAt(key, tree) {
+  const result = tree.children |> Map.getValueAt(key);
+  return result;
+})
+
 /* Setoid a => Setoid (RoseTree a) */
 RoseTree.prototype[fl.equals] = function(that) {
-  return equals(this.value, that.value) && equals(this.children, that.children);
+  return eq(this.value, that.value) && eq(this.children, that.children);
 };
 
 /* Functor RoseTree */

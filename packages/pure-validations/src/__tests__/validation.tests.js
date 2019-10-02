@@ -1,6 +1,7 @@
 import { Validation, getErrors, getInner } from "../validation";
 import { concat } from "../fantasy/prelude";
 import fl from "fantasy-land";
+import ValidationError from "../validationError";
 
 function applyLaw(law) {
   return (...args) => isEquivalent => law(isEquivalent)(...args);
@@ -64,18 +65,40 @@ describe("validation tests suite:", () => {
   it("get inner validation:", () => {
     // Arrange
     const errors = ["Err2", "Err1"];
-    const innerValidation = Validation.Failure(errors);
+    const innerValidationError = ValidationError(errors);
     const validation = Validation.Failure([], {
-      field1: Validation.Failure([], {
-        field11: innerValidation
+      field1: ValidationError([], {
+        field11: innerValidationError
       })
     });
 
-    var result = validation |> getInner(["field1", "field11"]);
+    const resultValidation = validation |> getInner(["field1", "field11"]);
+    const resultValidationError = resultValidation.cata({
+      Just: x => x,
+      Nothing: _ => null
+    });
 
     // Assert
-    expect(result).toBe(innerValidation);
+    expect(resultValidationError).toBe(innerValidationError);
   });
+
+  // it("get inner validation called twice returns same refernce :", () => {
+  //   // Arrange
+  //   const errors = ["Err2", "Err1"];
+  //   const innerValidationError = ValidationError(errors);
+  //   const validation = Validation.Failure([], {
+  //     field1: ValidationError([], {
+  //       field11: innerValidationError
+  //     })
+  //   });
+
+  //   const v1 = validation |> getInner(["field1", "field11"]);
+  //   const v2 = validation |> getInner(["field1", "field11"]);
+    
+
+  //   // Assert
+  //   expect(v1).toBe(v2);
+  // });
 
   it("get inner validation should return success if path not found:", () => {
     // Arrange

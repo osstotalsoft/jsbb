@@ -2,7 +2,7 @@ import { Validation } from "../validation";
 import { validate, Validator } from "../validator";
 import { required, maxLength, greaterThan, unique } from "../primitiveValidators";
 import { shape, items, stopOnFirstFailure, when, fromModel, logTo, concatFailure } from "../higherOrderValidators";
-
+import ValidationError from "../validationError";
 describe("composed validators:", () => {
   it("readme validator: ", () => {
     const gdprAgreement = () => true;
@@ -52,7 +52,7 @@ describe("composed validators:", () => {
     const validation = model |> validate(validator);
 
     // Assert
-    expect(validation).toStrictEqual(Validation.Failure([], { email: Validation.Failure(["Wrong"]) }));
+    expect(validation).toStrictEqual(Validation.Failure([], { email: ValidationError(["Wrong"]) }));
   });
 
   it("stopOnFirstFailure and shape validator success: ", () => {
@@ -122,7 +122,7 @@ describe("composed validators:", () => {
     // Assert
     expect(validation).toStrictEqual(
       Validation.Failure([], {
-        name: Validation.Failure(["Too short"])
+        name: ValidationError(["Too short"])
       })
     );
   });
@@ -145,7 +145,7 @@ describe("composed validators:", () => {
     // Assert
     expect(validation).toStrictEqual(
       Validation.Failure([], {
-        email: Validation.Failure(["Invalid email"])
+        email: ValidationError(["Invalid email"])
       })
     );
   });
@@ -168,8 +168,8 @@ describe("composed validators:", () => {
     // Assert
     expect(validation).toStrictEqual(
       Validation.Failure([], {
-        name: Validation.Failure(["Too short"]),
-        email: Validation.Failure(["Invalid email"])
+        name: ValidationError(["Too short"]),
+        email: ValidationError(["Invalid email"])
       })
     );
   });
@@ -201,7 +201,7 @@ describe("composed validators:", () => {
     const validation = model |> validate(validator);
 
     // Assert
-    expect(validation).toStrictEqual(Validation.Failure([], { email: Validation.Failure(["Too short"]) }));
+    expect(validation).toStrictEqual(Validation.Failure([], { email: ValidationError(["Too short"]) }));
   });
 
   it("stopOnFirstFailure and shape validators overlapping fields validators failure - fail second: ", () => {
@@ -216,7 +216,7 @@ describe("composed validators:", () => {
     const validation = model |> validate(validator);
 
     // Assert
-    expect(validation).toStrictEqual(Validation.Failure([], { email: Validation.Failure(["Invalid email"]) }));
+    expect(validation).toStrictEqual(Validation.Failure([], { email: ValidationError(["Invalid email"]) }));
   });
 
   it("concatFailure and shape validators overlapping fields validators failure - fail both: ", () => {
@@ -231,7 +231,7 @@ describe("composed validators:", () => {
     const validation = model |> validate(validator);
 
     // Assert
-    expect(validation).toStrictEqual(Validation.Failure([], { email: Validation.Failure(["Too short", "Invalid email"]) }));
+    expect(validation).toStrictEqual(Validation.Failure([], { email: ValidationError(["Too short", "Invalid email"]) }));
   });
 
   it("stopOnFirstFailure and items validators success: ", () => {
@@ -261,7 +261,7 @@ describe("composed validators:", () => {
     const validation = model |> validate(validator);
 
     // Assert
-    expect(validation).toStrictEqual(Validation.Failure([], { ["0"]: Validation.Failure(["Wrong"]) }));
+    expect(validation).toStrictEqual(Validation.Failure([], { ["0"]: ValidationError(["Wrong"]) }));
   });
 
   it("stopOnFirstFailure and items validators - fail only one item", () => {
@@ -278,7 +278,7 @@ describe("composed validators:", () => {
     // Assert
     expect(validation).toStrictEqual(
       Validation.Failure([], {
-        ["1"]: Validation.Failure(["Wrong"])
+        ["1"]: ValidationError(["Wrong"])
       })
     );
   });
@@ -310,7 +310,7 @@ describe("composed validators:", () => {
     const validation = model |> validate(validator);
 
     // Assert
-    expect(validation).toStrictEqual(Validation.Success({ ["0"]: Validation.Success() }));
+    expect(validation).toStrictEqual(Validation.Success());
   });
 
   it("stopOnFirstFailure and items validators overlapping items validators - fail first: ", () => {
@@ -325,7 +325,7 @@ describe("composed validators:", () => {
     const validation = model |> validate(validator);
 
     // Assert
-    expect(validation).toStrictEqual(Validation.Failure([], { ["0"]: Validation.Failure(["Wrong"]) }));
+    expect(validation).toStrictEqual(Validation.Failure([], { ["0"]: ValidationError(["Wrong"]) }));
   });
 
   it("stopOnFirstFailure and items validators overlapping items validators failure - fail second: ", () => {
@@ -340,10 +340,10 @@ describe("composed validators:", () => {
     const validation = model |> validate(validator);
 
     // Assert
-    expect(validation).toStrictEqual(Validation.Failure([], { ["0"]: Validation.Failure(["Too short"]) }));
+    expect(validation).toStrictEqual(Validation.Failure([], { ["0"]: ValidationError(["Too short"]) }));
   });
 
-  it("concatFailure and items validators overlapping items validators failure - fail both: ", () => {
+  it.only("concatFailure and items validators overlapping items validators failure - fail both: ", () => {
     // Arrange
     const nameValidator = Validator.of(Validation.Failure(["Wrong"]));
     const minLengthValidator = Validator.of(Validation.Failure(["Too short"]));
@@ -355,6 +355,6 @@ describe("composed validators:", () => {
     const validation = model |> validate(validator);
 
     // Assert
-    expect(validation).toStrictEqual(Validation.Failure([], { ["0"]: Validation.Failure(["Wrong", "Too short"]) }));
+    expect(validation).toStrictEqual(Validation.Failure([], { ["0"]: ValidationError(["Wrong", "Too short"]) }));
   });
 });

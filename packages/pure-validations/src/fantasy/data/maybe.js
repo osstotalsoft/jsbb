@@ -2,7 +2,7 @@ import { taggedSum } from "daggy";
 import fl from "fantasy-land";
 
 import { Loop, Done } from "./step";
-import { eq, lte, concat, map } from "../prelude";
+import { eq, lte, concat, map, lift2, $do } from "../prelude";
 
 //- The `Maybe` type is used to model "nullable" values in a type-
 //- safe way. Instead of returning a value OR null, return a Just
@@ -17,15 +17,7 @@ const { Just, Nothing } = Maybe;
 
 /* Setoid a => Setoid (Maybe a) */ {
   Maybe.prototype[fl.equals] = function(that) {
-    return this.cata({
-      Just: x =>
-        that.cata({
-          Just: eq(x),
-          Nothing: () => false
-        }),
-
-      Nothing: () => that instanceof Nothing
-    });
+    return lift2(eq, this, that);
   };
 }
 
@@ -46,16 +38,9 @@ const { Just, Nothing } = Maybe;
 /* Semigroup a => Semigroup (Maybe a) */ {
   Maybe.prototype[fl.concat] = function(that) {
     return this.cata({
-      Just: x =>
-        that.cata({
-          Just: y => {
-            const concatValue = concat(x, y);
-            return concatValue !== x ? Just(concatValue) : this;
-          },
-          Nothing: () => this
-        }),
+      Just: x => that |> map(concat(x)),
       Nothing: () => that
-    });
+    })
   };
 }
 
@@ -75,7 +60,7 @@ const { Just, Nothing } = Maybe;
 /* Apply Maybe */ {
   Maybe.prototype[fl.ap] = function(that) {
     return this.cata({
-      Just: f => that.map(f),
+      Just: f => that |> map(f),
       Nothing: () => this
     });
   };

@@ -3,8 +3,8 @@ import { validate } from "../../validator"
 import { unique, required, email, between, greaterThan, lessThan, minLength, maxLength, matches, atLeastOne } from "../index";
 import i18next from "i18next";
 
-describe("mandatory primitive validator:", () => {
-  it("mandatory validator success", () => {
+describe("required validator:", () => {
+  it("required validator success", () => {
     // Arrange
     const model = "value";
     const validator = required;
@@ -16,7 +16,7 @@ describe("mandatory primitive validator:", () => {
     expect(validation).toStrictEqual(Validation.Success());
   });
 
-  it("mandatory validator error - empty string", () => {
+  it("required validator error - empty string", () => {
     // Arrange
     const model = "";
     const validator = required;
@@ -28,7 +28,7 @@ describe("mandatory primitive validator:", () => {
     expect(validation).toStrictEqual(Validation.Failure([i18next.t("Validations.Generic.Mandatory")]));
   });
 
-  it("mandatory validator error - null", () => {
+  it("required validator error - null", () => {
     // Arrange
     const model = null;
     const validator = required;
@@ -40,7 +40,7 @@ describe("mandatory primitive validator:", () => {
     expect(validation).toStrictEqual(Validation.Failure([i18next.t("Validations.Generic.Mandatory")]));
   });
 
-  it("mandatory validator error - undefined", () => {
+  it("required validator error - undefined", () => {
     // Arrange
     const model = null;
     const validator = required;
@@ -53,7 +53,7 @@ describe("mandatory primitive validator:", () => {
   });
 });
 
-describe("atLeastOne primitive validator:", () => {
+describe("atLeastOne validator:", () => {
   it("atLeastOne validator error - empty array", () => {
     // Arrange
     const model = [];
@@ -67,7 +67,7 @@ describe("atLeastOne primitive validator:", () => {
   });
 });
 
-describe("format primitive validators:", () => {
+describe("format validators:", () => {
   it("email validator success", () => {
     // Arrange
     const model = "aa@bb.cc";
@@ -129,7 +129,7 @@ describe("format primitive validators:", () => {
   });
 });
 
-describe("comparison primitive validators:", () => {
+describe("comparison validators:", () => {
   it("between validator success", () => {
     // Arrange
     const model = 4;
@@ -215,7 +215,7 @@ describe("comparison primitive validators:", () => {
   });
 });
 
-describe("length primitive validators:", () => {
+describe("length validators:", () => {
   it("minLength validator success", () => {
     // Arrange
     const model = "12345";
@@ -265,7 +265,7 @@ describe("length primitive validators:", () => {
   });
 });
 
-describe("unique primitive validator:", () => {
+describe("unique validator:", () => {
   it("unique validator success - no selector", () => {
     // Arrange
     const model = [1, 2, 3];

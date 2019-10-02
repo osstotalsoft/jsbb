@@ -2,14 +2,14 @@ import { taggedSum } from "daggy";
 import fl from "fantasy-land";
 
 import { Chain } from "../Util/Derivations";
-import { concat, lift2 } from "../Prelude";
+import { concat, lift2, eq } from "../Prelude";
 
 //- List is basically the same as `Array`, though much easier for our
 //- examples. If one of the methods in Prototype/Array looks
 //- frightening, take a look at the same method here: all the `Array`
 //- methods act in the exact same way, but `List` is much clearer!
 
-const List = taggedSum({
+const List = taggedSum("List", {
   Cons: ["head", "tail"],
   Nil: []
 });
@@ -22,7 +22,7 @@ List.toArray = function(list) {
   const result = [];
   let start = list;
 
-  while (start instanceof Cons) {
+  while (Cons.is(start)) {
     result.push(start.head);
     start = start.tail;
   }
@@ -43,9 +43,13 @@ List.fromArray = function(arr) {
 /* Setoid a => Setoid (List a) */ {
   List.prototype[fl.equals] = function(that) {
     return this.cata({
-      Cons: (head, tail) => head[fl.equals](that.head) && tail[fl.equals](that.tail),
+      Cons: (head, tail) => {
+        return eq(head, that.head) && tail[fl.equals](that.tail)
+      },
 
-      Nil: () => that instanceof Nil
+      Nil: () => {
+        return that.is(Nil);
+      }
     });
   };
 }

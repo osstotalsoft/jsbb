@@ -1,9 +1,9 @@
 import { map, contramap, $do } from "../fantasy/prelude";
 import Reader from "../fantasy/data/reader";
 import { Validation, isValid } from "../validation";
+import ValidationError from "../validationError";
 import { Validator } from "../validator";
 import { checkValidators } from "./_utils";
-import curry from "lodash.curry";
 
 export default function field(key, validator) {
   checkValidators(validator);
@@ -12,7 +12,7 @@ export default function field(key, validator) {
     |> _logFieldPath
     |> _filterFieldPath
     |> contramap((model, ctx) => [model[key], _getFieldContext(ctx, key)])
-    |> map(_mapFieldToObjValidation(key))
+    |> map(map(ValidationError.moveToField(key)))
   );
 }
 
@@ -31,11 +31,6 @@ function _filterFieldPath(validator) {
     return !fieldContext.fieldFilter(fieldContext) ? Validator.of(Validation.Success()) : validator;
   });
 }
-
-const _mapFieldToObjValidation = curry(function _mapFieldToObjValidation(key, validation) {
-  const fields = { [key]: validation };
-  return isValid(validation) ? Validation.Success() : Validation.Failure([], fields);
-});
 
 function _getFieldContext(context, key) {
   return { ...context, fieldPath: [...context.fieldPath, key] };

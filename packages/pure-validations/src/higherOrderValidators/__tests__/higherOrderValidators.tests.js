@@ -1,6 +1,7 @@
 import { Validation } from "../../validation";
 import { Validator, validate } from "../../validator";
 import { field, shape, items, stopOnFirstFailure, concatFailure, when, fromModel, logTo, filterFields } from "../index";
+import ValidationError from "../../validationError";
 
 describe("stopOnFirstFailure validator:", () => {
   it("returns success when all return success: ", () => {
@@ -48,7 +49,7 @@ describe("concatFailure validator:", () => {
     const validation = model |> validate(validator);
 
     // Assert
-    expect(validation.value).toStrictEqual(Validation.Failure(["Wrong", "Too long"]).value);
+    expect(validation).toStrictEqual(Validation.Failure(["Wrong", "Too long"]));
   });
 })
 
@@ -104,7 +105,7 @@ describe("single field validator:", () => {
     const validation = model |> validate(validator);
 
     // Assert
-    expect(validation).toStrictEqual(Validation.Failure([], { field1: Validation.Failure(["Wrong"]) }));
+    expect(validation).toStrictEqual(Validation.Failure([], { field1: ValidationError(["Wrong"]) }));
   });
 
   it("returns failure when field not exists: ", () => {
@@ -117,7 +118,7 @@ describe("single field validator:", () => {
     const validation = model |> validate(validator);
 
     // Assert
-    expect(validation).toStrictEqual(Validation.Failure([], { field1: Validation.Failure(["Wrong"]) }));
+    expect(validation).toStrictEqual(Validation.Failure([], { field1: ValidationError(["Wrong"]) }));
   });
 });
 
@@ -145,7 +146,7 @@ describe("shape validator:", () => {
     const validation = model |> validate(validator);
 
     // Assert
-    expect(validation).toStrictEqual(Validation.Failure([], { field1: Validation.Failure(["Wrong"]) }));
+    expect(validation).toStrictEqual(Validation.Failure([], { field1: ValidationError(["Wrong"]) }));
   });
 
   it("returns failure when used with path predicate - predicate false ", () => {
@@ -212,7 +213,7 @@ describe("items validators:", () => {
     const validation = model |> validate(validator);
 
     // Assert
-    expect(validation).toStrictEqual(Validation.Failure([], { ["0"]: Validation.Failure(["Wrong"]) }));
+    expect(validation).toStrictEqual(Validation.Failure([], { ["0"]: ValidationError(["Wrong"]) }));
   });
 });
 
@@ -246,7 +247,7 @@ describe("fromModel validator:", () => {
     const validation = model |> validate(validator);
 
     // Assert
-    expect(validation).toStrictEqual(Validation.Failure([], { name: Validation.Failure(["Too long"]) }));
+    expect(validation).toStrictEqual(Validation.Failure([], { name: ValidationError(["Too long"]) }));
   });
 });
 
