@@ -343,7 +343,7 @@ describe("composed validators:", () => {
     expect(validation).toStrictEqual(Validation.Failure([], { ["0"]: ValidationError(["Too short"]) }));
   });
 
-  it.only("concatFailure and items validators overlapping items validators failure - fail both: ", () => {
+  it("concatFailure and items validators overlapping items validators failure - fail both: ", () => {
     // Arrange
     const nameValidator = Validator.of(Validation.Failure(["Wrong"]));
     const minLengthValidator = Validator.of(Validation.Failure(["Too short"]));

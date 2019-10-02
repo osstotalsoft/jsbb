@@ -2,7 +2,7 @@ import { taggedSum } from "daggy";
 import fl from "fantasy-land";
 
 import { Loop, Done } from "./step";
-import { eq, lte, concat, map, lift2, $do } from "../prelude";
+import { eq, lte, concat, map, lift2 } from "../prelude";
 
 //- The `Maybe` type is used to model "nullable" values in a type-
 //- safe way. Instead of returning a value OR null, return a Just
@@ -37,10 +37,21 @@ const { Just, Nothing } = Maybe;
 
 /* Semigroup a => Semigroup (Maybe a) */ {
   Maybe.prototype[fl.concat] = function(that) {
+    // return this.cata({
+    //   Just: x => that |> map(concat(x)),
+    //   Nothing: () => that
+    // })
     return this.cata({
-      Just: x => that |> map(concat(x)),
+      Just: x =>
+        that.cata({
+          Just: y => {
+            const concatValue = concat(x, y);
+            return concatValue !== x ? Just(concatValue) : this;
+          },
+          Nothing: () => this
+        }),
       Nothing: () => that
-    })
+    });
   };
 }
 
