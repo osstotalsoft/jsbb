@@ -4,7 +4,8 @@
   "description": "React extensions for the \"pure-validations\" validation api",
   "main": "lib/index.js",
   "scripts": {
-    "build": "babel src/ -d lib/",
+    "clean": "rimraf lib",
+    "build": "npm run clean && babel src/ -d lib/",
     "prepare": "npm run build",
     "test": "jest --watchAll"
   },
@@ -42,7 +43,8 @@
     "jest": "^24.9.0",
     "prettier-eslint": "^9.0.0",
     "react": "^16.9.0",
-    "react-test-renderer": "^16.9.0"
+    "react-test-renderer": "^16.9.0",
+    "rimraf": "^3.0.0"
   },
   "peerDependencies": {
     "react": "^16.9.0"
