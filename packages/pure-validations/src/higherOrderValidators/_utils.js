@@ -1,4 +1,4 @@
-import { Validator } from "../validator";
+import Reader from "../fantasy/data/reader";
 
 export function variadicApply(variadicFn) {
   const res = function(...args) {
@@ -16,12 +16,8 @@ export function variadicApply(variadicFn) {
 
 export function checkValidators(...validators) {
   validators.forEach(function(validator) {
-    if (!Validator.is(validator)) {
-      throw new Error(`Value ${prettyPrint(validator)} is not a validator!`);
+    if (!Reader.is(validator)) {
+      throw new Error(`Value ${validator.toString()} is not a validator!`);
     }
   });
-}
-
-function prettyPrint(obj) {
-  return typeof obj === "function" ? obj.toString() : JSON.stringify(obj);
 }

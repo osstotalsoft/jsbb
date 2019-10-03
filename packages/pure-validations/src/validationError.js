@@ -1,45 +1,24 @@
-import fl from "fantasy-land";
-import { concat } from "./fantasy/prelude";
+import List from "./fantasy/data/list";
+import Maybe from "./fantasy/data/maybe";
+import Map from "./fantasy/data/map";
+import RoseTree from "./fantasy/data/roseTree";
+import curry from "lodash.curry";
 
-const validationErrorPrototype = {
-  [fl.concat]: function(other) {
-    const errors = [...this.errors, ...other.errors];
-    const fields = merge(this.fields, other.fields);
+const { Just, Nothing } = Maybe;
 
-    return ValidationError(errors, fields);
-  },
-  getField: function(key) {
-    return this.fields[key];
-  }
-};
+function ValidationError(errors, fields = {}) {
+  const maybeError =
+    Array.isArray(errors) && errors.length > 0 ? Just(List.fromArray(errors)) : typeof errors === "string" ? Just(List.fromArray([errors])) : Nothing;
 
-export function ValidationError(errors = [], fields = {}) {
-  const self = Object.create(validationErrorPrototype);
-  self.errors = errors;
-  self.fields = fields;
+  const fieldsMap = Map.fromObj(fields);
 
-  return self;
+  return RoseTree(maybeError, fieldsMap);
 }
 
-function notIsNullOrUndefined(val) {
-  return val !== null && val !== undefined;
-}
+ValidationError.getField = RoseTree.getChildAt;
 
-function merge(leftObj, rightObj) {
-  const fields = [...new Set([...Object.keys(leftObj), ...Object.keys(rightObj)])];
-  var result = {};
-  for (let f of fields) {
-    const leftValue = leftObj[f];
-    const rightValue = rightObj[f];
+ValidationError.moveToField = curry(function moveToField(field, error) {
+  return ValidationError([], { [field]: error });
+});
 
-    if (notIsNullOrUndefined(leftValue) && notIsNullOrUndefined(rightValue)) {
-      result[f] = concat(leftValue, rightValue);
-    } else if (notIsNullOrUndefined(leftValue)) {
-      result[f] = leftValue;
-    } else {
-      result[f] = rightValue;
-    }
-  }
-
-  return result;
-}
+export default ValidationError;
