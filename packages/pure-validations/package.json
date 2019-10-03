@@ -1,6 +1,6 @@
 {
   "name": "@totalsoft/pure-validations",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "Validation api via functional composition",
   "main": "lib/index.js",
   "scripts": {
@@ -30,9 +30,9 @@
     "eslint": "^6.2.0",
     "eslint-plugin-babel": "^5.3.0",
     "eslint-plugin-jest": "^22.16.0",
+    "i18next": "^17.0.11",
     "jest": "^24.9.0",
-    "prettier-eslint": "^9.0.0",
-    "i18next": "^17.0.11"
+    "prettier-eslint": "^9.0.0"
   },
   "dependencies": {
     "daggy": "^1.4.0",
