@@ -15,6 +15,9 @@
   },
   "author": "TotalSoft",
   "license": "ISC",
+  "publishConfig": {
+    "access": "public"
+  },
   "bugs": {
     "url": "https://github.com/osstotalsoft/jsbb/issues"
   },
