@@ -1,5 +1,7 @@
-import { Validation } from "../validation";
 import { Validator } from "../validator";
+import { Success, Failure } from "../validation";
+import ValidationError from "../validationError";
+
 import i18next from "i18next";
 
 const defaultMessages = {
@@ -21,65 +23,63 @@ function translate(key, args) {
 
 export const required = Validator(x =>
   x !== null && x !== undefined && (typeof x === "string" ? x !== "" : true)
-    ? Validation.Success()
-    : Validation.Failure([translate("Validations.Generic.Mandatory")])
+    ? Success
+    : Failure(ValidationError(translate("Validations.Generic.Mandatory")))
 );
 
 export const atLeastOne = Validator(x =>
-  Array.isArray(x) && x.length ? Validation.Success() : Validation.Failure([translate("Validations.Generic.AtLeastOne")])
+  Array.isArray(x) && x.length ? Success : Failure(ValidationError(translate("Validations.Generic.AtLeastOne")))
 );
 
 export const email = Validator(x => {
   const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-  return re.test(String(x).toLowerCase()) ? Validation.Success() : Validation.Failure([translate("Validations.Generic.Email")]);
+  return re.test(String(x).toLowerCase()) ? Success : Failure(ValidationError(translate("Validations.Generic.Email")));
 });
 
 export function matches(regex) {
-  return Validator(x => (regex.test(String(x)) ? Validation.Success() : Validation.Failure([translate("Validations.Generic.Regex")])));
+  return Validator(x => (regex.test(String(x)) ? Success : Failure(ValidationError(translate("Validations.Generic.Regex")))));
 }
 
 export function between(min, max) {
   return Validator(value =>
     value === null || value === undefined || (value >= min && value <= max)
-      ? Validation.Success()
-      : Validation.Failure([translate("Validations.Generic.OutOfRange", { min, max })])
+      ? Success
+      : Failure(ValidationError(translate("Validations.Generic.OutOfRange", { min, max })))
   );
 }
 
 export function greaterThan(min) {
   return Validator(value =>
-    value === null || value === undefined || value > min
-      ? Validation.Success()
-      : Validation.Failure([translate("Validations.Generic.Greater", { min })])
+    value === null || value === undefined || value > min ? Success : Failure(ValidationError(translate("Validations.Generic.Greater", { min })))
   );
 }
 
 export function lessThan(max) {
   return Validator(value =>
-    value === null || value === undefined || value < max ? Validation.Success() : Validation.Failure([translate("Validations.Generic.Less", { max })])
+    value === null || value === undefined || value < max ? Success : Failure(ValidationError(translate("Validations.Generic.Less", { max })))
   );
 }
 
 export function minLength(min) {
   return Validator(value =>
     value === null || value === undefined || value.length > min
-      ? Validation.Success()
-      : Validation.Failure([translate("Validations.Generic.MinCharacters", { min })])
+      ? Success
+      : Failure(ValidationError(translate("Validations.Generic.MinCharacters", { min })))
   );
 }
 
 export function maxLength(max) {
   return Validator(value =>
     value === null || value === undefined || value.length < max
-      ? Validation.Success()
-      : Validation.Failure([translate("Validations.Generic.MaxCharacters", { max })])
+      ? Success
+      : Failure(ValidationError(translate("Validations.Generic.MaxCharacters", { max })))
   );
 }
 
 export function unique(selector) {
   return Validator(list => {
     if (list === null || list === undefined) {
-      return Validation.Success();
+      return Success;
     }
 
     let selectorFn;
@@ -101,7 +101,7 @@ export function unique(selector) {
     }
 
     return [...new Set(list.map(selectorFn))].length === list.length
-      ? Validation.Success()
-      : Validation.Failure([translate("Validations.Generic.Unique", { selector: selector ? selector.toString() : "" })]);
+      ? Success
+      : Failure(ValidationError(translate("Validations.Generic.Unique", { selector: selector ? selector.toString() : "" })));
   });
 }

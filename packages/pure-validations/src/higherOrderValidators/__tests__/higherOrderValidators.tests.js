@@ -1,4 +1,4 @@
-import { Validation } from "../../validation";
+import { Success, Failure } from "../../validation";
 import { Validator, validate } from "../../validator";
 import { field, shape, items, stopOnFirstFailure, concatFailure, when, fromModel, logTo, filterFields } from "../index";
 import ValidationError from "../../validationError";
@@ -6,8 +6,8 @@ import ValidationError from "../../validationError";
 describe("stopOnFirstFailure validator:", () => {
   it("returns success when all return success: ", () => {
     // Arrange
-    const nameValidator = Validator.of(Validation.Success());
-    const minLengthValidator = Validator.of(Validation.Success());
+    const nameValidator = Validator.of(Success);
+    const minLengthValidator = Validator.of(Success);
     const model = "";
 
     const validator = stopOnFirstFailure(nameValidator, minLengthValidator);
@@ -16,13 +16,13 @@ describe("stopOnFirstFailure validator:", () => {
     const validation = model |> validate(validator);
 
     // Assert
-    expect(validation).toBe(Validation.Success());
+    expect(validation).toBe(Success);
   });
 
   it("return failure when all return failure: ", () => {
     // Arrange
-    const nameValidator = _ => Validation.Failure(["Wrong"]);
-    const maxLengthValidator = jest.fn(_ => Validation.Failure(["Too long"]));
+    const nameValidator = _ => Failure(ValidationError("Wrong"));
+    const maxLengthValidator = jest.fn(_ => Failure(ValidationError("Too long")));
     const model = "testWrong";
 
     const validator = stopOnFirstFailure(Validator(nameValidator), Validator(maxLengthValidator));
@@ -31,16 +31,16 @@ describe("stopOnFirstFailure validator:", () => {
     const validation = model |> validate(validator);
 
     // Assert
-    expect(validation).toStrictEqual(Validation.Failure(["Wrong"]));
+    expect(validation).toStrictEqual(Failure(ValidationError("Wrong")));
     expect(maxLengthValidator.mock.calls.length).toBe(0);
   });
-})
+});
 
 describe("concatFailure validator:", () => {
   it("returns failure when all return failure: ", () => {
     // Arrange
-    const nameValidator = Validator.of(Validation.Failure(["Wrong"]));
-    const maxLengthValidator = Validator.of(Validation.Failure(["Too long"]));
+    const nameValidator = Validator.of(Failure(ValidationError("Wrong")));
+    const maxLengthValidator = Validator.of(Failure(ValidationError("Too long")));
     const model = "";
 
     const validator = concatFailure(nameValidator, maxLengthValidator);
@@ -49,14 +49,14 @@ describe("concatFailure validator:", () => {
     const validation = model |> validate(validator);
 
     // Assert
-    expect(validation).toStrictEqual(Validation.Failure(["Wrong", "Too long"]));
+    expect(validation).toStrictEqual(Failure(ValidationError(["Wrong", "Too long"])));
   });
-})
+});
 
 describe("when validator:", () => {
   it("returns failure when predicate returns true and inner validator returns failure:", () => {
     // Arrange
-    const nameValidator = Validator.of(Validation.Failure(["Wrong"]));
+    const nameValidator = Validator.of(Failure(ValidationError("Wrong")));
     const model = "testWrong";
     const validator = when(_ => true, nameValidator);
 
@@ -64,12 +64,12 @@ describe("when validator:", () => {
     const validation = model |> validate(validator);
 
     // Assert
-    expect(validation).toStrictEqual(Validation.Failure(["Wrong"]));
+    expect(validation).toStrictEqual(Failure(ValidationError("Wrong")));
   });
 
   it("returns succes when predicate returns false and inner validator returns failure:", () => {
     // Arrange
-    const nameValidator = Validator.of(Validation.Failure(["Wrong"]));
+    const nameValidator = Validator.of(Failure(ValidationError("Wrong")));
     const model = "testWrong";
     const validator = when(_ => false, nameValidator);
 
@@ -77,14 +77,14 @@ describe("when validator:", () => {
     const validation = model |> validate(validator);
 
     // Assert
-    expect(validation).toBe(Validation.Success());
+    expect(validation).toBe(Success);
   });
 });
 
 describe("single field validator:", () => {
   it("returns success when field validator returns success: ", () => {
     // Arrange
-    const fieldValidator = Validator.of(Validation.Success());
+    const fieldValidator = Validator.of(Success);
     const model = { field1: "test" };
     const validator = field("field1", fieldValidator);
 
@@ -92,12 +92,12 @@ describe("single field validator:", () => {
     const validation = model |> validate(validator);
 
     // Assert
-    expect(validation).toStrictEqual(Validation.Success());
+    expect(validation).toStrictEqual(Success);
   });
 
   it("returns failure when field validator returns failure: ", () => {
     // Arrange
-    const fieldValidator = Validator.of(Validation.Failure(["Wrong"]));
+    const fieldValidator = Validator.of(Failure(ValidationError("Wrong")));
     const model = { field1: "testWrong" };
     const validator = field("field1", fieldValidator);
 
@@ -105,12 +105,12 @@ describe("single field validator:", () => {
     const validation = model |> validate(validator);
 
     // Assert
-    expect(validation).toStrictEqual(Validation.Failure([], { field1: ValidationError(["Wrong"]) }));
+    expect(validation).toStrictEqual(Failure(ValidationError([], { field1: ValidationError("Wrong") })));
   });
 
   it("returns failure when field not exists: ", () => {
     // Arrange
-    const fieldValidator = Validator.of(Validation.Failure(["Wrong"]));
+    const fieldValidator = Validator.of(Failure(ValidationError("Wrong")));
     const model = {};
     const validator = field("field1", fieldValidator);
 
@@ -118,14 +118,14 @@ describe("single field validator:", () => {
     const validation = model |> validate(validator);
 
     // Assert
-    expect(validation).toStrictEqual(Validation.Failure([], { field1: ValidationError(["Wrong"]) }));
+    expect(validation).toStrictEqual(Failure(ValidationError([], { field1: ValidationError("Wrong") })));
   });
 });
 
 describe("shape validator:", () => {
   it("returns success when single field validator returns success: ", () => {
     // Arrange
-    const fieldValidator = Validator.of(Validation.Success());
+    const fieldValidator = Validator.of(Success);
     const model = { field1: "test" };
     const validator = shape({ field1: fieldValidator });
 
@@ -133,12 +133,12 @@ describe("shape validator:", () => {
     const validation = model |> validate(validator);
 
     // Assert
-    expect(validation).toStrictEqual(Validation.Success());
+    expect(validation).toStrictEqual(Success);
   });
 
   it("returns failure when single field validator returns failure: ", () => {
     // Arrange
-    const fieldValidator = Validator.of(Validation.Failure(["Wrong"]));
+    const fieldValidator = Validator.of(Failure(ValidationError("Wrong")));
     const model = { field1: "testWrong" };
     const validator = shape({ field1: fieldValidator });
 
@@ -146,12 +146,12 @@ describe("shape validator:", () => {
     const validation = model |> validate(validator);
 
     // Assert
-    expect(validation).toStrictEqual(Validation.Failure([], { field1: ValidationError(["Wrong"]) }));
+    expect(validation).toStrictEqual(Failure(ValidationError([], { field1: ValidationError("Wrong") })));
   });
 
   it("returns failure when used with path predicate - predicate false ", () => {
     // Arrange
-    const nameValidator = jest.fn(_ => Validation.Failure(["Wrong"]));
+    const nameValidator = jest.fn(_ => Failure(ValidationError("Wrong")));
     const model = {
       child: {
         name: "testWrong"
@@ -184,7 +184,7 @@ describe("shape validator:", () => {
     const validation = validate(validator, model, { dirtyInfo });
 
     // Assert
-    expect(validation).toBe(Validation.Success());
+    expect(validation).toBe(Success);
     expect(nameValidator.mock.calls.length).toBe(0);
   });
 });
@@ -192,7 +192,7 @@ describe("shape validator:", () => {
 describe("items validators:", () => {
   it("returns success when item validator returns success: ", () => {
     // Arrange
-    const itemValidator = Validator.of(Validation.Success());
+    const itemValidator = Validator.of(Success);
     const model = ["test"];
     const validator = items(itemValidator);
 
@@ -200,12 +200,12 @@ describe("items validators:", () => {
     const validation = model |> validate(validator);
 
     // Assert
-    expect(validation).toStrictEqual(Validation.Success({ ["0"]: Validation.Success() }));
+    expect(validation).toStrictEqual(Success);
   });
 
   it("returns failure when item validator returns failure: ", () => {
     // Arrange
-    const itemValidator = Validator.of(Validation.Failure(["Wrong"]));
+    const itemValidator = Validator.of(Failure(ValidationError("Wrong")));
     const model = ["testWrong"];
     const validator = items(itemValidator);
 
@@ -213,14 +213,14 @@ describe("items validators:", () => {
     const validation = model |> validate(validator);
 
     // Assert
-    expect(validation).toStrictEqual(Validation.Failure([], { ["0"]: ValidationError(["Wrong"]) }));
+    expect(validation).toStrictEqual(Failure(ValidationError([], { ["0"]: ValidationError("Wrong") })));
   });
 });
 
 describe("fromModel validator:", () => {
   it("success: ", () => {
     // Arrange
-    const maxLengthValidator = length => Validator(x => (x.length <= length ? Validation.Success() : Validation.Failure(["Too long"])));
+    const maxLengthValidator = length => Validator(x => (x.length <= length ? Success : Failure(ValidationError("Too long"))));
     const model = {
       maxLength: 4,
       name: "test"
@@ -231,12 +231,12 @@ describe("fromModel validator:", () => {
     const validation = model |> validate(validator);
 
     // Assert
-    expect(validation).toStrictEqual(Validation.Success({ name: Validation.Success() }));
+    expect(validation).toStrictEqual(Success);
   });
 
   it("failure: ", () => {
     // Arrange
-    const maxLengthValidator = length => Validator(x => (x.length <= length ? Validation.Success() : Validation.Failure(["Too long"])));
+    const maxLengthValidator = length => Validator(x => (x.length <= length ? Success : Failure(ValidationError("Too long"))));
     const model = {
       maxLength: 3,
       name: "test"
@@ -247,16 +247,16 @@ describe("fromModel validator:", () => {
     const validation = model |> validate(validator);
 
     // Assert
-    expect(validation).toStrictEqual(Validation.Failure([], { name: ValidationError(["Too long"]) }));
+    expect(validation).toStrictEqual(Failure(ValidationError([], { name: ValidationError("Too long") })));
   });
 });
 
 describe("utility validators:", () => {
   it("dirtyFieldsOnly with logTo validator", () => {
     // Arrange
-    const nameValidator = jest.fn(_ => Validation.Failure(["Wrong"]));
-    const surnameValidator = jest.fn(_ => Validation.Success());
-    const logger = { log: jest.fn(_ => { }) };
+    const nameValidator = jest.fn(_ => Failure("Wrong"));
+    const surnameValidator = jest.fn(_ => Success);
+    const logger = { log: jest.fn(_ => {}) };
     const model = {
       child: {
         name: "testWrong",
@@ -293,16 +293,16 @@ describe("utility validators:", () => {
     const validation = validate(decoratedValidator, model, { dirtyInfo });
 
     // Assert
-    expect(validation).toBe(Validation.Success());
+    expect(validation).toBe(Success);
     expect(nameValidator.mock.calls.length).toBe(0);
     expect(surnameValidator.mock.calls.length).toBe(1);
   });
 
   it("dirtyFieldsOnly on collection with logTo validator", () => {
     // Arrange
-    const nameValidator = jest.fn(_ => Validation.Failure(["Wrong"]));
-    const surnameValidator = jest.fn(_ => Validation.Success());
-    const logger = { log: jest.fn(_ => { }) };
+    const nameValidator = jest.fn(_ => Failure(ValidationError("Wrong")));
+    const surnameValidator = jest.fn(_ => Success);
+    const logger = { log: jest.fn(_ => {}) };
     const model = {
       children: [
         {
@@ -353,7 +353,7 @@ describe("utility validators:", () => {
     const validation = validate(decoratedValidator, model, { dirtyInfo });
 
     // Assert
-    expect(validation).toBe(Validation.Success());
+    expect(validation).toBe(Success);
 
     expect(nameValidator.mock.calls.length).toBe(0);
     expect(surnameValidator.mock.calls.length).toBe(2);

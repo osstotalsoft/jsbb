@@ -1,5 +1,6 @@
-import { Validation } from "../../validation";
-import { validate } from "../../validator"
+import { Success, Failure } from "../../validation";
+import ValidationError from "../../validationError";
+import { validate } from "../../validator";
 import { unique, required, email, between, greaterThan, lessThan, minLength, maxLength, matches, atLeastOne } from "../index";
 import i18next from "i18next";
 
@@ -10,10 +11,10 @@ describe("required validator:", () => {
     const validator = required;
 
     // Act
-    const validation = model |> validate(validator)
+    const validation = model |> validate(validator);
 
     // Assert
-    expect(validation).toStrictEqual(Validation.Success());
+    expect(validation).toStrictEqual(Success);
   });
 
   it("required validator error - empty string", () => {
@@ -22,10 +23,10 @@ describe("required validator:", () => {
     const validator = required;
 
     // Act
-    const validation = model |> validate(validator)
+    const validation = model |> validate(validator);
 
     // Assert
-    expect(validation).toStrictEqual(Validation.Failure([i18next.t("Validations.Generic.Mandatory")]));
+    expect(validation).toStrictEqual(Failure(ValidationError(i18next.t("Validations.Generic.Mandatory"))));
   });
 
   it("required validator error - null", () => {
@@ -34,10 +35,10 @@ describe("required validator:", () => {
     const validator = required;
 
     // Act
-    const validation = model |> validate(validator)
+    const validation = model |> validate(validator);
 
     // Assert
-    expect(validation).toStrictEqual(Validation.Failure([i18next.t("Validations.Generic.Mandatory")]));
+    expect(validation).toStrictEqual(Failure(ValidationError(i18next.t("Validations.Generic.Mandatory"))));
   });
 
   it("required validator error - undefined", () => {
@@ -46,10 +47,10 @@ describe("required validator:", () => {
     const validator = required;
 
     // Act
-    const validation = model |> validate(validator)
+    const validation = model |> validate(validator);
 
     // Assert
-    expect(validation).toStrictEqual(Validation.Failure([i18next.t("Validations.Generic.Mandatory")]));
+    expect(validation).toStrictEqual(Failure(ValidationError(i18next.t("Validations.Generic.Mandatory"))));
   });
 });
 
@@ -60,10 +61,10 @@ describe("atLeastOne validator:", () => {
     const validator = atLeastOne;
 
     // Act
-    const validation = model |> validate(validator)
+    const validation = model |> validate(validator);
 
     // Assert
-    expect(validation).toStrictEqual(Validation.Failure([i18next.t("Validations.Generic.AtLeastOne")]));
+    expect(validation).toStrictEqual(Failure(ValidationError(i18next.t("Validations.Generic.AtLeastOne"))));
   });
 });
 
@@ -74,10 +75,10 @@ describe("format validators:", () => {
     const validator = email;
 
     // Act
-    const validation = model |> validate(validator)
+    const validation = model |> validate(validator);
 
     // Assert
-    expect(validation).toStrictEqual(Validation.Success());
+    expect(validation).toStrictEqual(Success);
   });
 
   it("email validator error - null", () => {
@@ -86,10 +87,10 @@ describe("format validators:", () => {
     const validator = email;
 
     // Act
-    const validation = model |> validate(validator)
+    const validation = model |> validate(validator);
 
     // Assert
-    expect(validation).toStrictEqual(Validation.Failure([i18next.t("Validations.Generic.Email")]));
+    expect(validation).toStrictEqual(Failure(ValidationError(i18next.t("Validations.Generic.Email"))));
   });
 
   it("email validator error - wrong format", () => {
@@ -98,10 +99,10 @@ describe("format validators:", () => {
     const validator = email;
 
     // Act
-    const validation = model |> validate(validator)
+    const validation = model |> validate(validator);
 
     // Assert
-    expect(validation).toStrictEqual(Validation.Failure([i18next.t("Validations.Generic.Email")]));
+    expect(validation).toStrictEqual(Failure(ValidationError(i18next.t("Validations.Generic.Email"))));
   });
 
   it("matches validator success", () => {
@@ -110,10 +111,10 @@ describe("format validators:", () => {
     const validator = matches(/^[a-b]*$/);
 
     // Act
-    const validation = model |> validate(validator)
+    const validation = model |> validate(validator);
 
     // Assert
-    expect(validation).toStrictEqual(Validation.Success());
+    expect(validation).toStrictEqual(Success);
   });
 
   it("another matches validator success", () => {
@@ -122,10 +123,10 @@ describe("format validators:", () => {
     const validator = matches(/^[a-b]*$/);
 
     // Act
-    const validation = model |> validate(validator)
+    const validation = model |> validate(validator);
 
     // Assert
-    expect(validation).toStrictEqual(Validation.Failure([i18next.t("Validations.Generic.Regex")]));
+    expect(validation).toStrictEqual(Failure(ValidationError(i18next.t("Validations.Generic.Regex"))));
   });
 });
 
@@ -136,10 +137,10 @@ describe("comparison validators:", () => {
     const validator = between(3, 4);
 
     // Act
-    const validation = model |> validate(validator)
+    const validation = model |> validate(validator);
 
     // Assert
-    expect(validation).toStrictEqual(Validation.Success());
+    expect(validation).toStrictEqual(Success);
   });
 
   it("between validator error - greater", () => {
@@ -148,10 +149,10 @@ describe("comparison validators:", () => {
     const validator = between(3, 4);
 
     // Act
-    const validation = model |> validate(validator)
+    const validation = model |> validate(validator);
 
     // Assert
-    expect(validation).toStrictEqual(Validation.Failure([i18next.t("Validations.Generic.OutOfRange", { min: 3, max: 4 })]));
+    expect(validation).toStrictEqual(Failure(ValidationError(i18next.t("Validations.Generic.OutOfRange", { min: 3, max: 4 }))));
   });
 
   it("between validator error - smaller", () => {
@@ -160,10 +161,10 @@ describe("comparison validators:", () => {
     const validator = between(3, 4);
 
     // Act
-    const validation = model |> validate(validator)
+    const validation = model |> validate(validator);
 
     // Assert
-    expect(validation).toStrictEqual(Validation.Failure([i18next.t("Validations.Generic.OutOfRange", { min: 3, max: 4 })]));
+    expect(validation).toStrictEqual(Failure(ValidationError(i18next.t("Validations.Generic.OutOfRange", { min: 3, max: 4 }))));
   });
 
   it("greaterThan validator success", () => {
@@ -172,10 +173,10 @@ describe("comparison validators:", () => {
     const validator = greaterThan(4);
 
     // Act
-    const validation = model |> validate(validator)
+    const validation = model |> validate(validator);
 
     // Assert
-    expect(validation).toStrictEqual(Validation.Success());
+    expect(validation).toStrictEqual(Success);
   });
 
   it("greaterThan validator error", () => {
@@ -184,10 +185,10 @@ describe("comparison validators:", () => {
     const validator = greaterThan(4);
 
     // Act
-    const validation = model |> validate(validator)
+    const validation = model |> validate(validator);
 
     // Assert
-    expect(validation).toStrictEqual(Validation.Failure([i18next.t("Validations.Generic.Greater", { min: 4 })]));
+    expect(validation).toStrictEqual(Failure(ValidationError(i18next.t("Validations.Generic.Greater", { min: 4 }))));
   });
 
   it("lessThan validator success", () => {
@@ -196,10 +197,10 @@ describe("comparison validators:", () => {
     const validator = lessThan(5);
 
     // Act
-    const validation = model |> validate(validator)
+    const validation = model |> validate(validator);
 
     // Assert
-    expect(validation).toStrictEqual(Validation.Success());
+    expect(validation).toStrictEqual(Success);
   });
 
   it("lessThan validator error", () => {
@@ -208,10 +209,10 @@ describe("comparison validators:", () => {
     const validator = lessThan(4);
 
     // Act
-    const validation = model |> validate(validator)
+    const validation = model |> validate(validator);
 
     // Assert
-    expect(validation).toStrictEqual(Validation.Failure([i18next.t("Validations.Generic.Less", { max: 4 })]));
+    expect(validation).toStrictEqual(Failure(ValidationError(i18next.t("Validations.Generic.Less", { max: 4 }))));
   });
 });
 
@@ -222,10 +223,10 @@ describe("length validators:", () => {
     const validator = minLength(4);
 
     // Act
-    const validation = model |> validate(validator)
+    const validation = model |> validate(validator);
 
     // Assert
-    expect(validation).toStrictEqual(Validation.Success());
+    expect(validation).toStrictEqual(Success);
   });
 
   it("minLength validator error", () => {
@@ -234,10 +235,10 @@ describe("length validators:", () => {
     const validator = minLength(4);
 
     // Act
-    const validation = model |> validate(validator)
+    const validation = model |> validate(validator);
 
     // Assert
-    expect(validation).toStrictEqual(Validation.Failure([i18next.t("Validations.Generic.MinCharacters", { min: 4 })]));
+    expect(validation).toStrictEqual(Failure(ValidationError(i18next.t("Validations.Generic.MinCharacters", { min: 4 }))));
   });
 
   it("maxLength validator success", () => {
@@ -246,10 +247,10 @@ describe("length validators:", () => {
     const validator = maxLength(5);
 
     // Act
-    const validation = model |> validate(validator)
+    const validation = model |> validate(validator);
 
     // Assert
-    expect(validation).toStrictEqual(Validation.Success());
+    expect(validation).toStrictEqual(Success);
   });
 
   it("maxLength validator error", () => {
@@ -258,10 +259,10 @@ describe("length validators:", () => {
     const validator = maxLength(4);
 
     // Act
-    const validation = model |> validate(validator)
+    const validation = model |> validate(validator);
 
     // Assert
-    expect(validation).toStrictEqual(Validation.Failure([i18next.t("Validations.Generic.MaxCharacters", { max: 4 })]));
+    expect(validation).toStrictEqual(Failure(ValidationError(i18next.t("Validations.Generic.MaxCharacters", { max: 4 }))));
   });
 });
 
@@ -272,10 +273,10 @@ describe("unique validator:", () => {
     const validator = unique();
 
     // Act
-    const validation = model |> validate(validator)
+    const validation = model |> validate(validator);
 
     // Assert
-    expect(validation).toStrictEqual(Validation.Success());
+    expect(validation).toStrictEqual(Success);
   });
 
   it("unique validator error - no selector", () => {
@@ -284,10 +285,10 @@ describe("unique validator:", () => {
     const validator = unique();
 
     // Act
-    const validation = model |> validate(validator)
+    const validation = model |> validate(validator);
 
     // Assert
-    expect(validation).toStrictEqual(Validation.Failure([i18next.t("Validations.Generic.Unique", { selector: "" })]));
+    expect(validation).toStrictEqual(Failure(ValidationError(i18next.t("Validations.Generic.Unique", { selector: "" }))));
   });
 
   it("unique validator success - nested item string selector", () => {
@@ -296,10 +297,10 @@ describe("unique validator:", () => {
     const validator = unique("item.id");
 
     // Act
-    const validation = model |> validate(validator)
+    const validation = model |> validate(validator);
 
     // Assert
-    expect(validation).toStrictEqual(Validation.Success());
+    expect(validation).toStrictEqual(Success);
   });
 
   it("unique validator error - nested item string selector", () => {
@@ -308,10 +309,10 @@ describe("unique validator:", () => {
     const validator = unique("item.id");
 
     // Act
-    const validation = model |> validate(validator)
+    const validation = model |> validate(validator);
 
     // Assert
-    expect(validation).toStrictEqual(Validation.Failure([i18next.t("Validations.Generic.Unique", { selector: "item.id" })]));
+    expect(validation).toStrictEqual(Failure(ValidationError(i18next.t("Validations.Generic.Unique", { selector: "item.id" }))));
   });
 
   it("unique validator success - nested item array selector", () => {
@@ -320,10 +321,10 @@ describe("unique validator:", () => {
     const validator = unique(["item", "id"]);
 
     // Act
-    const validation = model |> validate(validator)
+    const validation = model |> validate(validator);
 
     // Assert
-    expect(validation).toStrictEqual(Validation.Success());
+    expect(validation).toStrictEqual(Success);
   });
 
   it("unique validator error - nested item array selector", () => {
@@ -332,10 +333,10 @@ describe("unique validator:", () => {
     const validator = unique(["item", "id"]);
 
     // Act
-    const validation = model |> validate(validator)
+    const validation = model |> validate(validator);
 
     // Assert
-    expect(validation).toStrictEqual(Validation.Failure([i18next.t("Validations.Generic.Unique", { selector: "item,id" })]));
+    expect(validation).toStrictEqual(Failure(ValidationError(i18next.t("Validations.Generic.Unique", { selector: "item,id" }))));
   });
 
   it("unique validator success - nested item function selector", () => {
@@ -344,10 +345,10 @@ describe("unique validator:", () => {
     const validator = unique(x => x.item.id);
 
     // Act
-    const validation = model |> validate(validator)
+    const validation = model |> validate(validator);
 
     // Assert
-    expect(validation).toStrictEqual(Validation.Success());
+    expect(validation).toStrictEqual(Success);
   });
 
   it("unique validator error - nested item function selector", () => {
@@ -356,9 +357,9 @@ describe("unique validator:", () => {
     const validator = unique(x => x.item.id);
 
     // Act
-    const validation = model |> validate(validator)
+    const validation = model |> validate(validator);
 
     // Assert
-    expect(validation).toStrictEqual(Validation.Failure([i18next.t("Validations.Generic.Unique", { selector: "x => x.item.id" })]));
+    expect(validation).toStrictEqual(Failure(ValidationError(i18next.t("Validations.Generic.Unique", { selector: "x => x.item.id" }))));
   });
 });

@@ -19,6 +19,10 @@ Map.getValueAt = curry(function getValueAt(key, aMap) {
   return Just(x);
 })
 
+Map.fromObj = function fromObj(obj){
+  return Map(obj);
+}
+
 Map.fromList = function fromList(list) {
   const obj = list |> reduce((acc, current) => (acc[KeyValuePair.getKey(current)] = KeyValuePair.getValue(current)), {});
   return Map(obj);
