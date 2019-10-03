@@ -1,12 +1,12 @@
-import { isValid } from "../validation";
-import { Validator } from "../validator";
+import Reader from "../fantasy/data/reader";
+import Maybe from "../fantasy/data/maybe";
 import { $do, concat } from "../fantasy/prelude";
 import { variadicApply, checkValidators } from "./_utils";
 
 function _stopOnFirstFailure(f1, f2) {
   return $do(function*() {
     const v1 = yield f1;
-    return !isValid(v1) ? Validator.of(v1) : concat(Validator.of(v1), f2);
+    return Maybe.Just.is(v1) ? Reader.of(v1) : concat(Reader.of(v1), f2);
   });
 }
 

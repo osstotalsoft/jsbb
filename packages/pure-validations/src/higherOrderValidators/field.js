@@ -1,9 +1,10 @@
 import { map, contramap, $do } from "../fantasy/prelude";
 import Reader from "../fantasy/data/reader";
-import { Validation, isValid } from "../validation";
+import Maybe from "../fantasy/data/maybe";
 import ValidationError from "../validationError";
-import { Validator } from "../validator";
 import { checkValidators } from "./_utils";
+
+const { Nothing } = Maybe;
 
 export default function field(key, validator) {
   checkValidators(validator);
@@ -20,15 +21,15 @@ function _logFieldPath(validator) {
   return $do(function*() {
     const [, fieldContext] = yield Reader.ask();
     const validation = yield validator;
-    _log(fieldContext, `Validation ${isValid(validation) ? "succeded" : "failed"} for path ${fieldContext.fieldPath.join(".")}`);
-    return Validator.of(validation);
+    _log(fieldContext, `Validation ${Nothing.is(validation) ? "succeded" : "failed"} for path ${fieldContext.fieldPath.join(".")}`);
+    return Reader.of(validation);
   });
 }
 
 function _filterFieldPath(validator) {
   return $do(function*() {
     const [, fieldContext] = yield Reader.ask();
-    return !fieldContext.fieldFilter(fieldContext) ? Validator.of(Validation.Success()) : validator;
+    return !fieldContext.fieldFilter(fieldContext) ? Reader.of(Nothing) : validator;
   });
 }
 
