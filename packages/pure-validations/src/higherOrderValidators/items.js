@@ -1,6 +1,6 @@
-import { $do, concat } from "../fantasy/prelude";
-import Reader from "../fantasy/data/reader";
-import Maybe from "../fantasy/data/maybe";
+import { $do, concat } from "@totalsoft/arcadia";
+import Reader from "@totalsoft/arcadia/lib/data/reader";
+import Maybe from "@totalsoft/arcadia/lib/data/maybe";
 import field from "./field";
 import { checkValidators } from "./_utils";
 

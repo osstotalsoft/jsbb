@@ -1,4 +1,4 @@
-import { contramap } from "../fantasy/prelude";
+import { contramap } from "@totalsoft/arcadia";
 import { checkValidators } from "./_utils";
 import curry from "lodash.curry";
 

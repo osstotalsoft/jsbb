@@ -1,6 +1,6 @@
-import { map, contramap, $do } from "../fantasy/prelude";
-import Reader from "../fantasy/data/reader";
-import Maybe from "../fantasy/data/maybe";
+import { map, contramap, $do } from "@totalsoft/arcadia";
+import Reader from "@totalsoft/arcadia/lib/data/reader";
+import Maybe from "@totalsoft/arcadia/lib/data/maybe";
 import ValidationError from "../validationError";
 import { checkValidators } from "./_utils";
 

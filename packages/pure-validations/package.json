@@ -37,6 +37,7 @@
     "rimraf": "^3.0.0"
   },
   "dependencies": {
+    "@totalsoft/arcadia": "^1.0.0",
     "daggy": "^1.4.0",
     "fantasy-land": "^4.0.1",
     "lodash.curry": "^4.1.1",
