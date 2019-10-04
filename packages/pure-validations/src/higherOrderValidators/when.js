@@ -1,6 +1,6 @@
-import Reader from "../fantasy/data/reader";
-import Maybe from "../fantasy/data/maybe";
-import { $do } from "../fantasy/prelude";
+import Reader from "@totalsoft/arcadia/lib/data/reader";
+import Maybe from "@totalsoft/arcadia/lib/data/maybe";
+import { $do } from "@totalsoft/arcadia";
 import curry from "lodash.curry";
 import { checkValidators } from "./_utils";
 

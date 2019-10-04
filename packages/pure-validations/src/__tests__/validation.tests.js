@@ -1,6 +1,5 @@
 import { Success, Failure, getErrors, getInner } from "../validation";
-import { concat } from "../fantasy/prelude";
-import fl from "fantasy-land";
+import { concat, empty } from "@totalsoft/arcadia";
 import ValidationError from "../validationError";
 
 function applyLaw(law) {
@@ -22,7 +21,7 @@ describe("validation tests suite:", () => {
     // Act
     const leftIdentityLaw = isEquivalent =>
       function(m) {
-        return isEquivalent(m.constructor[fl.empty]()[fl.concat](m), m);
+        return isEquivalent(concat(empty(m.constructor), m), m);
       };
     var lawEvaluator = applyLaw(leftIdentityLaw)(failure);
 

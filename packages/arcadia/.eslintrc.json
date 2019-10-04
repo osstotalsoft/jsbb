@@ -1,0 +1,27 @@
+{
+    "env": {
+        "browser": true,
+        "es6": true
+    },
+    "extends": [
+        "eslint:recommended",
+        "plugin:jest/recommended"
+    ],
+    "parser": "babel-eslint",
+    "plugins": [
+        "babel",
+        "jest",
+        "react-hooks"
+    ],
+    "globals": {
+        "Atomics": "readonly",
+        "SharedArrayBuffer": "readonly"
+    },
+    "parserOptions": {
+        "ecmaVersion": 2018,
+        "sourceType": "module"
+    },
+    "rules": {
+        "no-unused-vars": [2, {"args": "after-used", "argsIgnorePattern": "^_"}]
+    }
+}

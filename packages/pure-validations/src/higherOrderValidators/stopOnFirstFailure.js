@@ -1,6 +1,6 @@
-import Reader from "../fantasy/data/reader";
-import Maybe from "../fantasy/data/maybe";
-import { $do, concat } from "../fantasy/prelude";
+import Reader from "@totalsoft/arcadia/lib/data/reader";
+import Maybe from "@totalsoft/arcadia/lib/data/maybe";
+import { $do, concat } from "@totalsoft/arcadia";
 import { variadicApply, checkValidators } from "./_utils";
 
 function _stopOnFirstFailure(f1, f2) {

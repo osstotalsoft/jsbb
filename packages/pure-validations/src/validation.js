@@ -1,7 +1,7 @@
-import Maybe from "./fantasy/data/maybe";
-import List from "./fantasy/data/list";
-import RoseTree from "./fantasy/data/roseTree";
-import { chain, map, id, constant } from "./fantasy/prelude";
+import Maybe from "@totalsoft/arcadia/lib/data/maybe";
+import List from "@totalsoft/arcadia/lib/data/list";
+import RoseTree from "@totalsoft/arcadia/lib/data/roseTree";
+import { chain, map, id, constant } from "@totalsoft/arcadia";
 import ValidationError from "./validationError";
 import curry from "lodash.curry";
 
