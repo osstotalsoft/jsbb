@@ -1,5 +1,5 @@
 const base = require("../../babel.config.js");
 
-module.exports = {
-    ...base
-};
+module.exports = function(api){
+    return base(api);
+}

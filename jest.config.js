@@ -1,4 +1,4 @@
 module.exports = {
     "verbose": true,
-    testPathIgnorePatterns: ["<rootDir>/lib/"]
+    testPathIgnorePatterns: ["<rootDir>/build/"]
 }

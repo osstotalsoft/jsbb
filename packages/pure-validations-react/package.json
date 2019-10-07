@@ -4,8 +4,8 @@
   "description": "React extensions for the \"pure-validations\" validation api",
   "main": "lib/index.js",
   "scripts": {
-    "prebuild": "rimraf lib",
-    "build": "babel src/ --out-dir lib/ --ignore \"**/__tests__\" --ignore \"**/__mocks__\"",
+    "prebuild": "rimraf build",
+    "build": "babel src/ --out-dir build/ --ignore \"**/__tests__\" --ignore \"**/__mocks__\" && node ../../scripts/copy-files.js",
     "prepare": "yarn run build",
     "test": "jest --watchAll"
   },
