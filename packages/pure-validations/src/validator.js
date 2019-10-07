@@ -1,4 +1,4 @@
-import Reader from "@totalsoft/arcadia/lib/data/reader";
+import Reader from "@totalsoft/arcadia/data/reader";
 import curry from "lodash.curry";
 import fl from "fantasy-land";
 

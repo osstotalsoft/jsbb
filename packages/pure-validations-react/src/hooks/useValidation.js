@@ -1,9 +1,9 @@
 import { useState, useCallback, useMemo } from 'react';
-import { Validation, validate, isValid, logTo, filterFields } from '@totalsoft/pure-validations';
+import { Success, validate, isValid, logTo, filterFields } from '@totalsoft/pure-validations';
 
 
 export function useValidation(rules, { isLogEnabled = true, logger = console, fieldFilterFunc = undefined } = {}, deps = []) {
-    const [validation, setValidation] = useState(Validation.Success());
+    const [validation, setValidation] = useState(Success);
     const validator = useMemo(() => {
         let newValidator = rules;
 
@@ -30,7 +30,7 @@ export function useValidation(rules, { isLogEnabled = true, logger = console, fi
 
         // Reset
         useCallback(() => {
-            setValidation(Validation.Success())
+            setValidation(Success)
         }, [])
     ]
 }

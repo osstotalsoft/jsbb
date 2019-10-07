@@ -1,6 +1,6 @@
 import { $do, concat } from "@totalsoft/arcadia";
-import Reader from "@totalsoft/arcadia/lib/data/reader";
-import Maybe from "@totalsoft/arcadia/lib/data/maybe";
+import Reader from "@totalsoft/arcadia/data/reader";
+import Maybe from "@totalsoft/arcadia/data/maybe";
 import field from "./field";
 import { checkValidators } from "./_utils";
 

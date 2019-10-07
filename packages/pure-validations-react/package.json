@@ -4,9 +4,9 @@
   "description": "React extensions for the \"pure-validations\" validation api",
   "main": "lib/index.js",
   "scripts": {
-    "clean": "rimraf lib",
-    "build": "npm run clean && babel src/ -d lib/",
-    "prepare": "npm run build",
+    "prebuild": "rimraf build",
+    "build": "babel src/ --out-dir build/ --ignore \"**/__tests__\" --ignore \"**/__mocks__\" && node ../../scripts/copy-files.js",
+    "prepare": "yarn run build",
     "test": "jest --watchAll"
   },
   "repository": {
@@ -28,23 +28,8 @@
     "lodash.get": "^4.4.2"
   },
   "devDependencies": {
-    "@babel/cli": "^7.5.5",
-    "@babel/core": "^7.5.5",
-    "@babel/plugin-proposal-optional-chaining": "^7.2.0",
-    "@babel/plugin-proposal-pipeline-operator": "^7.5.0",
-    "@babel/preset-env": "^7.5.5",
-    "@testing-library/react-hooks": "^2.0.1",
-    "babel-eslint": "^10.0.2",
-    "babel-jest": "^24.9.0",
-    "eslint": "^6.2.0",
-    "eslint-plugin-babel": "^5.3.0",
-    "eslint-plugin-jest": "^22.16.0",
-    "eslint-plugin-react-hooks": "^2.0.1",
-    "jest": "^24.9.0",
-    "prettier-eslint": "^9.0.0",
-    "react": "^16.9.0",
     "react-test-renderer": "^16.9.0",
-    "rimraf": "^3.0.0"
+    "@testing-library/react-hooks": "^2.0.1"
   },
   "peerDependencies": {
     "react": "^16.9.0"
