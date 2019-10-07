@@ -4,9 +4,9 @@
   "description": "Fantasy Land compliant algebraic data types",
   "main": "lib/index.js",
   "scripts": {
-    "clean": "rimraf lib",
-    "build": "npm run clean && babel src/ -d lib/",
-    "prepare": "npm run build",
+    "prebuild": "rimraf lib",
+    "build": "babel src/ --out-dir lib/ --ignore \"**/__tests__\" --ignore \"**/__mocks__\"",
+    "prepare": "yarn run build",
     "test": "jest --watchAll"
   },
   "repository": {
@@ -24,20 +24,6 @@
   },
   "homepage": "https://github.com/osstotalsoft/jsbb#readme",
   "devDependencies": {
-    "@babel/cli": "^7.5.5",
-    "@babel/core": "^7.5.5",
-    "@babel/plugin-proposal-optional-chaining": "^7.2.0",
-    "@babel/plugin-proposal-pipeline-operator": "^7.5.0",
-    "@babel/preset-env": "^7.5.5",
-    "babel-eslint": "^10.0.2",
-    "babel-jest": "^24.9.0",
-    "eslint": "^6.2.0",
-    "eslint-plugin-babel": "^5.3.0",
-    "eslint-plugin-jest": "^22.16.0",
-    "i18next": "^17.0.11",
-    "jest": "^24.9.0",
-    "prettier-eslint": "^9.0.0",
-    "rimraf": "^3.0.0"
   },
   "dependencies": {
     "daggy": "^1.4.0",

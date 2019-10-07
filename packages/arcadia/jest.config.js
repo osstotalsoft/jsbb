@@ -1,4 +1,7 @@
+const base = require("../../jest.config.js");
+
 module.exports = {
-    "verbose": true,
-    testPathIgnorePatterns: ["<rootDir>/lib/"]
-}
+    ...base,
+    name: "pure-validations",
+    displayName: "pure-validations"
+};
