@@ -1,0 +1,9 @@
+{
+    "compilerOptions": {
+      "baseUrl": "./",
+      "paths": {
+        "@totalsoft/arcadia/lib": ["./packages/arcadia/src"],
+        "@totalsoft/arcadia/lib/*": ["./packages/arcadia/src/*"]
+      }
+    }
+  }
