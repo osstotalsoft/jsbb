@@ -1,6 +1,6 @@
 {
   "name": "@totalsoft/pure-validations-react",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "React extensions for the \"pure-validations\" validation api",
   "main": "lib/index.js",
   "scripts": {
@@ -24,12 +24,12 @@
   },
   "homepage": "https://github.com/osstotalsoft/jsbb#readme",
   "dependencies": {
-    "@totalsoft/pure-validations": "^1.1.0",
+    "@totalsoft/pure-validations": "^1.2.0",
     "lodash.get": "^4.4.2"
   },
   "devDependencies": {
-    "react-test-renderer": "^16.9.0",
-    "@testing-library/react-hooks": "^2.0.1"
+    "@testing-library/react-hooks": "^2.0.1",
+    "react-test-renderer": "^16.9.0"
   },
   "peerDependencies": {
     "react": "^16.9.0"

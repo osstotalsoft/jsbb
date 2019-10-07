@@ -1,6 +1,6 @@
 {
   "name": "@totalsoft/arcadia",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Fantasy Land compliant algebraic data types",
   "main": "index.js",
   "scripts": {
@@ -23,8 +23,6 @@
     "url": "https://github.com/osstotalsoft/jsbb/issues"
   },
   "homepage": "https://github.com/osstotalsoft/jsbb#readme",
-  "devDependencies": {
-  },
   "dependencies": {
     "daggy": "^1.4.0",
     "fantasy-land": "^4.0.1",

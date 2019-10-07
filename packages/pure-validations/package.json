@@ -1,6 +1,6 @@
 {
   "name": "@totalsoft/pure-validations",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Validation api via functional composition",
   "main": "index.js",
   "scripts": {
@@ -20,10 +20,8 @@
   "publishConfig": {
     "access": "public"
   },
-  "devDependencies": {
-  },
   "dependencies": {
-    "@totalsoft/arcadia": "^1.1.0",
+    "@totalsoft/arcadia": "^1.2.0",
     "daggy": "^1.4.0",
     "fantasy-land": "^4.0.1",
     "lodash.curry": "^4.1.1"
