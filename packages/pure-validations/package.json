@@ -21,7 +21,7 @@
     "access": "public"
   },
   "dependencies": {
-    "@totalsoft/arcadia": "^1.2.0",
+    "@totalsoft/zion": "^1.2.0",
     "daggy": "^1.4.0",
     "fantasy-land": "^4.0.1",
     "lodash.curry": "^4.1.1"

@@ -1,6 +1,6 @@
-import { map, contramap, $do } from "@totalsoft/arcadia";
-import Reader from "@totalsoft/arcadia/data/reader";
-import Maybe from "@totalsoft/arcadia/data/maybe";
+import { map, contramap, $do } from "@totalsoft/zion";
+import Reader from "@totalsoft/zion/data/reader";
+import Maybe from "@totalsoft/zion/data/maybe";
 import ValidationError from "../validationError";
 import { checkValidators } from "./_utils";
 

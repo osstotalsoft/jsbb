@@ -1,6 +1,6 @@
-import Reader from "@totalsoft/arcadia/data/reader";
-import Maybe from "@totalsoft/arcadia/data/maybe";
-import { $do } from "@totalsoft/arcadia";
+import Reader from "@totalsoft/zion/data/reader";
+import Maybe from "@totalsoft/zion/data/maybe";
+import { $do } from "@totalsoft/zion";
 import { checkValidators } from "./_utils";
 
 export default function fromModel(validatorFactory) {

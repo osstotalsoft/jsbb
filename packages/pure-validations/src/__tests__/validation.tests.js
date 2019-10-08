@@ -1,5 +1,5 @@
 import { Success, Failure, getErrors, getInner } from "../validation";
-import { concat, empty } from "@totalsoft/arcadia";
+import { concat, empty } from "@totalsoft/zion";
 import ValidationError from "../validationError";
 
 function applyLaw(law) {

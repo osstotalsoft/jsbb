@@ -4,7 +4,7 @@
 *"Sometimes, the elegant implementation is just a function. Not a method. Not a class. Not a framework. Just a function."*
 
 ## The blocks
-  - [`arcadia`](./packages/arcadia#readme)
+  - [`zion`](./packages/zion#readme)
   - [`pure-validations`](./packages/pure-validations#readme)
   - [`pure-validations-react`](./packages/pure-validations#readme)
   - [`rules-engine`](./commands/rules-engine#readme)

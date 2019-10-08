@@ -1,6 +1,6 @@
 module.exports = api => {
   const defaultAlias = {
-    "@totalsoft/arcadia": "@totalsoft/arcadia/src",
+    "@totalsoft/zion": "@totalsoft/zion/src",
     "@totalsoft/pure-validations": "@totalsoft/pure-validations/src"
   };
 

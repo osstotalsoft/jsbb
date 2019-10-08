@@ -1,4 +1,4 @@
-import Reader from "@totalsoft/arcadia/data/reader";
+import Reader from "@totalsoft/zion/data/reader";
 
 export function variadicApply(variadicFn) {
   const res = function(...args) {

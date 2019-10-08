@@ -1,7 +1,7 @@
-import List from "@totalsoft/arcadia/data/list";
-import Maybe from "@totalsoft/arcadia/data/maybe";
-import Map from "@totalsoft/arcadia/data/map";
-import RoseTree from "@totalsoft/arcadia/data/roseTree";
+import List from "@totalsoft/zion/data/list";
+import Maybe from "@totalsoft/zion/data/maybe";
+import Map from "@totalsoft/zion/data/map";
+import RoseTree from "@totalsoft/zion/data/roseTree";
 import curry from "lodash.curry";
 
 const { Just, Nothing } = Maybe;

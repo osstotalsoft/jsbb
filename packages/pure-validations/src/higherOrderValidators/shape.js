@@ -1,6 +1,6 @@
-import { $do, concat } from "@totalsoft/arcadia";
-import Reader from "@totalsoft/arcadia/data/reader";
-import Maybe from "@totalsoft/arcadia/data/maybe";
+import { $do, concat } from "@totalsoft/zion";
+import Reader from "@totalsoft/zion/data/reader";
+import Maybe from "@totalsoft/zion/data/maybe";
 import field from "./field";
 
 const { Nothing } = Maybe;
