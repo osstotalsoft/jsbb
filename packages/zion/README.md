@@ -59,6 +59,37 @@ Instance of:
 - [Foldable][]
 
 
+### KeyValuePair
+```haskell
+data KeyValuePair k a
+```
+Instance of:
+- [Functor][]
+
+
+### Reader
+```haskell
+data Reader r a
+```
+Instance of:
+- [Functor][]
+- [Apply][]
+- [Chain][]
+- [Contravariant][]
+- [Semigroup][]
+
+
+### Step
+```haskell
+data Step b a
+```
+Instance of:
+- [Setoid][]
+- [Ord][]
+- [Functor][]
+- [Bifunctor][]
+
+
 
 
 
@@ -72,6 +103,7 @@ Instance of:
 [Semigroup]:                https://github.com/fantasyland/fantasy-land#semigroup
 [Monoid]:                   https://github.com/fantasyland/fantasy-land#monoid
 [Functor]:                  https://github.com/fantasyland/fantasy-land#functor
+[Bifunctor]:                https://github.com/fantasyland/fantasy-land#bifunctor
 [Apply]:                    https://github.com/fantasyland/fantasy-land#apply
 [Applicative]:              https://github.com/fantasyland/fantasy-land#applicative
 [Alt]:                      https://github.com/fantasyland/fantasy-land#alt
@@ -80,4 +112,5 @@ Instance of:
 [Traversable]:              https://github.com/fantasyland/fantasy-land#traversable
 [Chain]:                    https://github.com/fantasyland/fantasy-land#chain
 [ChainRec]:                 https://github.com/fantasyland/fantasy-land#chainRec
-[Extend]:                 https://github.com/fantasyland/fantasy-land#extend
+[Extend]:                   https://github.com/fantasyland/fantasy-land#extend
+[Contravariant]:            https://github.com/fantasyland/fantasy-land#contravariant
