@@ -90,7 +90,21 @@ Instance of:
 - [Bifunctor][]
 
 
-
+## Polymorphic functions
+- eq :: Setoid a => a -> a -> Bool
+- chain :: Chain m => (a -> m b) -> m a -> m b
+- ap :: Apply f => f (a -> b) -> f a -> f b
+- map :: Functor f => (a -> b) -> f a -> f b
+- contramap :: Contravariant f => (b -> a) -> f a -> f b
+- lift2 :: Apply f => (a -> b -> c) -> f a -> f b -> f c
+- concat :: Semigroup s => s -> s -> s
+- fold :: Monoid m => (a -> m) -> [a] -> m
+- merge :: Semigroup s => { to: a -> s a, from: s a -> a} -> a -> a -> a
+- traverse :: (Traversable t, Applicative f) => TypeRep f -> (a -> f b) -> t a -> f (t b)
+- empty :: Monoid a => TypeRep a -⁠> a
+- reduce :: Foldable f => (b -> a -> b) -> b -> f a -> b
+- id :: a -> a
+- constant :: a -> (b -> a)
 
 
 

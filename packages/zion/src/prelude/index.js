@@ -26,7 +26,7 @@ const eq = curry(function eq(x, y) {
   return x[fl.equals](y);
 });
 
-// chain :: Monad m => (a -> m b) -> m a -> m b
+// chain :: Chain m => (a -> m b) -> m a -> m b
 const chain = curry(function chain(fn, ma) {
   return ma[fl.chain](fn);
 });
@@ -46,7 +46,7 @@ const contramap = curry(function contramap(fn, contravariant) {
   return contravariant[fl.contramap](fn);
 });
 
-// lift2 :: Apply f => (a -> b) -> f a -> f b ->
+// lift2 :: Apply f => (a -> b -> c) -> f a -> f b -> f c
 const lift2 = curry(function lift2(op, applicative1, applicative2) {
   return ap(applicative1 |> map(op), applicative2);
 });
@@ -64,23 +64,25 @@ const merge = curry(function merge(strategy, a, b) {
   return strategy.from(strategy.to(a)[fl.concat](strategy.to(b)));
 });
 
-//+ traverse :: Traversable t => Applicative f
-//+          => TypeRep f -> (a -> f b) -> t a -> f (t b)
+// traverse :: (Traversable t, Applicative f) => TypeRep f -> (a -> f b) -> t a -> f (t b)
 const traverse = curry(function traverse(T, f, xs) {
   return xs[fl.traverse](T, f);
 });
 
+// empty :: Monoid a => TypeRep a -⁠> a
 const empty = M => M[fl.empty]();
 
-//+ reduce :: Foldable f => (b -> a -> b) -> b -> f a -> b
+// reduce :: Foldable f => (b -> a -> b) -> b -> f a -> b
 const reduce = curry(function reduce(reducer, acc, xs) {
   return xs[fl.reduce](reducer, acc);
 });
 
+//id :: a -> a
 function id(x) {
   return x;
 }
 
+//constant :: a -> (b -> a)
 function constant(k) {
   return _ => k;
 }
