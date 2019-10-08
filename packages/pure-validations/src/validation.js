@@ -1,6 +1,6 @@
 import Maybe from "@totalsoft/zion/data/maybe";
 import List from "@totalsoft/zion/data/list";
-import RoseTree from "@totalsoft/zion/data/roseTree";
+import ObjectTree from "@totalsoft/zion/data/objectTree";
 import { chain, map, id, constant } from "@totalsoft/zion";
 import ValidationError from "./validationError";
 import curry from "lodash.curry";
@@ -13,7 +13,7 @@ function isValid(validation) {
 }
 
 function getErrors(validation) {
-  const maybeArray = validation |> chain(RoseTree.getValue) |> map(List.toArray);
+  const maybeArray = validation |> chain(ObjectTree.getValue) |> map(List.toArray);
   const result = maybeArray.cata({
     Just: id,
     Nothing: constant([])

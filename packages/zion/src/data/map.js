@@ -37,7 +37,7 @@ Map.prototype[fl.equals] = function(that) {
   return eq(Map.toList(that), Map.toList(this));
 };
 
-/* Functor RoseTree */
+/* Functor ObjectTree */
 Map.prototype[fl.map] = function(f) {
   return Map.fromList(Map.toList(this) |> map(f));
 };

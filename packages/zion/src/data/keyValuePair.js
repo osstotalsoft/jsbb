@@ -14,7 +14,7 @@ KeyValuePair.getValue = function getValue(x) {
   return x.value;
 };
 
-/* Functor RoseTree */
+/* Functor ObjectTree */
 KeyValuePair.prototype[fl.map] = function(f) {
     return KeyValuePair(this.key, f(this.value));
   };

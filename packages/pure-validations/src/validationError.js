@@ -1,7 +1,7 @@
 import List from "@totalsoft/zion/data/list";
 import Maybe from "@totalsoft/zion/data/maybe";
 import Map from "@totalsoft/zion/data/map";
-import RoseTree from "@totalsoft/zion/data/roseTree";
+import ObjectTree from "@totalsoft/zion/data/objectTree";
 import curry from "lodash.curry";
 
 const { Just, Nothing } = Maybe;
@@ -12,10 +12,10 @@ function ValidationError(errors, fields = {}) {
 
   const fieldsMap = Map.fromObj(fields);
 
-  return RoseTree(maybeError, fieldsMap);
+  return ObjectTree(maybeError, fieldsMap);
 }
 
-ValidationError.getField = RoseTree.getChildAt;
+ValidationError.getField = ObjectTree.getChildAt;
 
 ValidationError.moveToField = curry(function moveToField(field, error) {
   return ValidationError([], { [field]: error });
