@@ -99,7 +99,7 @@ List.fromArray = function(arr) {
   List.prototype[fl.alt] = List.prototype[fl.concat];
 }
 
-/* Zero List */ {
+/* Plus List */ {
   List.prototype[fl.zero] = List.prototype[fl.empty];
 }
 

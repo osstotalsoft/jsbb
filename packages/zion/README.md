@@ -27,6 +27,28 @@ Instance of:
 - [Chain][]
 - [ChainRec][]
 
+### List
+```haskell
+data List a = Cons a (List a) | Nil
+```
+Instance of:
+- [Setoid][]
+- [Ord][]
+- [Semigroup][]
+- [Monoid][]
+- [Functor][]
+- [Apply][]
+- [Applicative][]
+- [Alt][]
+- [Plus][]
+- [Foldable][]
+- [Traversable][]
+- [Chain][]
+- [Extend][]
+
+
+
+
 [Haskell]:                  https://www.haskell.org/
 [Ramda]:                    http://ramdajs.com/
 [Sanctuary]:                https://github.com/sanctuary-js/
@@ -44,3 +66,4 @@ Instance of:
 [Traversable]:              https://github.com/fantasyland/fantasy-land#traversable
 [Chain]:                    https://github.com/fantasyland/fantasy-land#chain
 [ChainRec]:                 https://github.com/fantasyland/fantasy-land#chainRec
+[Extend]:                 https://github.com/fantasyland/fantasy-land#extend
