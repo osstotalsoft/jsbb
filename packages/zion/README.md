@@ -47,6 +47,20 @@ Instance of:
 - [Extend][]
 
 
+### Map
+```haskell
+data Map k a
+```
+Instance of:
+- [Setoid][]
+- [Semigroup][]
+- [Monoid][]
+- [Functor][]
+- [Foldable][]
+
+
+
+
 
 
 [Haskell]:                  https://www.haskell.org/
