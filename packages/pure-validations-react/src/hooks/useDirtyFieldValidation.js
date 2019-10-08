@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react';
 import { useValidation } from './useValidation'
-import { dirtyInfo as di } from '../dirtyInfo';
+import * as di from '../dirtyInfo';
 
 export function useDirtyFieldValidation(rules, options = {}, deps = []) {
     const [dirtyOnly, setDirtyOnly] = useState(true)

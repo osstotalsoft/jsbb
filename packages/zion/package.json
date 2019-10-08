@@ -2,7 +2,8 @@
   "name": "@totalsoft/zion",
   "version": "2.0.0",
   "description": "Fantasy Land compliant algebraic data types",
-  "main": "index.js",
+  "main": "./index.js",
+  "module": "./index.js",
   "scripts": {
     "prebuild": "rimraf build",
     "build": "babel src/ --out-dir build/ --ignore \"**/__tests__\" --ignore \"**/__mocks__\" && node ../../scripts/copy-files.js",

@@ -1,8 +1,8 @@
 import { taggedSum } from "daggy";
 import fl from "fantasy-land";
 
-import { Chain } from "../Util/Derivations";
-import { concat, lift2, eq } from "../Prelude";
+import { Chain } from "../util/derivations";
+import { concat, lift2, eq } from "../prelude";
 
 //- List is basically the same as `Array`, though much easier for our
 //- examples. If one of the methods in Prototype/Array looks
