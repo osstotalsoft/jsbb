@@ -2,4 +2,4 @@ export { concatFailure, field, filterFields, fromModel, items, logTo, shape, sto
 export * from "./primitiveValidators";
 export { Failure, Success, isValid, getErrors, getInner } from "./validation";
 export { Validator, validate } from "./validator";
-export { default } from "./validationError"
+export { default as ValidationError } from "./validationError"

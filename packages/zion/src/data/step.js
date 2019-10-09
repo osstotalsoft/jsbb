@@ -59,4 +59,4 @@ const { Loop, Done } = Step
   }
 }
 
-export default Step
+export { Loop, Done }

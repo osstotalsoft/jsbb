@@ -26,6 +26,16 @@ const eq = curry(function eq(x, y) {
   return x[fl.equals](y);
 });
 
+const lte = curry(function eq(x, y) {
+  if (typeof x === typeof y && ["string", "number"].includes(typeof x)) {
+    return x <= y;
+  }
+  if (typeof x[fl.lte] !== "function") {
+    console.log(x);
+  }
+  return x[fl.lte](y);
+});
+
 // chain :: Chain m => (a -> m b) -> m a -> m b
 const chain = curry(function chain(fn, ma) {
   return ma[fl.chain](fn);
@@ -92,4 +102,9 @@ function constant(k) {
   return _ => k;
 }
 
-export { eq, chain, $do, ap, map, lift2, concat, contramap, fold, merge, traverse, empty, reduce, id, constant };
+//compose :: (b -> c) -> (a -> b) -> a -> c
+const compose = curry(function compose(f, g, x) {
+  return f(g(x));
+})
+
+export { eq, lte, chain, $do, ap, map, lift2, concat, contramap, fold, merge, traverse, empty, reduce, id, constant, compose };
