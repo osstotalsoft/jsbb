@@ -15,7 +15,7 @@ describe("lift2:", () => {
     expect(monadSum(Just(5), Nothing)).toStrictEqual(Nothing);
   });
 
-  it.only("should lift binary function on List: ", () => {
+  it("should lift binary function on List: ", () => {
     // Arrange
     const sum = a => b => a + b;
     const monadSum = lift2(sum);
