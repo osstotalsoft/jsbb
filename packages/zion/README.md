@@ -106,6 +106,20 @@ Instance of:
 - id :: a -> a
 - constant :: a -> (b -> a)
 
+## Do notation
+```javascript
+const monadSum = (monadX, monadY) =>
+      $do(function*() {
+        const x = yield monadX;
+        const y = yield monadY;
+        return x + y;
+      });
+
+expect(monadSum(Just(5), Just(6))).toStrictEqual(Just(11));
+expect(monadSum(Just(5), Nothing)).toStrictEqual(Nothing);
+```
+
+
 
 
 [Haskell]:                  https://www.haskell.org/
