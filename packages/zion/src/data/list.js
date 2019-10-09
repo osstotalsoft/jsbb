@@ -1,7 +1,5 @@
 import { taggedSum } from "daggy";
 import fl from "fantasy-land";
-
-import { Chain } from "../util/derivations";
 import { concat, lift2, eq } from "../prelude";
 
 //- List is basically the same as `Array`, though much easier for our
@@ -44,7 +42,7 @@ List.fromArray = function(arr) {
   List.prototype[fl.equals] = function(that) {
     return this.cata({
       Cons: (head, tail) => {
-        return eq(head, that.head) && tail[fl.equals](that.tail)
+        return eq(head, that.head) && tail[fl.equals](that.tail);
       },
 
       Nil: () => {
@@ -88,7 +86,13 @@ List.fromArray = function(arr) {
 }
 
 /* Apply List */ {
-  List.prototype[fl.ap] = Chain[fl.ap];
+  List.prototype[fl.ap] = function(aList) {
+    return this.cata({
+      Cons: (headF, tailF) => concat(aList[fl.map](headF), tailF[fl.ap](aList)),
+
+      Nil: () => Nil
+    });
+  };
 }
 
 /* Applicative List */ {
