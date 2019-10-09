@@ -97,6 +97,15 @@ Instance of:
 - map :: Functor f => (a -> b) -> f a -> f b
 - contramap :: Contravariant f => (b -> a) -> f a -> f b
 - lift2 :: Apply f => (a -> b -> c) -> f a -> f b -> f c
+  ```javascript
+  const sum = a => b => a + b;
+  const monadSum = lift2(sum);
+
+  // Act && Assert
+  expect(monadSum(Just(5), Just(6))).toStrictEqual(Just(11));
+  expect(monadSum(Just(5), Nothing)).toStrictEqual(Nothing);
+  ```
+
 - concat :: Semigroup s => s -> s -> s
 - fold :: Monoid m => (a -> m) -> [a] -> m
 - merge :: Semigroup s => { to: a -> s a, from: s a -> a} -> a -> a -> a

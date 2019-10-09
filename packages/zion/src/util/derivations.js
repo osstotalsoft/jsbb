@@ -1,23 +1,20 @@
 //- This file provides all the derivations as specified in
 //- the Fantasy Land spec. Import and patch as you wish.
 
-import fl from 'fantasy-land'
-import { compose, id } from '../prelude'
+import fl from "fantasy-land";
+import { compose, id } from "../prelude";
 
 export const Ord = {
-  [fl.equals]: function (that) {
-    return this[fl.lte](that)
-      && that[fl.lte](this)
+  [fl.equals]: function(that) {
+    return this[fl.lte](that) && that[fl.lte](this);
   }
-}
+};
 
 export const Applicative = {
-  [fl.map]: function (f) {
-    return this[fl.ap](
-      this[fl.of](f)
-    )
+  [fl.map]: function(f) {
+    return this[fl.ap](this[fl.of](f));
   }
-}
+};
 
 // export const Traversable = {
 //   [fl.map]: function (f) {
@@ -31,29 +28,30 @@ export const Applicative = {
 // }
 
 export const Chain = {
-  [fl.ap]: function (fs) {
-    return fs[fl.chain](
-      f => this[fl.map](f)
-    )
+  [fl.ap]: function(applicative) {
+    return this[fl.chain](applicative[fl.map]);
   }
-}
+};
 
 export const Monad = {
-  [fl.map]: function (f) {
+  [fl.map]: function(f) {
     return this[fl.chain](
-      compose(this[fl.of])(f)
-    )
+      compose(
+        this.constructor[fl.of],
+        f
+      )
+    );
   }
-}
+};
 
 export const Bifunctor = {
-  [fl.map]: function (f) {
-    return this[fl.bimap](id, f)
+  [fl.map]: function(f) {
+    return this[fl.bimap](id, f);
   }
-}
+};
 
 export const Profunctor = {
-  [fl.map]: function (f) {
-    return this[fl.promap](id, f)
+  [fl.map]: function(f) {
+    return this[fl.promap](id, f);
   }
-}
+};
