@@ -1,9 +1,11 @@
 /* eslint-disable no-console */
 const path = require('path');
 const fse = require('fs-extra');
+const glob = require('glob');
 
 const packagePath = process.cwd();
 const buildPath = path.join(packagePath, './build');
+const srcPath = path.join(packagePath, './src');
 
 /**
  * Puts a package.json into every immediate child directory of rootDir.
@@ -15,6 +17,31 @@ const buildPath = path.join(packagePath, './build');
  *
  * @param {string} rootDir
  */
+async function createModulePackages({ from, to }) {
+  const directoryPackages = glob.sync('*/index.js', { cwd: from }).map(path.dirname);
+
+  await Promise.all(
+    directoryPackages.map(async directoryPackage => {
+      const packageJson = {
+        sideEffects: false,
+        module: path.join('./index.js'),
+        //typings: './index.d.ts',
+      };
+      const packageJsonPath = path.join(to, directoryPackage, 'package.json');
+
+      /*const [typingsExist] =*/ await Promise.all([
+        //fse.exists(path.join(to, directoryPackage, 'index.d.ts')),
+        fse.writeFile(packageJsonPath, JSON.stringify(packageJson, null, 2)),
+      ]);
+
+      // if (!typingsExist) {
+      //   throw new Error(`index.d.ts for ${directoryPackage} is missing`);
+      // }
+
+      return packageJsonPath;
+    }),
+  );
+}
 
 async function createPackageFile() {
   const packageData = await fse.readFile(path.resolve(packagePath, './package.json'), 'utf8');
@@ -38,6 +65,8 @@ async function createPackageFile() {
 async function run() {
   try {
     await createPackageFile();
+
+    await createModulePackages({ from: srcPath, to: buildPath });
 
   } catch (err) {
     console.error(err);
