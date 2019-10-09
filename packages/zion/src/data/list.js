@@ -92,7 +92,7 @@ List.fromArray = function(arr) {
 }
 
 /* Applicative List */ {
-  List.prototype[fl.of] = x => Cons(x, Nil);
+  List[fl.of] = x => Cons(x, Nil);
 }
 
 /* Alt List */ {
@@ -127,7 +127,7 @@ List.fromArray = function(arr) {
 
 /* Chain List */ {
   List.prototype[fl.chain] = function(f) {
-    this[fl.map](f)[fl.reduce(concat, Nil)];
+    return this[fl.map](f)[fl.reduce](concat, Nil);
   };
 }
 

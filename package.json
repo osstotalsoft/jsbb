@@ -1,7 +1,9 @@
 {
   "name": "root",
   "private": true,
-  "scripts": {},
+  "scripts": {
+    "test": "jest --watchAll"
+  },
   "devDependencies": {
     "lerna": "^3.16.4",
     "@babel/cli": "^7.5.5",

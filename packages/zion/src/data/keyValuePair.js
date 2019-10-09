@@ -1,8 +1,5 @@
 import { tagged } from "daggy";
 import fl from "fantasy-land";
-// import { $do, concat, map, reduce } from "../prelude";
-// import { Just, Nothing } from "./maybe";
-// import { Nil, Cons } from "./list";
 
 const KeyValuePair = tagged("KeyValuePair", ["key", "value"]);
 

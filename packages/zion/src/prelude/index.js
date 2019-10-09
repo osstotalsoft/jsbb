@@ -1,18 +1,18 @@
 import curry from "lodash.curry";
 import fl from "fantasy-land";
+import immutagen from "immutagen";
 
 function $do(gen) {
-  let g = gen(); // Will need to re-bind generator when done.
-  const step = value => {
-    const result = g.next(value);
-    if (result.done) {
-      g = gen();
-      return result.value;
-    } else {
-      return chain(step, result.value);
+  const doNext = (next, pure) => input => {
+    const { value, next: nextNext } = next(input);
+
+    if (!nextNext) {
+      return pure(value);
     }
+
+    return chain(doNext(nextNext, value.constructor[fl.of]), value);
   };
-  return step();
+  return doNext(immutagen(gen))();
 }
 
 //+ eq :: Setoid a => a -> a -> Bool
@@ -35,6 +35,11 @@ const chain = curry(function chain(fn, ma) {
 const ap = curry(function ap(fnFunctor, applicative) {
   return applicative[fl.ap](fnFunctor);
 });
+
+// pure :: Applicative f => TypeRep f -> a -> f a
+export const pure = function pure(A) {
+  return A[fl.of];
+};
 
 // map :: Functor f => (a -> b) -> f a -> f b
 const map = curry(function map(fn, functor) {

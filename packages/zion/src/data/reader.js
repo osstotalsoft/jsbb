@@ -48,7 +48,7 @@ Reader.ask = () => Reader((...props) => props); // Reader
     return $do(function*() {
       const x1 = yield self;
       const x2 = yield that;
-      return Reader[fl.of](concat(x1, x2));
+      return concat(x1, x2);
     });
   };
 }

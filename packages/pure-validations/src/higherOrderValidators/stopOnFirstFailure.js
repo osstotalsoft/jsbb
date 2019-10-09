@@ -1,4 +1,3 @@
-import Reader from "@totalsoft/zion/data/reader";
 import Maybe from "@totalsoft/zion/data/maybe";
 import { $do, concat } from "@totalsoft/zion";
 import { variadicApply, checkValidators } from "./_utils";
@@ -6,7 +5,8 @@ import { variadicApply, checkValidators } from "./_utils";
 function _stopOnFirstFailure(f1, f2) {
   return $do(function*() {
     const v1 = yield f1;
-    return Maybe.Just.is(v1) ? Reader.of(v1) : concat(Reader.of(v1), f2);
+    const result = Maybe.Just.is(v1) ? v1 : concat(v1, yield f2);
+    return result;
   });
 }
 

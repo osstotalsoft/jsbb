@@ -9,10 +9,10 @@ export default function shape(validatorObj) {
   return $do(function*() {
     const [model] = yield Reader.ask();
     if (model === null || model === undefined) {
-      return Reader.of(Nothing);
+      return Nothing;
     }
 
-    return Object.entries(validatorObj)
+    return yield Object.entries(validatorObj)
       .map(([k, v]) => field(k, v))
       .reduce(concat, Reader.of(Nothing));
   });

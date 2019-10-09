@@ -22,14 +22,14 @@ function _logFieldPath(validator) {
     const [, fieldContext] = yield Reader.ask();
     const validation = yield validator;
     _log(fieldContext, `Validation ${Nothing.is(validation) ? "succeded" : "failed"} for path ${fieldContext.fieldPath.join(".")}`);
-    return Reader.of(validation);
+    return validation;
   });
 }
 
 function _filterFieldPath(validator) {
   return $do(function*() {
     const [, fieldContext] = yield Reader.ask();
-    return !fieldContext.fieldFilter(fieldContext) ? Reader.of(Nothing) : validator;
+    return !fieldContext.fieldFilter(fieldContext) ? Nothing : yield validator;
   });
 }
 

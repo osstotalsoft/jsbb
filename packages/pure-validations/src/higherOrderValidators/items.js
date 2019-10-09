@@ -1,18 +1,22 @@
-import { $do, concat } from "@totalsoft/zion";
+import { $do, concat, empty } from "@totalsoft/zion";
 import Reader from "@totalsoft/zion/data/reader";
 import Maybe from "@totalsoft/zion/data/maybe";
 import field from "./field";
 import { checkValidators } from "./_utils";
-
-const { Nothing } = Maybe;
 
 export default function items(itemValidator) {
   checkValidators(itemValidator);
   return $do(function*() {
     const [items] = yield Reader.ask();
     if (items === null || items === undefined) {
-      return Reader.of(Nothing);
+      return empty(Maybe);
     }
-    return items.map((_, index) => field(index, itemValidator)).reduce(concat, Reader.of(Nothing));
+
+    let validations = [];
+    for (let i = 0; i < items.length; i++) {
+      validations.push(yield field(i, itemValidator));
+    }
+
+    return validations.reduce(concat, empty(Maybe));
   });
 }
