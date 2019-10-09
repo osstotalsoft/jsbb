@@ -33,7 +33,7 @@ const chain = curry(function chain(fn, ma) {
 
 // ap :: Apply f => f (a -> b) -> f a -> f b
 const ap = curry(function ap(fnFunctor, applicative) {
-  return applicative[fl.ap](fnFunctor);
+  return fnFunctor[fl.ap](applicative);
 });
 
 // pure :: Applicative f => TypeRep f -> a -> f a
