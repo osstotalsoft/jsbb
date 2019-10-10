@@ -17,22 +17,22 @@ function $do(gen) {
 
 //+ eq :: Setoid a => a -> a -> Bool
 const eq = curry(function eq(x, y) {
-  if (typeof x === typeof y && ["string", "number"].includes(typeof x)) {
+  if (["string", "number"].includes(typeof x)) {
     return x === y;
   }
-  if (typeof x[fl.equals] !== "function") {
-    console.log(x);
-  }
+  // if (typeof x[fl.equals] !== "function") {
+  //   console.log(x);
+  // }
   return x[fl.equals](y);
 });
 
 const lte = curry(function eq(x, y) {
-  if (typeof x === typeof y && ["string", "number"].includes(typeof x)) {
+  if (["string", "number"].includes(typeof x)) {
     return x <= y;
   }
-  if (typeof x[fl.lte] !== "function") {
-    console.log(x);
-  }
+  // if (typeof x[fl.lte] !== "function") {
+  //   console.log(x);
+  // }
   return x[fl.lte](y);
 });
 

@@ -7,6 +7,16 @@ Zion is a functional programming library inspired by [Haskell][] and [Fantasy La
 
 It provides [Haskell][]-like algebraic data-types and polymorphic functions against [Fantasy Land][] algebraic structures.
 
+## Instalation & usage
+```javascript
+npm install @totalsoft/zion
+```
+
+```javascript
+import List from "@totalsoft/zion/data/list";
+import { concat, lift2, eq } from "@totalsoft/zion";
+```
+
 ## Algebraic data types
 ### Maybe
 ```haskell
@@ -92,6 +102,16 @@ Instance of:
 
 ## Polymorphic functions
 - eq :: Setoid a => a -> a -> Bool
+   ```javascript
+  expect(eq(Just(5), Just(5))).toBe(true);
+  expect(eq(Nothing, Nothing)).toBe(true);
+  expect(eq(Just(5), Nothing)).toBe(false);
+  expect(eq(Just(Just(Just(5))), Just(Just(Just(5))))).toBe(true);
+  expect(eq(Just("tra la la"), Just("tra la la"))).toBe(true);
+  expect(eq(List.fromArray([1, 2]), List.fromArray([1, 2]))).toBe(true);
+  expect(eq(Nil, Nil)).toBe(true);
+  expect(eq(List.fromArray([1, 2]), Nil)).toBe(false);
+  ```
 - chain :: Chain m => (a -> m b) -> m a -> m b
 - ap :: Apply f => f (a -> b) -> f a -> f b
 - map :: Functor f => (a -> b) -> f a -> f b
@@ -104,6 +124,8 @@ Instance of:
   // Act && Assert
   expect(monadSum(Just(5), Just(6))).toStrictEqual(Just(11));
   expect(monadSum(Just(5), Nothing)).toStrictEqual(Nothing);
+  expect(monadSum(List.fromArray([1]), List.fromArray([2]))).toStrictEqual(List.fromArray([1+2]));
+  expect(monadSum(List.fromArray([1, 2]), List.fromArray([3]))).toStrictEqual(List.fromArray([1 + 3, 2 + 3]));
   ```
 
 - concat :: Semigroup s => s -> s -> s
@@ -126,6 +148,8 @@ const monadSum = (monadX, monadY) =>
 
 expect(monadSum(Just(5), Just(6))).toStrictEqual(Just(11));
 expect(monadSum(Just(5), Nothing)).toStrictEqual(Nothing);
+expect(monadSum(List.fromArray([1]), List.fromArray([2]))).toStrictEqual(List.fromArray([1+2]));
+expect(monadSum(List.fromArray([1, 2]), List.fromArray([3]))).toStrictEqual(List.fromArray([1 + 3, 2 + 3]));
 ```
 
 

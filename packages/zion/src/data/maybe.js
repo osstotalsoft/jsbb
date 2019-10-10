@@ -2,7 +2,7 @@ import { taggedSum } from "daggy";
 import fl from "fantasy-land";
 
 import { Loop, Done } from "./step";
-import { eq, lte, concat, map, lift2 } from "../prelude";
+import { eq, lte, concat, map} from "../prelude";
 
 //- The `Maybe` type is used to model "nullable" values in a type-
 //- safe way. Instead of returning a value OR null, return a Just
@@ -17,7 +17,14 @@ const { Just, Nothing } = Maybe;
 
 /* Setoid a => Setoid (Maybe a) */ {
   Maybe.prototype[fl.equals] = function(that) {
-    return lift2(eq, this, that);
+    return this.cata({
+      Just: x => that.cata({
+        Just: eq(x),
+        Nothing: () => false
+      }),
+
+      Nothing: () => Nothing.is(that)
+    })
   };
 }
 
