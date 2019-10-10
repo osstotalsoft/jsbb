@@ -1,8 +1,6 @@
 import { taggedSum } from "daggy";
 import fl from "fantasy-land";
-
-import { Chain } from "../util/derivations";
-import { concat, lift2, eq } from "../prelude";
+import { equals, ap, lift, concat } from "ramda";
 
 //- List is basically the same as `Array`, though much easier for our
 //- examples. If one of the methods in Prototype/Array looks
@@ -44,7 +42,7 @@ List.fromArray = function(arr) {
   List.prototype[fl.equals] = function(that) {
     return this.cata({
       Cons: (head, tail) => {
-        return eq(head, that.head) && tail[fl.equals](that.tail)
+        return equals(head, that.head) && tail[fl.equals](that.tail);
       },
 
       Nil: () => {
@@ -88,7 +86,13 @@ List.fromArray = function(arr) {
 }
 
 /* Apply List */ {
-  List.prototype[fl.ap] = Chain[fl.ap];
+  List.prototype[fl.ap] = function(fn) {
+    return this.cata({
+      Cons: (head, tail) => concat(head |> ap(fn), tail[fl.ap](fn)),
+
+      Nil: () => Nil
+    });
+  };
 }
 
 /* Applicative List */ {
@@ -118,7 +122,7 @@ List.fromArray = function(arr) {
 /* Traversable List */ {
   List.prototype[fl.traverse] = function(T, f) {
     return this.cata({
-      Cons: (head, tail) => lift2(x => y => Cons(x, y), f(head), tail[fl.traverse](T, f)),
+      Cons: (head, tail) => lift(x => y => Cons(x, y), f(head), tail[fl.traverse](T, f)),
 
       Nil: () => T.of(Nil)
     });

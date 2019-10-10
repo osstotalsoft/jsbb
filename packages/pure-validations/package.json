@@ -23,8 +23,7 @@
   "dependencies": {
     "@totalsoft/zion": "^2.0.0",
     "daggy": "^1.4.0",
-    "fantasy-land": "^4.0.1",
-    "lodash.curry": "^4.1.1"
+    "fantasy-land": "^4.0.1"
   },
   "peerDependencies": {
     "i18next": "^17.0.11"

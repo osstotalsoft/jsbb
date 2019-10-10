@@ -1,6 +1,7 @@
 import { tagged } from "daggy";
 import fl from "fantasy-land";
-import { $do, concat } from "../prelude";
+import { $do } from "../prelude";
+import { concat } from "ramda";
 
 const Reader = tagged("Reader", ["computation"]);
 Reader[fl.of] = x => Reader(_ => x); // Monad, Applicative
@@ -19,8 +20,8 @@ Reader.ask = () => Reader((...props) => props); // Reader
 }
 
 /* Apply Reader */ {
-  Reader.prototype[fl.ap] = function(that) {
-    return Reader((...props) => that.computation(...props)(this.computation(...props)));
+  Reader.prototype[fl.ap] = function(fn) {
+    return Reader((...props) => fn.computation(...props)(this.computation(...props)));
   };
 }
 

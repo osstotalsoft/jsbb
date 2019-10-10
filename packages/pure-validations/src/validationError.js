@@ -2,7 +2,7 @@ import List from "@totalsoft/zion/data/list";
 import Maybe from "@totalsoft/zion/data/maybe";
 import Map from "@totalsoft/zion/data/map";
 import ObjectTree from "@totalsoft/zion/data/objectTree";
-import curry from "lodash.curry";
+import { curry } from "ramda";
 
 const { Just, Nothing } = Maybe;
 

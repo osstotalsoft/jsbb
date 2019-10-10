@@ -28,6 +28,6 @@
     "daggy": "^1.4.0",
     "fantasy-land": "^4.0.1",
     "immutagen": "^1.0.9",
-    "lodash.curry": "^4.1.1"
+    "ramda": "^0.26.1"
   }
 }
