@@ -1,4 +1,5 @@
-import { $do, concat } from "@totalsoft/zion";
+import { $do } from "@totalsoft/zion";
+import { concat } from "ramda";
 import Reader from "@totalsoft/zion/data/reader";
 import Maybe from "@totalsoft/zion/data/maybe";
 import field from "./field";

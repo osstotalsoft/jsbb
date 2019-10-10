@@ -1,9 +1,8 @@
 import Maybe from "@totalsoft/zion/data/maybe";
 import List from "@totalsoft/zion/data/list";
 import ObjectTree from "@totalsoft/zion/data/objectTree";
-import { chain, map, id, constant } from "@totalsoft/zion";
 import ValidationError from "./validationError";
-import curry from "lodash.curry";
+import { chain, map, identity, always, curry } from "ramda";
 
 const Success = Maybe.Nothing;
 const Failure = Maybe.Just;
@@ -15,8 +14,8 @@ function isValid(validation) {
 function getErrors(validation) {
   const maybeArray = validation |> chain(ObjectTree.getValue) |> map(List.toArray);
   const result = maybeArray.cata({
-    Just: id,
-    Nothing: constant([])
+    Just: identity,
+    Nothing: always([])
   });
   return result;
 }

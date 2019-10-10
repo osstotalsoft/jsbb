@@ -1,5 +1,5 @@
 import Reader from "@totalsoft/zion/data/reader";
-import curry from "lodash.curry";
+import { curry } from "ramda";
 import fl from "fantasy-land";
 
 const Validator = Reader;

@@ -1,5 +1,6 @@
 import Maybe from "@totalsoft/zion/data/maybe";
-import { $do, concat } from "@totalsoft/zion";
+import { $do } from "@totalsoft/zion";
+import { concat } from "ramda";
 import { variadicApply, checkValidators } from "./_utils";
 
 function _stopOnFirstFailure(f1, f2) {
