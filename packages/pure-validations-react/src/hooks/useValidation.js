@@ -1,6 +1,6 @@
 import { useState, useCallback, useMemo, useEffect } from 'react';
-import { Success, validate, isValid, logTo, filterFields } from '@totalsoft/pure-validations';
-import { ValidationProxy } from '../validationProxy';
+import { Success, validate, logTo, filterFields } from '@totalsoft/pure-validations';
+import { ValidationProxy, isValid } from '../validationProxy';
 import { useTranslation } from 'react-i18next/hooks';
 
 
@@ -27,8 +27,8 @@ export function useValidation(rules, { isLogEnabled = true, logger = console, fi
         if (isValid(validation)) {
             return
         }
-        const validation = validate(validator, state.model, state.context);
-        setValidation(ValidationProxy(validation));
+        const validationProxy = ValidationProxy(validate(validator, state.model, state.context));
+        setValidation((validationProxy));
     }, [i18n.language])
 
     return [
@@ -36,9 +36,9 @@ export function useValidation(rules, { isLogEnabled = true, logger = console, fi
 
         // Validate
         useCallback((model, context) => {
-            const validation = validate(validator, model, context);
+            const validation = ValidationProxy(validate(validator, model, context));
             setState({ model, context })
-            setValidation(ValidationProxy(validation));
+            setValidation((validation));
             return isValid(validation);
         }, [validator]),
 

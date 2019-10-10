@@ -3,6 +3,7 @@ import { Success, isValid as pureIsValid, getErrors as pureGetErrors, getInner }
 const isValidPropSymbol = Symbol("isValid")
 const errorsPropSymbol = Symbol("errors")
 const errorSeparatorSymbol = Symbol("errorSeparator")
+const targetSymbol = Symbol("target")
 const defaultErrorSeparator = ", "
 
 const handler = {
@@ -12,6 +13,10 @@ const handler = {
         }
 
         switch (name) {
+            case targetSymbol: {
+                return target;
+            }
+
             case isValidPropSymbol: {
                 const valid = pureIsValid(target)
                 target[isValidPropSymbol] = valid; // cache value
@@ -31,7 +36,19 @@ const handler = {
     }
 }
 
-const successProxy = new Proxy(Success, handler)
+const successProxy = initializeSuccessProxy()
+
+function initializeSuccessProxy() {
+    const proxy = new Proxy(Success, handler)
+    proxy[isValidPropSymbol]
+    proxy[errorsPropSymbol]
+    proxy[targetSymbol]
+    return proxy;
+}
+
+export function eject(proxy) {
+    return proxy[targetSymbol]
+}
 
 export function getErrors(proxy, separator) {
     proxy[errorSeparatorSymbol] = separator

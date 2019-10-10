@@ -1,6 +1,5 @@
 import { checkValidators } from "./_utils";
-import curry from "lodash.curry";
-import { map } from "@totalsoft/zion";
+import { curry, map } from "ramda"
 import ValidationError from "../validationError";
 import i18next from "i18next";
 

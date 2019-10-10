@@ -1,9 +1,10 @@
 const mock = jest.genMockFromModule("@totalsoft/pure-validations");
 
-mock.Success = { value: true };
-mock.Failure = () => ({ value: false });
+mock.Success = { value: true, toString: () => "Success" };
+mock.Failure = () => ({ value: false, toString: () => "Failure" });
 
 mock.isValid = jest.fn(validation => validation.value);
+mock.getErrors = jest.fn(_ => []);
 
 mock.Validator = {
   of: validation => ({ validation })
@@ -18,6 +19,7 @@ mock.__clearMocks = function() {
   mock.logTo.mockClear();
   mock.filterFields.mockClear();
   mock.isValid.mockClear();
+  mock.getErrors.mockClear();
 };
 
 // eslint-disable-next-line no-undef
