@@ -1,5 +1,5 @@
 import { Success, Failure, getErrors, getInner } from "../validation";
-import { concat, empty } from "@totalsoft/zion";
+import { concat, empty } from "ramda";
 import ValidationError from "../validationError";
 
 function applyLaw(law) {
@@ -21,7 +21,7 @@ describe("validation tests suite:", () => {
     // Act
     const leftIdentityLaw = isEquivalent =>
       function(m) {
-        return isEquivalent(concat(empty(m.constructor), m), m);
+        return isEquivalent(concat(empty(m), m), m);
       };
     var lawEvaluator = applyLaw(leftIdentityLaw)(failure);
 

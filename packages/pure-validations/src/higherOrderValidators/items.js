@@ -1,15 +1,16 @@
-import { $do, concat, empty } from "@totalsoft/zion";
+import { $do } from "@totalsoft/zion";
+import { concat } from "ramda";
 import Reader from "@totalsoft/zion/data/reader";
-import Maybe from "@totalsoft/zion/data/maybe";
 import field from "./field";
 import { checkValidators } from "./_utils";
+import { Success } from "../validation";
 
 export default function items(itemValidator) {
   checkValidators(itemValidator);
   return $do(function*() {
     const [items] = yield Reader.ask();
     if (items === null || items === undefined) {
-      return empty(Maybe);
+      return Success;
     }
 
     let validations = [];
@@ -17,6 +18,6 @@ export default function items(itemValidator) {
       validations.push(yield field(i, itemValidator));
     }
 
-    return validations.reduce(concat, empty(Maybe));
+    return validations.reduce(concat, Success);
   });
 }

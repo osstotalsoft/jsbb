@@ -1,6 +1,8 @@
-import { map, contramap, $do } from "@totalsoft/zion";
+import { contramap, $do } from "@totalsoft/zion";
 import Reader from "@totalsoft/zion/data/reader";
 import Maybe from "@totalsoft/zion/data/maybe";
+import { map } from "ramda";
+
 import ValidationError from "../validationError";
 import { checkValidators } from "./_utils";
 

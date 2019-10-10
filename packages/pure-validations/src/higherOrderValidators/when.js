@@ -1,7 +1,7 @@
 import Reader from "@totalsoft/zion/data/reader";
 import Maybe from "@totalsoft/zion/data/maybe";
 import { $do } from "@totalsoft/zion";
-import curry from "lodash.curry";
+import { curry } from "ramda";
 import { checkValidators } from "./_utils";
 
 const { Nothing } = Maybe;

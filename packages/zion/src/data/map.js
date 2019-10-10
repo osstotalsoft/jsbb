@@ -1,10 +1,9 @@
 import { tagged } from "daggy";
 import fl from "fantasy-land";
-import { concat, map, reduce, eq, id } from "../prelude";
 import Maybe from "./maybe";
 import List from "./list";
 import KeyValuePair from "./keyValuePair";
-import curry from "lodash.curry";
+import { equals, map, concat, reduce, identity, curry } from "ramda";
 
 const { Just, Nothing } = Maybe;
 
@@ -34,7 +33,7 @@ Map.toList = function toList(aMap) {
 
 /* Setoid a => Setoid (Map a) */
 Map.prototype[fl.equals] = function(that) {
-  return eq(Map.toList(that), Map.toList(this));
+  return equals(Map.toList(that), Map.toList(this));
 };
 
 /* Functor ObjectTree */
@@ -56,7 +55,7 @@ Map.prototype[fl.concat] = function(that) {
     const thatValue = Map.getValueAt(f, that);
     const concatValue = concat(thisValue, thatValue);
     result[f] = concatValue.cata({
-      Just: id,
+      Just: identity,
       Nothing: _ => undefined //???????????
     });
   }
