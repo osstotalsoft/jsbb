@@ -15,7 +15,7 @@ function $do(gen) {
   return doNext(immutagen(gen))();
 }
 
-//+ pure :: Applicative f => TypeRep f -> a -> f a
+// pure :: Applicative f => TypeRep f -> a -> f a
 const pure = function(A) {
   if (A[fl.of]) {
     return A[fl.of];

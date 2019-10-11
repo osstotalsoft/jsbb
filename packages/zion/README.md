@@ -101,9 +101,9 @@ Instance of:
 
 
 ## Polymorphic functions
+- pure :: Applicative f => TypeRep f -> a -> f a
 - contramap :: Contravariant f => (b -> a) -> f a -> f b
-
-- fold :: Monoid m => (a -> m) -> [a] -> m
+- fold :: Monoid m, Foldable f => (a -> m a) -> f a -> m a
 
 ## Do notation
 ```javascript
