@@ -1,9 +1,14 @@
-import { useState, useCallback, useMemo } from 'react';
-import { Success, validate, isValid, logTo, filterFields } from '@totalsoft/pure-validations';
+import { useState, useCallback, useMemo, useEffect } from 'react';
+import { Success, validate, logTo, filterFields } from '@totalsoft/pure-validations';
+import { ValidationProxy, isValid } from '../validationProxy';
+import { useTranslation } from 'react-i18next/hooks';
 
 
 export function useValidation(rules, { isLogEnabled = true, logger = console, fieldFilterFunc = undefined } = {}, deps = []) {
-    const [validation, setValidation] = useState(Success);
+    const [validation, setValidation] = useState(ValidationProxy(Success));
+    const [, i18n] = useTranslation()
+    const [state, setState] = useState({})
+
     const validator = useMemo(() => {
         let newValidator = rules;
 
@@ -18,19 +23,29 @@ export function useValidation(rules, { isLogEnabled = true, logger = console, fi
         return newValidator
     }, [rules, isLogEnabled, logger, fieldFilterFunc, ...deps]); // eslint-disable-line react-hooks/exhaustive-deps
 
+    useEffect(() => {
+        if (isValid(validation)) {
+            return
+        }
+        const validationProxy = ValidationProxy(validate(validator, state.model, state.context));
+        setValidation((validationProxy));
+    }, [i18n.language])
+
     return [
         validation,
 
         // Validate
         useCallback((model, context) => {
-            const validation = validate(validator, model, context);
-            setValidation(validation);
+            const validation = ValidationProxy(validate(validator, model, context));
+            setState({ model, context })
+            setValidation((validation));
             return isValid(validation);
         }, [validator]),
 
         // Reset
         useCallback(() => {
-            setValidation(Success)
+            setValidation(ValidationProxy(Success))
+            setState({})
         }, [])
     ]
 }
