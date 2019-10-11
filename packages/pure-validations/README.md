@@ -16,7 +16,7 @@ shape({
             age: greaterThan(x.minimumAllowedAge)
         })
     ),
-    assets: [unique("id"), required |> items] |> concatFailure
+    assets: [atLeastOne, unique("id"), required |> items] |> concatFailure
 }) |> logTo(console);
 ```
 
