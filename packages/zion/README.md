@@ -108,16 +108,23 @@ Instance of:
 ## Do notation
 ```javascript
 const monadSum = (monadX, monadY) =>
-      $do(function*() {
-        const x = yield monadX;
-        const y = yield monadY;
-        return x + y;
-      });
+  $do(function*() {
+    const x = yield monadX;
+    const y = yield monadY;
+    return x + y;
+  })
 
-expect(monadSum(Just(5), Just(6))).toStrictEqual(Just(11));
-expect(monadSum(Just(5), Nothing)).toStrictEqual(Nothing);
-expect(monadSum(List.fromArray([1]), List.fromArray([2]))).toStrictEqual(List.fromArray([1+2]));
-expect(monadSum(List.fromArray([1, 2]), List.fromArray([3]))).toStrictEqual(List.fromArray([1 + 3, 2 + 3]));
+expect(monadSum(Just(5), Just(6))).toStrictEqual(Just(11))
+expect(monadSum(Just(5), Nothing)).toStrictEqual(Nothing)
+
+expect(monadSum(List.fromArray([1]), List.fromArray([2]))).toStrictEqual(List.fromArray([1+2]))
+expect(monadSum(List.fromArray([1, 2]), List.fromArray([3]))).toStrictEqual(List.fromArray([1 + 3, 2 + 3]))
+
+expect(monadSum([1, 2], [3])).toStrictEqual([1 + 3, 2 + 3])
+expect(monadSum([1], [2])).toStrictEqual([1 + 2])
+
+expect(monadSum(x => x + 1, x => x - 1)(7)).toBe(7 + 1 + 7 - 1)
+expect(monadSum(x => x * 2, x => x - 1)(5)).toBe(5 * 2 + 5 - 1)
 ```
 
 

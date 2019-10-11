@@ -37,4 +37,12 @@ describe("do notation:", () => {
     expect(monadSum([1], [2])).toStrictEqual([1 + 2]);
     expect(monadSum([1, 2], [3, 4])).toStrictEqual([1 + 3, 1 + 4, 2 + 3, 2 + 4]);
   });
+
+  it("should chain functions: ", () => {
+    // Arrange
+
+    // Act && Assert
+    expect(monadSum(x => x + 1, x => x - 1)(7)).toBe(7 + 1 + 7 - 1);
+    expect(monadSum(x => x * 2, x => x - 1)(5)).toBe(5 * 2 + 5 - 1);
+  });
 });

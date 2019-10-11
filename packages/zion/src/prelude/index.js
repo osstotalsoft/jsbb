@@ -1,6 +1,6 @@
 import fl from "fantasy-land";
 import immutagen from "immutagen";
-import { chain, reduce, concat, curry } from "ramda";
+import { chain, reduce, concat, curry, always } from "ramda";
 
 function $do(gen) {
   const doNext = (next, typeRep) => input => {
@@ -17,6 +17,15 @@ function $do(gen) {
 
 //+ pure :: Applicative f => TypeRep f -> a -> f a
 const pure = function(A) {
+  if (A[fl.of]) {
+    return A[fl.of];
+  }
+  if (A === Array) {
+    return A.of;
+  }
+  if (A === Function) {
+    return always;
+  }
   return A[fl.of] || A.of;
 };
 
