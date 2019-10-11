@@ -20,18 +20,21 @@ shape({
 }) |> logTo(console);
 ```
 
-## Installation and Usage
-`npm install @totalsoft/pure-validations`
-
-#### ES6
-
+## Installation
 ```javascript
-import * as v from 'pure-validations';
+npm install '@totalsoft/pure-validations'
 ```
-or...
+
+## Usage
 
 ```javascript
-import { required, email } from 'pure-validations';
+import { required, email, concatFailure, validate, isValid, getErrors } from '@totalsoft/pure-validations';
+
+const goodEmail = "someEmail@something.com"
+const validator = [required, email] |> stopOnFirstFailure
+const validation = validate(validator, goodEmail)
+const isValid = validation |> isValid
+const errs = validation |> getErrors
 ```
 
 ## Concepts
