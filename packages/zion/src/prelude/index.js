@@ -26,7 +26,7 @@ const pure = function(A) {
   if (A === Function) {
     return always;
   }
-  return A[fl.of] || A.of;
+  throw Error(`TypeRep ${A} is not Applicative`);
 };
 
 // contramap :: Contravariant f => (b -> a) -> f a -> f b
