@@ -1,6 +1,6 @@
 {
   "name": "@totalsoft/zion",
-  "version": "2.1.1",
+  "version": "2.1.2",
   "description": "Fantasy Land compliant algebraic data types",
   "main": "./index.js",
   "module": "./index.js",
