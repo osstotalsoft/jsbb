@@ -21,63 +21,67 @@ function translate(key, args) {
   return i18next.t(key, { defaultValue: defaultMessages[key], ...args }) || defaultMessages[key];
 }
 
-export const required = Validator(x =>
-  x !== null && x !== undefined && (typeof x === "string" ? x !== "" : true)
+export const required = Validator(function required(x) {
+  return x !== null && x !== undefined && (typeof x === "string" ? x !== "" : true)
     ? Success
-    : Failure(ValidationError(translate("Validations.Generic.Mandatory")))
-);
+    : Failure(ValidationError(translate("Validations.Generic.Mandatory")));
+});
 
-export const atLeastOne = Validator(x =>
-  Array.isArray(x) && x.length ? Success : Failure(ValidationError(translate("Validations.Generic.AtLeastOne")))
-);
+export const atLeastOne = Validator(function atLeastOne(x) {
+  return Array.isArray(x) && x.length ? Success : Failure(ValidationError(translate("Validations.Generic.AtLeastOne")));
+});
 
-export const email = Validator(x => {
+export const email = Validator(function email(x) {
   const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
   return re.test(String(x).toLowerCase()) ? Success : Failure(ValidationError(translate("Validations.Generic.Email")));
 });
 
 export function matches(regex) {
-  return Validator(x => (regex.test(String(x)) ? Success : Failure(ValidationError(translate("Validations.Generic.Regex")))));
+  return Validator(function matches(x) {
+    return regex.test(String(x)) ? Success : Failure(ValidationError(translate("Validations.Generic.Regex")));
+  });
 }
 
 export function between(min, max) {
-  return Validator(value =>
-    value === null || value === undefined || (value >= min && value <= max)
+  return Validator(function between(value) {
+    return value === null || value === undefined || (value >= min && value <= max)
       ? Success
-      : Failure(ValidationError(translate("Validations.Generic.OutOfRange", { min, max })))
-  );
+      : Failure(ValidationError(translate("Validations.Generic.OutOfRange", { min, max })));
+  });
 }
 
 export function greaterThan(min) {
-  return Validator(value =>
-    value === null || value === undefined || value > min ? Success : Failure(ValidationError(translate("Validations.Generic.Greater", { min })))
-  );
+  return Validator(function greaterThan(value) {
+    return value === null || value === undefined || value > min
+      ? Success
+      : Failure(ValidationError(translate("Validations.Generic.Greater", { min })));
+  });
 }
 
 export function lessThan(max) {
-  return Validator(value =>
-    value === null || value === undefined || value < max ? Success : Failure(ValidationError(translate("Validations.Generic.Less", { max })))
-  );
+  return Validator(function lessThan(value) {
+    return value === null || value === undefined || value < max ? Success : Failure(ValidationError(translate("Validations.Generic.Less", { max })));
+  });
 }
 
 export function minLength(min) {
-  return Validator(value =>
-    value === null || value === undefined || value.length > min
+  return Validator(function minLength(value) {
+    return value === null || value === undefined || value.length > min
       ? Success
-      : Failure(ValidationError(translate("Validations.Generic.MinCharacters", { min })))
-  );
+      : Failure(ValidationError(translate("Validations.Generic.MinCharacters", { min })));
+  });
 }
 
 export function maxLength(max) {
-  return Validator(value =>
-    value === null || value === undefined || value.length < max
+  return Validator(function maxLength(value) {
+    return value === null || value === undefined || value.length < max
       ? Success
-      : Failure(ValidationError(translate("Validations.Generic.MaxCharacters", { max })))
-  );
+      : Failure(ValidationError(translate("Validations.Generic.MaxCharacters", { max })));
+  });
 }
 
 export function unique(selector) {
-  return Validator(list => {
+  return Validator(function unique(list) {
     if (list === null || list === undefined) {
       return Success;
     }
