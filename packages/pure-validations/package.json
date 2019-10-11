@@ -1,6 +1,6 @@
 {
   "name": "@totalsoft/pure-validations",
-  "version": "2.0.0",
+  "version": "2.1.2",
   "description": "Validation api via functional composition",
   "main": "index.js",
   "scripts": {
@@ -21,7 +21,7 @@
     "access": "public"
   },
   "dependencies": {
-    "@totalsoft/zion": "^2.0.0",
+    "@totalsoft/zion": "^2.1.2",
     "daggy": "^1.4.0",
     "fantasy-land": "^4.0.1"
   },

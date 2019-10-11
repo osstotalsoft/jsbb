@@ -1,6 +1,7 @@
 import { renderHook, act } from "@testing-library/react-hooks";
 import { useDirtyFieldValidation } from "../useDirtyFieldValidation";
-import { isValid, Validator, Success, Failure, validate, __clearMocks } from "@totalsoft/pure-validations";
+import { Validator, Success, Failure, isValid, validate, __clearMocks } from "@totalsoft/pure-validations";
+import { eject } from "../../validationProxy";
 
 describe("UseDirtyFieldValidaiton hook", () => {
   afterEach(() => {
@@ -129,7 +130,7 @@ describe("UseDirtyFieldValidaiton hook", () => {
 
     // Assert
     const [validation] = result.current;
-    expect(isValid.mock.calls.length).toBe(1);
+    expect(isValid.mock.calls.length).toBe(0); // Success proxy uses an initialized cache
     expect(validate.mock.calls.length).toBe(1);
     expect(isValid(validation)).toBe(true);
     expect(returnedIsValid).toBe(true);
@@ -204,7 +205,7 @@ describe("UseDirtyFieldValidaiton hook", () => {
     const [validation2, validate2, reset2] = result.current;
 
     // Assert
-    expect(validation1).toStrictEqual(validation2);
+    expect(eject(validation1)).toBe(eject(validation2));
     expect(validate1).not.toBe(validate2);
     expect(reset1).toBe(reset2);
     expect(validate.mock.calls.length).toBe(1);

@@ -24,6 +24,7 @@
     "rimraf": "^3.0.0",
     "i18next": "^17.0.11",
     "react": "^16.9.0",
+    "react-i18next": "^9.0.0",
     "glob": "^7.1.2"
   },
   "workspaces": [

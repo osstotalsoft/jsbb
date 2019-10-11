@@ -80,7 +80,7 @@ export function maxLength(max) {
   });
 }
 
-export function unique(selector) {
+export function unique(selector, displayName = null) {
   return Validator(function unique(list) {
     if (list === null || list === undefined) {
       return Success;
@@ -104,8 +104,10 @@ export function unique(selector) {
       throw "Invalid selector"; // TBD
     }
 
+    const fieldName = displayName ? i18next.t(displayName) || displayName : selector ? selector.toString() : "";
+
     return [...new Set(list.map(selectorFn))].length === list.length
       ? Success
-      : Failure(ValidationError(translate("Validations.Generic.Unique", { selector: selector ? selector.toString() : "" })));
+      : Failure(ValidationError(translate("Validations.Generic.Unique", { selector: fieldName })));
   });
 }

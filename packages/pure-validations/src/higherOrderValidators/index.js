@@ -7,5 +7,6 @@ import filterFields from "./filterFields";
 import logTo from "./logTo";
 import stopOnFirstFailure from "./stopOnFirstFailure";
 import concatFailure from "./concatFailure";
+import errorMessage from "./errorMessage";
 
-export { stopOnFirstFailure, concatFailure, when, fromModel, field, shape, items, filterFields, logTo };
+export { stopOnFirstFailure, concatFailure, when, fromModel, field, shape, items, filterFields, logTo, errorMessage };
