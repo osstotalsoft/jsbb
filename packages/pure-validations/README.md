@@ -46,14 +46,14 @@ Validation = Success | Failure
 ```
 If it is a successful validation there's no more information required but if it is a failure you have to provide more information regarding the failure.
 ```javascript
-const success = Validation.Success
-const failure = Validation.Failure(ValidationError("The value must be greater than 5."))
+const success = Success
+const failure = Failure(ValidationError("The value must be greater than 5."))
 ```
 
 ### Validators
 A validator is just a function that takes in a value and returns a validation.
 ```javascript
-const integer = Validator(x => Number.isInteger(x) ? Validation.Success : Validation.Failure(ValidationError('Not an integer!')))
+const integer = Validator(x => Number.isInteger(x) ? Success : Failure(ValidationError('Not an integer!')))
 ```
 
 The library provides some out of the box primitive validators that you can use in the composition process.
@@ -95,10 +95,10 @@ Used to validate just a field of the model.
 
 ```javascript
 const name = field('name')
-const adresses = field('adresses')
+const data = field('data')
 
 const nameValidator = required |> name
-const surNameValidator = atleastOne |> adresses
+const dataValidator = atleastOne |> data
 ```
 #### shape
 Used to compose a complex validator from field validators.
