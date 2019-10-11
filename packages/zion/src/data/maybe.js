@@ -9,7 +9,7 @@ import { equals, lte, map, concat } from "ramda";
 //- value OR Nothing. Why? Because these two values have **the same
 //- interface**, which means that you can treat them in the same way.
 //- When you want to get a value _out_, you must also deal with the
-//- Nothing case, which prevents you from forgetting about it.
+//- Nothing case, which prevents you from forgetting about it. 
 
 const Maybe = taggedSum("Maybe", { Just: ["value"], Nothing: [] });
 

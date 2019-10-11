@@ -9,12 +9,12 @@ const defaultErrorSeparator = ", "
 const handler = {
     get: function (target, name) {
         if (name in target) {
-            return target[name];
+            return target[name]
         }
 
         switch (name) {
             case targetSymbol: {
-                return target;
+                return target
             }
 
             case isValidPropSymbol: {
