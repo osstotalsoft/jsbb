@@ -26,7 +26,6 @@ npm install '@totalsoft/pure-validations'
 ```
 
 ## Usage
-
 ```javascript
 import { required, email, concatFailure, validate, isValid, getErrors } from '@totalsoft/pure-validations';
 
