@@ -1,6 +1,6 @@
 import { Success, Failure } from "../validation";
 import { validate, Validator } from "../validator";
-import { required, maxLength, greaterThan, unique } from "../primitiveValidators";
+import { required, maxLength, greaterThan, unique, atLeastOne } from "../primitiveValidators";
 import { shape, items, stopOnFirstFailure, when, fromModel, logTo, concatFailure } from "../higherOrderValidators";
 import ValidationError from "../validationError";
 describe("composed validators:", () => {
@@ -18,7 +18,7 @@ describe("composed validators:", () => {
             age: greaterThan(x.minimumAllowedAge)
           })
         ),
-        assets: [unique("id"), required |> items] |> concatFailure
+        assets: [atLeastOne, unique("id"), required |> items] |> concatFailure
       }) |> logTo({ log: () => {} });
 
     const model = {
@@ -29,7 +29,8 @@ describe("composed validators:", () => {
       personalInfo: {
         age: 19,
         minimumAllowedAge: 18
-      }
+      },
+      assets: [{ id: 1 }]
     };
 
     // Act
