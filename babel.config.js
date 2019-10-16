@@ -6,29 +6,29 @@ module.exports = api => {
 
   const presets = api.env("test")
     ? [
-        [
-          "@babel/preset-env",
-          {
-            targets: { node: "current" }
-          }
-        ]
+      [
+        "@babel/preset-env",
+        {
+          targets: { node: "current" }
+        }
       ]
+    ]
     : [];
 
   const defaultPlugins = [["@babel/plugin-proposal-pipeline-operator", { proposal: "minimal" }], "@babel/plugin-proposal-optional-chaining"];
 
   const plugins = api.env("test")
     ? [
-        ...defaultPlugins,
-        [
-          "babel-plugin-module-resolver",
-          {
-            root: ["./"],
-            alias: defaultAlias
-          }
-        ]
+      ...defaultPlugins,
+      [
+        "babel-plugin-module-resolver",
+        {
+          root: ["./"],
+          alias: defaultAlias
+        }
       ]
-    : defaultPlugins;
+    ]
+    : [...defaultPlugins, ["@babel/plugin-transform-modules-commonjs"]];
 
   return {
     presets,
