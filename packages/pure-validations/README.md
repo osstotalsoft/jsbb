@@ -6,16 +6,20 @@ Composition means you have a category of objects, and some means of combining th
 
 Throughout the process of composition, you start with some simple primitive validators, compose those using some combinators or higher order validators and you get some prety powerful validation pipelines.
 ```javascript
-    const validator = {
-        contactInfo: {
+    const validator =
+      {
+        contactInfo:
+          {
             firstName: required,
             lastName: [required, maxLength(50)] |> stopOnFirstFailure,
             email: email,
             userAgreement: required |> when(gdprRequired)
-        } |> shape,
+          } |> shape,
         personalInfo: fromModel(x => field("age", greaterThan(x.minimumAllowedAge))),
         assets: [atLeastOne, unique("id"), required |> items] |> concatFailure
-      } |> shape |> logTo(console);
+      }
+      |> shape
+      |> logTo(console);
 ```
 
 ## Installation
