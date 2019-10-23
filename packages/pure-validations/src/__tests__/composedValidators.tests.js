@@ -1,30 +1,31 @@
 import { Success, Failure } from "../validation";
 import { validate, Validator } from "../validator";
-import { required, maxLength, greaterThan, unique, atLeastOne } from "../primitiveValidators";
-import { shape, items, stopOnFirstFailure, when, fromModel, logTo, concatFailure } from "../higherOrderValidators";
+import { required, maxLength, greaterThan, unique, atLeastOne, email } from "../primitiveValidators";
+import { shape, items, stopOnFirstFailure, when, fromModel, logTo, concatFailure, field } from "../higherOrderValidators";
 import ValidationError from "../validationError";
 describe("composed validators:", () => {
   it("readme validator: ", () => {
-    const gdprAgreement = () => true;
     // Arrange
-    const validator =
-      shape({
-        contactInfo: shape({
-          name: [required, maxLength(50)] |> stopOnFirstFailure,
-          email: required |> when(gdprAgreement)
-        }),
-        personalInfo: fromModel(x =>
-          shape({
-            age: greaterThan(x.minimumAllowedAge)
-          })
-        ),
+    const gdprRequired = () => true;
+    const console = { log: () => {} };
+
+    const validator = {
+        contactInfo: {
+            firstName: required,
+            lastName: [required, maxLength(50)] |> stopOnFirstFailure,
+            email: email,
+            userAgreement: required |> when(gdprRequired)
+        } |> shape,
+        personalInfo: fromModel(x => field("age", greaterThan(x.minimumAllowedAge))),
         assets: [atLeastOne, unique("id"), required |> items] |> concatFailure
-      }) |> logTo({ log: () => {} });
+      } |> shape |> logTo(console);
 
     const model = {
       contactInfo: {
-        name: "name",
-        email: "rpopovici@gmai.com"
+        firstName: "firstName",
+        lastName: "lastName",
+        email: "rpopovici@gmai.com",
+        userAgreement: true
       },
       personalInfo: {
         age: 19,
