@@ -6,7 +6,7 @@
 ## The blocks
   - [`zion`](./packages/zion#readme)
   - [`pure-validations`](./packages/pure-validations#readme)
-  - [`pure-validations-react`](./packages/pure-validations#readme)
+  - [`pure-validations-react`](./packages/pure-validations-react#readme)
   - [`rules-engine`](./commands/rules-engine#readme)
 
 ## Bootstrap
