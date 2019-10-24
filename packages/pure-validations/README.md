@@ -15,7 +15,7 @@ Throughout the process of composition, you start with some simple primitive vali
             email: email,
             userAgreement: required |> when(gdprRequired)
           } |> shape,
-        personalInfo: (x => greaterThan(x.minimumAllowedAge) |> field("age")) |> fromModel, //fromModel(x => field("age", greaterThan(x.minimumAllowedAge))),
+        personalInfo: (x => greaterThan(x.minimumAllowedAge) |> field("age")) |> fromModel,
         assets: [atLeastOne, unique("id"), required |> items] |> concatFailure
       }
       |> shape
