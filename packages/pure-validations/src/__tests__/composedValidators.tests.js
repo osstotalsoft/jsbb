@@ -8,6 +8,7 @@ describe("composed validators:", () => {
     // Arrange
     const gdprRequired = () => true;
     const console = { log: () => {} };
+    const english = field("english");
 
     const validator =
       shape({
@@ -18,7 +19,7 @@ describe("composed validators:", () => {
           email: email,
           address: required
         }),
-        languages: required |> field("english"),
+        languages: required |> english,
         education: [atLeastOne, unique(x => x.id), required |> items] |> concatFailure,
         experience: (x => shape({ javaScript: greaterThan(x.minimumExperience) })) |> fromModel
       }) |> logTo(console);

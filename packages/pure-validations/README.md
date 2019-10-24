@@ -15,10 +15,10 @@ Throughout the process of composition, you start with some simple primitive vali
           email: email,
           address: required
         }),
-        languages: required |> field("english"),
+        languages: required |> english,
         education: [atLeastOne, unique(x => x.id), required |> items] |> concatFailure,
         experience: (x => shape({ javaScript: greaterThan(x.minimumExperience) })) |> fromModel
-      }) |> logTo(console);
+      }) |> logTo(console)
 ```
 
 ## Installation
