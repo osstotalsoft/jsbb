@@ -1,14 +1,14 @@
 import { contramap, $do } from "@totalsoft/zion";
 import Reader from "@totalsoft/zion/data/reader";
 import Maybe from "@totalsoft/zion/data/maybe";
-import { map } from "ramda";
+import { map, curry } from "ramda";
 
 import ValidationError from "../validationError";
 import { checkValidators } from "./_utils";
 
 const { Nothing } = Maybe;
 
-export default function field(key, validator) {
+const field = curry(function field(key, validator) {
   checkValidators(validator);
   return (
     validator
@@ -17,7 +17,7 @@ export default function field(key, validator) {
     |> contramap((model, ctx) => [model[key], _getFieldContext(ctx, key)])
     |> map(map(ValidationError.moveToField(key)))
   );
-}
+});
 
 function _logFieldPath(validator) {
   return $do(function*() {
@@ -44,3 +44,5 @@ function _log(context, message) {
     context.logger.log(message);
   }
 }
+
+export default field;

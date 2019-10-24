@@ -8,7 +8,7 @@ describe("composed validators:", () => {
     // Arrange
     const gdprRequired = () => true;
     const console = { log: () => {} };
-
+    
     const validator =
       {
         contactInfo:
@@ -18,7 +18,7 @@ describe("composed validators:", () => {
             email: email,
             userAgreement: required |> when(gdprRequired)
           } |> shape,
-        personalInfo: fromModel(x => field("age", greaterThan(x.minimumAllowedAge))),
+        personalInfo: (x => greaterThan(x.minimumAllowedAge) |> field("age")) |> fromModel, //fromModel(x => field("age", greaterThan(x.minimumAllowedAge))),
         assets: [atLeastOne, unique("id"), required |> items] |> concatFailure
       }
       |> shape

@@ -15,11 +15,11 @@ Throughout the process of composition, you start with some simple primitive vali
             email: email,
             userAgreement: required |> when(gdprRequired)
           } |> shape,
-        personalInfo: fromModel(x => field("age", greaterThan(x.minimumAllowedAge))),
+        personalInfo: (x => greaterThan(x.minimumAllowedAge) |> field("age")) |> fromModel, //fromModel(x => field("age", greaterThan(x.minimumAllowedAge))),
         assets: [atLeastOne, unique("id"), required |> items] |> concatFailure
       }
       |> shape
-      |> logTo(console);
+      |> logTo(console)
 ```
 
 ## Installation
@@ -33,7 +33,7 @@ import { required, email, concatFailure, validate, isValid, getErrors } from '@t
 
 const goodEmail = "someEmail@something.com"
 const validator = [required, email] |> stopOnFirstFailure
-const validation = validate(validator, goodEmail)
+const validation = goodEmail |> validate(validator)
 const isValid = validation |> isValid
 const errs = validation |> getErrors
 ```
