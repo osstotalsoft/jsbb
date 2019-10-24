@@ -10,32 +10,35 @@ describe("composed validators:", () => {
     const console = { log: () => {} };
 
     const validator =
-      {
-        contactInfo:
-          {
-            firstName: required,
-            lastName: [required, maxLength(50)] |> stopOnFirstFailure,
-            email: email,
-            userAgreement: required |> when(gdprRequired)
-          } |> shape,
-        personalInfo: (x => greaterThan(x.minimumAllowedAge) |> field("age")) |> fromModel,
-        assets: [atLeastOne, unique("id"), required |> items] |> concatFailure
-      }
-      |> shape
-      |> logTo(console);
+      shape({
+        firstName: required,
+        lastName: [required, maxLength(50)] |> stopOnFirstFailure,
+        userAgreement: required |> when(gdprRequired),
+        contactInfo: shape({
+          email: email,
+          address: required
+        }),
+        languages: required |> field("english"),
+        education: [atLeastOne, unique(x => x.id), required |> items] |> concatFailure,
+        experience: (x => shape({ javaScript: greaterThan(x.minimumExperience) })) |> fromModel
+      }) |> logTo(console);
 
     const model = {
+      firstName: "firstName",
+      lastName: "lastName",
+      userAgreement: true,
       contactInfo: {
-        firstName: "firstName",
-        lastName: "lastName",
         email: "rpopovici@gmai.com",
-        userAgreement: true
+        address: "some str"
       },
-      personalInfo: {
-        age: 19,
-        minimumAllowedAge: 18
+      languages: {
+        english: "A1"
       },
-      assets: [{ id: 1 }]
+      education: [{ id: 1 }],
+      experience: {
+        javaScript: 7,
+        minimumExperience: 3
+      }
     };
 
     // Act

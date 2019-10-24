@@ -7,19 +7,18 @@ Composition means you have a category of objects, and some means of combining th
 Throughout the process of composition, you start with some simple primitive validators, compose those using some combinators or higher order validators and you get some prety powerful validation pipelines.
 ```javascript
     const validator =
-      {
-        contactInfo:
-          {
-            firstName: required,
-            lastName: [required, maxLength(50)] |> stopOnFirstFailure,
-            email: email,
-            userAgreement: required |> when(gdprRequired)
-          } |> shape,
-        personalInfo: (x => greaterThan(x.minimumAllowedAge) |> field("age")) |> fromModel,
-        assets: [atLeastOne, unique("id"), required |> items] |> concatFailure
-      }
-      |> shape
-      |> logTo(console)
+      shape({
+        firstName: required,
+        lastName: [required, maxLength(50)] |> stopOnFirstFailure,
+        userAgreement: required |> when(gdprRequired),
+        contactInfo: shape({
+          email: email,
+          address: required
+        }),
+        languages: required |> field("english"),
+        education: [atLeastOne, unique(x => x.id), required |> items] |> concatFailure,
+        experience: (x => shape({ javaScript: greaterThan(x.minimumExperience) })) |> fromModel
+      }) |> logTo(console);
 ```
 
 ## Installation
