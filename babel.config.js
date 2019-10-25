@@ -1,4 +1,7 @@
-module.exports = _api => {
+module.exports = api => {
+ 
+  api.cache.using(() => process.env.NODE_ENV)
+
   const defaultAlias = {
     "@totalsoft/zion": "@totalsoft/zion/src",
     "@totalsoft/pure-validations": "@totalsoft/pure-validations/src"
