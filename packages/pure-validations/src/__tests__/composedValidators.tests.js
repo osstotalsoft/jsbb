@@ -1,12 +1,11 @@
 import { Success, Failure } from "../validation";
 import { validate, Validator } from "../validator";
 import { required, maxLength, greaterThan, unique, atLeastOne, email } from "../primitiveValidators";
-import { shape, items, stopOnFirstFailure, when, fromModel, logTo, concatFailure, field } from "../higherOrderValidators";
+import { shape, items, stopOnFirstFailure, when, fromModel, logTo, concatFailure, field, parent, readFrom } from "../higherOrderValidators";
 import ValidationError from "../validationError";
 describe("composed validators:", () => {
   it("readme validator: ", () => {
     // Arrange
-    const gdprRequired = () => true;
     const console = { log: () => {} };
     const english = field("english");
 
@@ -14,7 +13,7 @@ describe("composed validators:", () => {
       shape({
         firstName: required,
         lastName: [required, maxLength(50)] |> stopOnFirstFailure,
-        userAgreement: required |> when(gdprRequired),
+        userAgreement: required |> when((x => x.gdprRequired) |> readFrom |> parent),
         contactInfo: shape({
           email: email,
           address: required
@@ -39,7 +38,8 @@ describe("composed validators:", () => {
       experience: {
         javaScript: 7,
         minimumExperience: 3
-      }
+      },
+      gdprRequired: true
     };
 
     // Act

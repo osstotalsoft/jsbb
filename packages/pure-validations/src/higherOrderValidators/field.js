@@ -14,7 +14,7 @@ const field = curry(function field(key, validator) {
     validator
     |> _logFieldPath
     |> _filterFieldPath
-    |> contramap((model, ctx) => [model[key], _getFieldContext(ctx, key)])
+    |> contramap((model, ctx) => [model[key], _getFieldContext(model, ctx, key)])
     |> map(map(ValidationError.moveToField(key)))
   );
 });
@@ -35,8 +35,8 @@ function _filterFieldPath(validator) {
   });
 }
 
-function _getFieldContext(context, key) {
-  return { ...context, fieldPath: [...context.fieldPath, key] };
+function _getFieldContext(model, context, key) {
+  return { ...context, fieldPath: [...context.fieldPath, key], parentModel: model, parentContext: context };
 }
 
 function _log(context, message) {

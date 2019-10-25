@@ -2,6 +2,7 @@ import { Success, Failure } from "../../validation";
 import { Validator, validate } from "../../validator";
 import { field, shape, items, stopOnFirstFailure, concatFailure, when, fromModel, logTo, filterFields } from "../index";
 import ValidationError from "../../validationError";
+import Reader from "@totalsoft/zion/data/reader";
 
 describe("stopOnFirstFailure validator:", () => {
   it("returns success when all return success: ", () => {
@@ -78,6 +79,62 @@ describe("when validator:", () => {
 
     // Assert
     expect(validation).toBe(Success);
+  });
+
+  it("returns inner validator when predicate is boolean true:", () => {
+    // Arrange
+    const model = "testWrong";
+    const innerValidation = Failure(ValidationError("Wrong"));
+    const innerValidator = Validator.of(innerValidation);
+    const whenValidator = when(true, innerValidator);
+
+    // Act
+    const whenValidation = model |> validate(whenValidator);
+
+    // Assert
+    expect(whenValidation).toBe(innerValidation);
+  });
+
+  it("returns success when predicate is boolean false:", () => {
+    // Arrange
+    const model = "testWrong";
+    const innerValidation = Failure(ValidationError("Wrong"));
+    const innerValidator = Validator.of(innerValidation);
+    const whenValidator = when(false, innerValidator);
+
+    // Act
+    const whenValidation = model |> validate(whenValidator);
+
+    // Assert
+    expect(whenValidation).toBe(Success);
+  });
+
+  it("returns inner validator when predicate is Reader of boolean true:", () => {
+    // Arrange
+    const model = "testWrong";
+    const innerValidation = Failure(ValidationError("Wrong"));
+    const innerValidator = Validator.of(innerValidation);
+    const whenValidator = when(Reader.of(true), innerValidator);
+
+    // Act
+    const whenValidation = model |> validate(whenValidator);
+
+    // Assert
+    expect(whenValidation).toBe(innerValidation);
+  });
+
+  it("returns success when predicate is Reader of boolean false:", () => {
+    // Arrange
+    const model = "testWrong";
+    const innerValidation = Failure(ValidationError("Wrong"));
+    const innerValidator = Validator.of(innerValidation);
+    const whenValidator = when(Reader.of(false), innerValidator);
+
+    // Act
+    const whenValidation = model |> validate(whenValidator);
+
+    // Assert
+    expect(whenValidation).toBe(Success);
   });
 });
 
