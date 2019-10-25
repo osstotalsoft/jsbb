@@ -1,7 +1,7 @@
 import { Success, Failure } from "../validation";
 import { validate, Validator } from "../validator";
 import { required, maxLength, greaterThan, unique, atLeastOne, email } from "../primitiveValidators";
-import { shape, items, stopOnFirstFailure, when, fromModel, logTo, concatFailure, field, parent, readFrom } from "../higherOrderValidators";
+import { shape, items, stopOnFirstFailure, when, fromModel, logTo, concatFailure, field, fromRoot } from "../higherOrderValidators";
 import ValidationError from "../validationError";
 describe("composed validators:", () => {
   it("readme validator: ", () => {
@@ -13,14 +13,14 @@ describe("composed validators:", () => {
       shape({
         firstName: required,
         lastName: [required, maxLength(50)] |> stopOnFirstFailure,
-        userAgreement: required |> when((x => x.gdprRequired) |> readFrom |> parent),
+        userAgreement: fromRoot(root => required |> when(root.gdprRequired)),
         contactInfo: shape({
           email: email,
           address: required
         }),
         languages: required |> english,
         education: [atLeastOne, unique(x => x.id), required |> items] |> concatFailure,
-        experience: (x => shape({ javaScript: greaterThan(x.minimumExperience) })) |> fromModel
+        experience: fromModel(experience => shape({ javaScript: greaterThan(experience.minimumExperience) }))
       }) |> logTo(console);
 
     const model = {

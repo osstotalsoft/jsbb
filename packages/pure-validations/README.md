@@ -10,15 +10,15 @@ Throughout the process of composition, you start with some simple primitive vali
       shape({
         firstName: required,
         lastName: [required, maxLength(50)] |> stopOnFirstFailure,
-        userAgreement: required |> when(gdprRequired),
+        userAgreement: fromRoot(root => required |> when(root.gdprRequired)),
         contactInfo: shape({
           email: email,
           address: required
         }),
         languages: required |> english,
         education: [atLeastOne, unique(x => x.id), required |> items] |> concatFailure,
-        experience: (x => shape({ javaScript: greaterThan(x.minimumExperience) })) |> fromModel
-      }) |> logTo(console)
+        experience: fromModel(experience => shape({ javaScript: greaterThan(experience.minimumExperience) }))
+      }) |> logTo(console);
 ```
 
 ## Installation
@@ -128,8 +128,33 @@ shape({
         shape({
             age: greaterThan(model.minimumAllowedAge)
         })
-    ),
-    assets: [atLeastOne, unique("id"), required |> items] |> concatFailure
+    )
+});
+```
+
+#### fromParent
+Useful when you need the parent model in the composition process.
+
+```javascript
+shape({
+    personalInfo:
+        shape({
+            age: fromParent(parent => greaterThan(parent.minimumAllowedAge))
+        })
+    )
+});
+```
+
+#### fromRoot
+Useful when you need the root model in the composition process.
+
+```javascript
+shape({
+    personalInfo:
+        shape({
+            age: fromRoot(root => greaterThan(root.personalInfo.minimumAllowedAge))
+        })
+    )
 });
 ```
 
