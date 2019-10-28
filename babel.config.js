@@ -7,14 +7,6 @@ module.exports = api => {
     "@totalsoft/pure-validations": "@totalsoft/pure-validations/src"
   };
 
-  const defaultPresets = [
-    [
-      "@babel/preset-env",
-      {
-        modules: process.env.BABEL_ENV === "esm" ? false : "commonjs"
-      }
-    ]
-  ];
 
   // const presets = api.env("test")
   //   ? [
@@ -43,10 +35,18 @@ module.exports = api => {
   //   : [...defaultPlugins, ["@babel/plugin-transform-modules-commonjs"]];
 
   return {
-    presets: defaultPresets,
     plugins: defaultPlugins,
     env: {
-      cjs: {},
+      cjs: {
+        presets: [
+          [
+            "@babel/preset-env",
+            {
+              modules: "commonjs"
+            }
+          ]
+        ],
+      },
       esm: {
         plugins: [["@babel/plugin-transform-runtime", { useESModules: true }]]
       },
