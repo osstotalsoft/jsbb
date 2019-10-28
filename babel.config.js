@@ -1,5 +1,5 @@
 module.exports = api => {
- 
+
   api.cache.using(() => process.env.NODE_ENV)
 
   const defaultAlias = {
@@ -51,6 +51,14 @@ module.exports = api => {
         plugins: [["@babel/plugin-transform-runtime", { useESModules: true }]]
       },
       test: {
+        presets: [
+          [
+            "@babel/preset-env",
+            {
+              targets: { node: "current" }
+            }
+          ]
+        ],
         plugins: [
           [
             "babel-plugin-module-resolver",
