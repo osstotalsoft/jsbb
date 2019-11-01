@@ -11,7 +11,7 @@ import { equals, lte, map, concat } from "ramda";
 //- When you want to get a value _out_, you must also deal with the
 //- Nothing case, which prevents you from forgetting about it. 
 
-const Maybe = taggedSum("Maybe", { Just: ["value"], Nothing: [] });
+const Maybe = taggedSum("Maybe", { Just: [Symbol("value")], Nothing: [] });
 
 const { Just, Nothing } = Maybe;
 
