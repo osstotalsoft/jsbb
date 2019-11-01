@@ -1,5 +1,5 @@
 import { renderHook, act } from "@testing-library/react-hooks";
-import { useValidation } from "../useValidation";
+import { useValidation } from "../";
 import { isValid, Validator, Success, Failure, validate, logTo, filterFields, __clearMocks } from "@totalsoft/pure-validations";
 
 describe("useValidation hook", () => {
