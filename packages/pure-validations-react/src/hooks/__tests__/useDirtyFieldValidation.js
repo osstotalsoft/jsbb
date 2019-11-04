@@ -1,5 +1,5 @@
 import { renderHook, act } from "@testing-library/react-hooks";
-import { useDirtyFieldValidation } from "../useDirtyFieldValidation";
+import { useDirtyFieldValidation } from "../";
 import { Validator, Success, Failure, isValid, validate, __clearMocks } from "@totalsoft/pure-validations";
 import { eject } from "../../validationProxy";
 

@@ -24,8 +24,8 @@ async function createModulePackages({ from, to }) {
     directoryPackages.map(async directoryPackage => {
       const packageJson = {
         sideEffects: false,
-        module: path.join('./index.js'),
-        //typings: './index.d.ts',
+        module: path.join('../esm', directoryPackage, 'index.js'),
+        typings: './index.d.ts',
       };
       const packageJsonPath = path.join(to, directoryPackage, 'package.json');
 
@@ -43,6 +43,17 @@ async function createModulePackages({ from, to }) {
   );
 }
 
+async function typescriptCopy({ from, to }) {
+  if (!(await fse.exists(to))) {
+    console.warn(`path ${to} does not exists`);
+    return [];
+  }
+
+  const files = glob.sync('**/*.d.ts', { cwd: from });
+  const cmds = files.map(file => fse.copy(path.resolve(from, file), path.resolve(to, file)));
+  return Promise.all(cmds);
+}
+
 async function createPackageFile() {
   const packageData = await fse.readFile(path.resolve(packagePath, './package.json'), 'utf8');
   // eslint-disable-next-line no-unused-vars
@@ -52,7 +63,9 @@ async function createPackageFile() {
   const newPackageData = {
     ...packageDataOther,
     private: false,
-    main: './index.js'
+    main: './index.js',
+    module: './esm/index.js',
+    typings: './index.d.ts'
   };
   const targetPath = path.resolve(buildPath, './package.json');
 
@@ -65,6 +78,9 @@ async function createPackageFile() {
 async function run() {
   try {
     await createPackageFile();
+
+    // TypeScript
+    await typescriptCopy({ from: srcPath, to: buildPath });
 
     await createModulePackages({ from: srcPath, to: buildPath });
 

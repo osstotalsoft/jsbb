@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { useValidation } from './useValidation'
+import { useValidation } from './'
 import * as di from '../dirtyInfo';
 
 export function useDirtyFieldValidation(rules, options = {}, deps = []) {

@@ -1,0 +1,14 @@
+{
+    "defaultSeverity": "error",
+    "extends": ["dtslint/dtslint.json"],
+    "jsRules": {},
+    "rules": {
+        "deprecation": true,
+        "file-name-casing": [true, "camel-case"],
+        "no-empty-interface": false,
+        "no-unnecessary-generics": true,
+        "no-redundant-jsdoc": false,
+        "interface-over-type-literal": false,
+        "semicolon": [true, "always", "ignore-bound-class-methods"]
+    }
+}
