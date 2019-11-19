@@ -1,12 +1,12 @@
 import Reader from "@totalsoft/zion/data/reader";
 import { curry, map } from "ramda";
-import { $do } from "@totalsoft/zion";
+import { $do, contramap } from "@totalsoft/zion";
 import { checkRules } from "../_utils";
 
 export const propertyChanged = curry(function propertyChanged(selector) {
     return $do(function* () {
         const [, ctx] = yield Reader.ask();
-        return selector(ctx.newDocument) !== selector(ctx.oldDocument)
+        return selector(ctx.document) !== selector(ctx.prevDocument)
     });
 });
 
@@ -14,6 +14,11 @@ export const propertyChanged = curry(function propertyChanged(selector) {
 export function not(predicate) {
     const predicateReader = ensureReader(predicate);
     return predicateReader |> map(x => !x)
+}
+
+export default function ofParent(predicate) {
+    const predicateReader = ensureReader(predicate);
+    return predicateReader |> contramap((_, ctx) => [ctx.parentModel, ctx.parentContext]);
 }
 
 function ensureReader(predicate) {

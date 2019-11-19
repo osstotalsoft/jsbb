@@ -1,22 +1,23 @@
-import { Rule, applyRule } from "../";
-import { fromModel, when, shape } from "../higherOrderRules";
-import { constant } from "../primitiveRules";
+import { applyRule } from "../";
+import { when, shape, chainRules, logTo, scope } from "../higherOrderRules";
+import { constant, computed, maximumValue } from "../primitiveRules";
 import { propertyChanged, not } from "../predicates";
 
 describe("rules tests suite:", () => {
     it("rules test: ", () => {
         // Arrange
         const rule = shape({
-            //a: Rule((_prop, { newDocument }) => newDocument.b + 1),
-            a: Rule(doc => doc.b + 1),
+            //a: Rule((_prop, { document }) => document.b + 1),
+            a: [computed(doc => doc.b + 1), maximumValue(50)] |> chainRules,
             c: constant(null) |> when(not(propertyChanged(doc => doc.b))),
-            d: Rule(doc => doc.a + doc.b),
-            child: fromModel(child => shape({
-                bb: constant(child.aa + 3) |> when(propertyChanged(doc => doc.child.aa))
+            d: computed(doc => doc.a + doc.b),
+            child: scope(doc => doc.child, shape({
+                bb: computed(child => child.aa + 3) |> when(propertyChanged(child => child.aa)),
+                //cc: computed((doc) => doc.child.bb) |> when(propertyChanged(doc => doc.child.bb))
             }))
-        })
+        }) |> logTo(console)
 
-        
+
         const oldModel = {
             a: 1,
             b: 2,
@@ -42,7 +43,7 @@ describe("rules tests suite:", () => {
         let result = newModel;
         while (result !== prevResult) {
             console.log("----RUN ----");
-            const currentResult = applyRule(rule, result, prevResult, { logger: console, log: true })
+            const currentResult = applyRule(rule, result, prevResult)
             prevResult = result;
             result = currentResult;
         }
@@ -51,7 +52,7 @@ describe("rules tests suite:", () => {
         // const result2 = applyRule(rule, result, newModel, { logger: console, log: true })
         // const result3 = applyRule(rule, result2, result, { logger: console, log: true })
 
-            // Assert
+        // Assert
         //    ;
     });
 });

@@ -1,5 +1,5 @@
 import Reader from "@totalsoft/zion/data/reader";
-import { map, curry } from "ramda";
+import { curry } from "ramda";
 import { contramap, $do } from "@totalsoft/zion";
 import { checkRules } from "../_utils";
 
@@ -9,13 +9,19 @@ export const field = curry(function field(key, rule) {
         rule
         |> _logFieldPath
         |> contramap((model, ctx) => [model[key], _getFieldContext(model, ctx, key)])
-        |> map(moveToField(key))
+        |> mergeParent(key)
     );
 });
 
-const moveToField = curry(function moveToField(field, value) {
-    return ({ [field]: value });
+const mergeParent = curry(function mergeParent(field, fieldRule) {
+    return $do(function* () {
+        const [model,] = yield Reader.ask();
+        const fieldValue = yield fieldRule;
+
+        return model[field] === fieldValue ? model : { ...model, [field]: fieldValue };
+    });
 });
+
 
 function _logFieldPath(rule) {
     return $do(function* () {
@@ -27,7 +33,7 @@ function _logFieldPath(rule) {
 }
 
 function _getFieldContext(model, context, key) {
-    return { ...context, fieldPath: [...context.fieldPath, key], parentModel: model, parentContext: context };
+    return { ...context, fieldPath: [...context.fieldPath, key], prevModel: context.prevModel[key], parentModel: model, parentContext: context };
 }
 
 function _log(context, message) {

@@ -4,6 +4,7 @@ import field from "./field";
 import shape from "./shape";
 import logTo from "./logTo";
 import chainRules from "./chainRules";
+import scope from "./scope";
 
 export {
   when,
@@ -11,5 +12,6 @@ export {
   field,
   shape,
   chainRules,
-  logTo
+  logTo,
+  scope
 };
