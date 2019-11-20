@@ -1,7 +1,11 @@
 import Reader from "@totalsoft/zion/data/reader";
-import { curry, map } from "ramda";
-import { $do, contramap } from "@totalsoft/zion";
-import { checkRules } from "../_utils";
+import fl from "fantasy-land";
+import { curry, map, lift, reduce } from "ramda";
+import { $do } from "@totalsoft/zion";
+import { checkRules, variadicApply } from "../_utils";
+
+export const Predicate = Reader;
+Predicate.of = Reader[fl.of]
 
 export const propertyChanged = curry(function propertyChanged(selector) {
     return $do(function* () {
@@ -10,23 +14,50 @@ export const propertyChanged = curry(function propertyChanged(selector) {
     });
 });
 
+export const propertiesChanged = curry(function propertyChanged(selector) {
+    return $do(function* () {
+        const [, ctx] = yield Reader.ask();
+        const properties = selector(ctx.document);
+        const prevProperties = selector(ctx.prevDocument);
+
+        return properties.some((value, index) => value !== prevProperties[index])
+    });
+});
+
+//export const equals = lift(x => y => x === y) |> ensureReaderParams
+
+export const equals = curry(function equals(selector1, selector2) {
+    return $do(function* () {
+        const [, ctx] = yield Reader.ask();
+        return selector1(ctx.document) === selector2(ctx.document)
+    });
+});
+
+const _and = lift(x => y => x && y);
+export const all = variadicApply(function all(...predicates) {
+    return predicates |> map(ensureReader) |> reduce(_and, Predicate.of(true));
+});
+
+const _or = lift(x => y => x || y);
+export const any = variadicApply(function any(...predicates) {
+    //const test =  predicates |> map(ensureReader) |> reduce(_or);
+    return predicates |> map(ensureReader) |> reduce(_or, Predicate.of(false));
+});
 
 export function not(predicate) {
-    const predicateReader = ensureReader(predicate);
-    return predicateReader |> map(x => !x)
+    return predicate |> ensureReader |> map(x => !x)
 }
 
-export default function ofParent(predicate) {
-    const predicateReader = ensureReader(predicate);
-    return predicateReader |> contramap((_, ctx) => [ctx.parentModel, ctx.parentContext]);
+export function isNumber(selector) {
+    return selector |> ensureReader |> map(x => !isNaN(x))
 }
 
-function ensureReader(predicate) {
+export function ensureReader(predicate) {
     if (typeof predicate === "boolean") {
-        return Reader.of(predicate);
+        return Predicate.of(predicate);
     }
     if (typeof predicate === "function") {
-        return Reader(predicate);
+        return Predicate(predicate);
     }
 
     checkRules(predicate);

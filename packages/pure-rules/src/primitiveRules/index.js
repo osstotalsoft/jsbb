@@ -2,7 +2,7 @@ import { Rule } from "../rule";
 import { lift, curry, curryN } from "ramda"
 import Reader from "@totalsoft/zion/data/reader";
 
-const ensureReaderParams = curry(function (N, func) {
+export const ensureReaderParams = curry(function (N, func) {
     return curryN(N, function (...args) {
         const readerArgs = args.map(ensureReader);
         return func(...readerArgs)
@@ -21,7 +21,7 @@ export function computed(computation) {
 
 export const min = lift(curry(Math.min)) |> ensureReaderParams(2);
 export const max = lift(curry(Math.max)) |> ensureReaderParams(2);
-export const sum = lift(curry((a, b) => a + b)) |> ensureReaderParams(2);
+export const sum = lift(a => b => a + b) |> ensureReaderParams(2);
 
 
 export const minimumValue = max(unchanged) |> ensureReaderParams(1)

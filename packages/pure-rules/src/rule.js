@@ -13,6 +13,6 @@ const emptyContext = {
     logger: { log: () => { } },
 };
 
-export const applyRule = curry(function applyRule(rule, newModel, prevModel, ctx = undefined) {
+export const applyRule = curry(function applyRule(rule, newModel, prevModel = undefined, ctx = undefined) {
     return rule.runReader(newModel, { ...emptyContext, ...ctx, prevModel, document: newModel, prevDocument: prevModel });
 });

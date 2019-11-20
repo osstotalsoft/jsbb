@@ -33,7 +33,7 @@ function _logFieldPath(rule) {
 }
 
 function _getFieldContext(model, context, key) {
-    return { ...context, fieldPath: [...context.fieldPath, key], prevModel: context.prevModel[key], parentModel: model, parentContext: context };
+    return { ...context, fieldPath: [...context.fieldPath, key], prevModel: context.prevModel && context.prevModel[key], parentModel: model, parentContext: context };
 }
 
 function _log(context, message) {
