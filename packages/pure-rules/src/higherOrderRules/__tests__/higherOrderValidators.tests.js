@@ -1,5 +1,5 @@
 import { Rule, applyRule } from "../../rule";
-import { chainRules, field, shape, when, scope } from "..";
+import { chainRules, field, shape, when, scope, items } from "..";
 import ifThenElse from "../ifthenelse";
 
 describe("higher order rules:", () => {
@@ -63,6 +63,61 @@ describe("higher order rules:", () => {
 
     // Assert
     expect(result).toStrictEqual({ name: "name", surname: "surname" });
+  });
+
+  it("shape preserves null object: ", () => {
+    // Arrange
+    const rule = shape({
+      name: Rule.of("name"),
+      surname: Rule.of("surname"),
+    });
+
+    const model = null;
+
+    // Act
+    const result = applyRule(rule, model, null);
+
+    // Assert
+    expect(result).toBe(model);
+  });
+
+  it("items applies rule on items: ", () => {
+    // Arrange
+    const rule = items(Rule(x => x + 1));
+
+    const model = [1, 2, 3];
+
+    // Act
+    const result = applyRule(rule, model, null);
+
+    // Assert
+    expect(result).toStrictEqual([2, 3, 4]);
+  });
+
+  it("items preserves empty array: ", () => {
+    // Arrange
+    const rule = items(Rule(x => x + 1));
+
+    const model = [];
+
+    // Act
+    const result = applyRule(rule, model, null);
+
+    // Assert
+    expect(result).toBe(model);
+  });
+
+  it("items preserves enforces reference economy: ", () => {
+    // Arrange
+    const rule = items(Rule(x => x));
+
+    const model = [1, 2];
+
+    // Act
+    const result = applyRule(rule, model, null);
+
+    // Assert
+    expect(result).toBe(model);
   });
 
   it("scope changes the current document: ", () => {

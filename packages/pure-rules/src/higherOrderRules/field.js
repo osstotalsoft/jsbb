@@ -18,7 +18,13 @@ const mergeParent = curry(function mergeParent(field, fieldRule) {
         const [model,] = yield Reader.ask();
         const fieldValue = yield fieldRule;
 
-        return model[field] === fieldValue ? model : { ...model, [field]: fieldValue };
+        if (model[field] === fieldValue) {
+            return model;
+        }
+
+        return Array.isArray(model)
+            ? Object.assign([...model], { [field]: fieldValue })
+            : { ...model, [field]: fieldValue }
     });
 });
 
