@@ -120,10 +120,10 @@ describe("higher order rules:", () => {
     expect(result).toBe(model);
   });
 
-  it("scope changes the current document: ", () => {
+  it("scope maps document to current model: ", () => {
     // Arrange
-    const rule = scope(_ => ({ scopeField: "OK" }), Rule((model, ctx) => ctx.document.scopeField));
-    const model = {};
+    const rule = scope(Rule((model, ctx) => ctx.document.scopeField));
+    const model = { scopeField: "OK" };
 
     // Act
     const result = applyRule(rule, model, null);
@@ -131,6 +131,20 @@ describe("higher order rules:", () => {
     // Assert
     expect(result).toBe("OK");
   });
+
+  
+  it("scope maps previous document to previous model: ", () => {
+    // Arrange
+    const rule = scope(Rule((model, ctx) => ctx.prevDocument.scopeField));
+    const prevModel = { scopeField: "OK" };
+
+    // Act
+    const result = applyRule(rule, {}, prevModel);
+
+    // Assert
+    expect(result).toBe("OK");
+  });
+
 
   it("when applies rule when condition is true: ", () => {
     // Arrange

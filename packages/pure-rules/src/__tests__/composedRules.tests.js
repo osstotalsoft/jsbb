@@ -15,7 +15,7 @@ describe("composed rules:", () => {
                     propertyChanged(loan => loan.advance),
                     propertyChanged(loan => loan.interestRate)
                 ] |> any),
-            person: scope(loan => loan.person, shape({
+            person: scope(shape({
                 fullName: computed(person => `${person.surname} ${person.name}`) |> when(propertiesChanged(person => [person.name, person.surname])),
             }))
         }) |> logTo(console)

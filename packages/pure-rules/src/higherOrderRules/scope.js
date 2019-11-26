@@ -1,10 +1,10 @@
 import { contramap } from "@totalsoft/zion";
 
-export default function scope(scopeSelector, rule) {
+export default function scope(rule) {
   return rule |>
     contramap((model, ctx) => [model, {
       ...ctx,
-      document: scopeSelector(ctx.document),
-      prevDocument: scopeSelector(ctx.prevDocument)
+      document: model,
+      prevDocument: ctx.prevModel
     }])
 }
