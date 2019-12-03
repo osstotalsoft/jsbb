@@ -2,7 +2,7 @@ import { renderHook, act } from "@testing-library/react-hooks";
 import { useRulesEngine } from "../";
 import { Rule, applyRule, logTo, __clearMocks } from "@totalsoft/pure-rules";
 
-describe("useValidation hook", () => {
+describe("useRulesEngine hook", () => {
     afterEach(() => {
         __clearMocks();
     });

@@ -36,6 +36,18 @@ export function merge(sourceDirtyInfo, targetDirtyInfo) {
     return result;
 }
 
+export function detectChanges(model, prevModel, prevDirtyInfo = create()) {
+    if (typeof (model) !== "object" || typeof (prevModel) !== "object") {
+        return model !== prevModel
+    }
+
+    return Object.keys(model)
+        .filter(k => model[k] !== prevModel[k])
+        .reduce((acc, prop) =>
+            updateSingleProperty(prop, detectChanges(model[prop], prevModel[prop], prevDirtyInfo[prop]), acc),
+            prevDirtyInfo)
+}
+
 export function isPropertyDirty(propertyPath, dirtyInfo) {
     return getIsDirty(get(dirtyInfo, propertyPath));
 }

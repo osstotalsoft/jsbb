@@ -1,5 +1,5 @@
 import { applyRule } from "../";
-import { when, shape, logTo, scope, chainRules } from "../higherOrderRules";
+import { when, shape, logTo, scope, chainRules, items } from "../higherOrderRules";
 import { constant, computed, maximumValue } from "../primitiveRules";
 import { propertyChanged, any, propertiesChanged } from "../predicates";
 
@@ -116,4 +116,22 @@ describe("composed rules:", () => {
         expect(result2).toStrictEqual({ a: 3, b: 2 })
     });
 
+    it("items and scope:", () => {
+        // Arrange
+        const rule = items(
+            scope(shape({
+                b: computed(item => item.a + 100) |> when(propertyChanged(item => item.a))
+            }))
+        )
+
+        const originalModel = [{a: 1, b: 2}]
+        const changedModel = [{...originalModel[0], a: 3}]
+
+        // Act
+        const result = applyRule(rule, changedModel, originalModel)
+        
+        // Assert
+        expect(result).toStrictEqual([{a: 3, b: 103}])
+        
+    });
 });

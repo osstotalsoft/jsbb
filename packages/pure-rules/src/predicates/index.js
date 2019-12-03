@@ -10,13 +10,23 @@ Predicate.of = Reader[fl.of]
 export const propertyChanged = curry(function propertyChanged(selector) {
     return $do(function* () {
         const [, ctx] = yield Reader.ask();
+
+        if (ctx.document === null || ctx.document === undefined || ctx.prevDocument === null || ctx.prevDocument === undefined) {
+            return ctx.document !== ctx.prevDocument;
+        }
+
         return selector(ctx.document) !== selector(ctx.prevDocument)
     });
 });
 
 export const propertiesChanged = curry(function propertyChanged(selector) {
-    return $do(function* () {
+    return $do(function* () {       
         const [, ctx] = yield Reader.ask();
+
+        if (ctx.document === null || ctx.document === undefined || ctx.prevDocument === null || ctx.prevDocument === undefined) {
+            return ctx.document !== ctx.prevDocument;
+        }
+
         const properties = selector(ctx.document);
         const prevProperties = selector(ctx.prevDocument);
 
@@ -40,7 +50,6 @@ export const all = variadicApply(function all(...predicates) {
 
 const _or = lift(x => y => x || y);
 export const any = variadicApply(function any(...predicates) {
-    //const test =  predicates |> map(ensureReader) |> reduce(_or);
     return predicates |> map(ensureReader) |> reduce(_or, Predicate.of(false));
 });
 
