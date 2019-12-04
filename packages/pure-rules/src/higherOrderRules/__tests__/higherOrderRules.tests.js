@@ -1,6 +1,5 @@
 import { Rule, applyRule } from "../../rule";
-import { chainRules, field, shape, when, scope, items } from "..";
-import ifThenElse from "../ifthenelse";
+import { chainRules, field, shape, when, scope, items, ifThenElse } from "..";
 
 describe("higher order rules:", () => {
   it("chainRules uses chains output to input: ", () => {

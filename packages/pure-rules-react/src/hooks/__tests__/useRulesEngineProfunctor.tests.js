@@ -1,7 +1,7 @@
 import { renderHook, act } from "@testing-library/react-hooks";
 import { Rule, applyRule, logTo, __clearMocks } from "@totalsoft/pure-rules";
 import { onChanged, getValue } from "../../rulesProfunctorProxy";
-import { useRulesEngineProfunctor } from "../useRulesEngineProfunctor";
+import { useRulesEngineProfunctor } from "../";
 import * as di from "../../dirtyInfo"
 
 describe("useValidation hook", () => {
