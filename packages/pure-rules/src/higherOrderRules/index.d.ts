@@ -52,7 +52,7 @@ export function items<TItem>(itemRule: Rule<TItem>): Rule<TItem[]>;
 export type Logger = { log: (message: string) => void };
 
 /**
- * Logs the rule appliction process to the speficfied logger.
+ * Logs the rule application process to the speficfied logger.
  * @see https://github.com/osstotalsoft/jsbb/tree/master/packages/pure-rules#logto
  */
 export function logTo<TModel>(logger: Logger, rule: Rule<TModel>): Rule<TModel>;
@@ -72,7 +72,7 @@ export type Reader<TContext, TValue> = { computation: (ctx: TContext) => TValue 
 export function scope<TModel>(rule: Rule<TModel>): Rule<TModel>;
 
 /**
- * Used to compose a complex rules from field rules.
+ * Used to compose complex rules from field rules.
  * @see https://github.com/osstotalsoft/jsbb/tree/master/packages/pure-rules#shape
  */
 export function shape<TRuleObj extends { [k: string]: Rule<unknown> }>(

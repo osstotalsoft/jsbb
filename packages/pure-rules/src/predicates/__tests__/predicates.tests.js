@@ -8,7 +8,7 @@ describe("predicates:", () => {
     const predicate = not(Reader(_ => true));
 
     // Act
-    const newModel = predicate.runReader(model, null);
+    const newModel = predicate.runReader(model, {});
 
     // Assert
     expect(newModel).toBe(false);
@@ -17,10 +17,10 @@ describe("predicates:", () => {
   it("not with predicate", () => {
     // Arrange
     const model = 6;
-    const predicate = not(_ => true);
+    const predicate = not(() => true);
 
     // Act
-    const newModel = predicate.runReader(model, null);
+    const newModel = predicate.runReader(model, {});
 
     // Assert
     expect(newModel).toBe(false);
@@ -32,7 +32,7 @@ describe("predicates:", () => {
     const predicate = not(true);
 
     // Act
-    const newModel = predicate.runReader(model, null);
+    const newModel = predicate.runReader(model, {});
 
     // Assert
     expect(newModel).toBe(false);
@@ -40,11 +40,11 @@ describe("predicates:", () => {
 
   it("equals", () => {
     // Arrange
-    const model = 6;
-    const predicate = equals(_ => 1, _ => 1);
+    const model = -1;
+    const predicate = equals(doc => doc.a + 1, _ => 7);
 
     // Act
-    const newModel = predicate.runReader(model, {});
+    const newModel = predicate.runReader(model, { document: { a: 6 } });
 
     // Assert
     expect(newModel).toBe(true);

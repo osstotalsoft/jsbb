@@ -6,6 +6,7 @@ import items from "./items";
 import logTo from "./logTo";
 import chainRules from "./chainRules";
 import scope from "./scope";
+import ifThenElse from "./ifThenElse"
 
 export {
   when,
@@ -15,5 +16,6 @@ export {
   items,
   chainRules,
   logTo,
-  scope
+  scope,
+  ifThenElse
 };

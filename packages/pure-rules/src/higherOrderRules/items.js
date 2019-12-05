@@ -8,14 +8,14 @@ const mapIndexed = addIndex(map);
 
 export default function items(itemRule) {
   checkRules(itemRule);
-  return $do(function*() {
+  return $do(function* () {
     const [items] = yield Reader.ask();
     if (items === null || items === undefined || items.length === 0) {
       return items;
     }
     return yield items
-            |> mapIndexed((_, index) => field(index, itemRule))
-            |> chainRules;
+      |> mapIndexed((_, index) => field(index, itemRule))
+      |> chainRules;
 
   });
 }

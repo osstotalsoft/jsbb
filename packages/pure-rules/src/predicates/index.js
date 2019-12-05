@@ -61,12 +61,16 @@ export function isNumber(selector) {
     return selector |> ensureReader |> map(x => !isNaN(x))
 }
 
+function computed(computation) {
+    return Predicate((prop, { document, prevDocument }) => computation(document, prevDocument, prop));
+}
+
 export function ensureReader(predicate) {
     if (typeof predicate === "boolean") {
         return Predicate.of(predicate);
     }
     if (typeof predicate === "function") {
-        return Predicate(predicate);
+        return computed(predicate);
     }
 
     checkRules(predicate);
