@@ -1,4 +1,5 @@
 import get from 'lodash.get';
+import { findMatchingItem } from '@totalsoft/pure-rules';
 
 export function create(isDirty = false) {
     return { isDirty };
@@ -41,11 +42,57 @@ export function detectChanges(model, prevModel, prevDirtyInfo = create()) {
         return model !== prevModel
     }
 
-    return Object.keys(model)
-        .filter(k => model[k] !== prevModel[k])
+    if (Array.isArray(model)) {
+        return detectChangesArray(model, prevModel, prevDirtyInfo)
+    }
+
+    const diAfterUpdates = Object.keys(model)
+        .filter(k => k in prevModel && model[k] !== prevModel[k])
         .reduce((acc, prop) =>
             updateSingleProperty(prop, detectChanges(model[prop], prevModel[prop], prevDirtyInfo[prop]), acc),
             prevDirtyInfo)
+
+    const diAfterDeletions = Object.keys(prevModel)
+        .filter(k => !(k in model))
+        .reduce((acc, prop) =>
+            updateSingleProperty(prop, false, acc),
+            diAfterUpdates)
+
+    return diAfterDeletions;
+}
+
+function detectChangesArray(model, prevModel, prevDirtyInfo) {
+
+    // const modelMap = toMap(model);
+    // const prevModelMap = toMap(prevModel);
+
+    // const diAfterUpdatesOrReorder = Object.keys(model)
+    //     .map(k => [modelMap[k], prevModelMap[k]])
+    //     .filter(([item, matchingItem]) => atchingItem !== undefined)
+    //     .filter(([[itemValue, itemIdex], [matchingItemValue, matchingItemIndex]]) => itemValue !== matchingItemValue || itemIndex !== matchingItemIndex)
+    //     .reduce((acc, [[itemValue, itemIdex], [matchingItemValue, matchingItemIndex]]) => {
+    //         return itemIndex !== matchingItemIndex ? updateSingleProperty(itemIdex, detectChanges(itemValue, matchingItemValue, prevDirtyInfo[itemIdex]), acc)
+    //     }
+    //         ,
+    //         prevDirtyInfo)
+
+
+
+    const diAfterUpdates = Object.keys(model)
+        .map(k => [model[k], findMatchingItem(model[k], k, prevModel), k])
+        .filter(([item, matchingItem]) => (matchingItem !== undefined && item != matchingItem))
+        .reduce((acc, [item, matchingItem, index]) =>
+            updateSingleProperty(index, detectChanges(item, matchingItem, prevDirtyInfo[index]), acc),
+            prevDirtyInfo)
+
+
+    const diAfterDeletions = Object.keys(prevModel)
+        .filter(index => findMatchingItem(prevModel[index], index, model) === undefined)
+        .reduce((acc, index) =>
+            updateSingleProperty(index, false, acc),
+            diAfterUpdates)
+
+    return diAfterDeletions;
 }
 
 export function isPropertyDirty(propertyPath, dirtyInfo) {

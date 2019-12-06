@@ -16,6 +16,5 @@ export default function items(itemRule) {
     return yield items
       |> mapIndexed((_, index) => field(index, itemRule))
       |> chainRules;
-
   });
 }

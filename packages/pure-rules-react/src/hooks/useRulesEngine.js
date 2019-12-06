@@ -1,10 +1,10 @@
 import { useState, useCallback, useMemo } from 'react';
 import { useDirtyInfo } from './useDirtyInfo';
-import { logTo, applyRule } from '@totalsoft/pure-rules'
+import { logTo, applyRule, ensureArrayUIDsDeep } from '@totalsoft/pure-rules'
 
 export function useRulesEngine(rules, initialModel, { isLogEnabled = true, logger = console } = {}, deps = []) {
     const [dirtyInfo, setDirtyPath, resetDirtyInfo] = useDirtyInfo()
-    const [model, setModel] = useState(initialModel)
+    const [model, setModel] = useState(ensureArrayUIDsDeep(initialModel))
 
     const rulesEngine = useMemo(() => {
         let newRules = rules;
@@ -16,13 +16,6 @@ export function useRulesEngine(rules, initialModel, { isLogEnabled = true, logge
         return newRules
     }, [rules, isLogEnabled, logger, ...deps]); // eslint-disable-line react-hooks/exhaustive-deps
 
-    // useEffect(() => {
-    //     if (model !== initialModel) {
-    //         setModel(initialModel);
-    //         resetDirtyInfo();
-    //     }
-    // }, [initialModel])
-
     return [
         model,
 
@@ -31,7 +24,7 @@ export function useRulesEngine(rules, initialModel, { isLogEnabled = true, logge
         // Update property
         useCallback((propertyPath, value) => {
             setDirtyPath(propertyPath)
-            const changedModel = _setInnerProp(model, propertyPath, value)
+            const changedModel = ensureArrayUIDsDeep(_setInnerProp(model, propertyPath, value))
             if (changedModel === model) {
                 return model;
             }
@@ -44,7 +37,7 @@ export function useRulesEngine(rules, initialModel, { isLogEnabled = true, logge
         // Reset
         useCallback((newModel) => {
             resetDirtyInfo();
-            setModel(newModel);
+            setModel(ensureArrayUIDsDeep(newModel));
         }, [])
     ]
 }

@@ -2,6 +2,7 @@ import { applyRule } from "../";
 import { when, shape, logTo, scope, chainRules, items } from "../higherOrderRules";
 import { constant, computed, maximumValue } from "../primitiveRules";
 import { propertyChanged, any, propertiesChanged } from "../predicates";
+import { ensureArrayUIDsDeep } from "../arrayUtils";
 
 describe("composed rules:", () => {
     it("readme rules: ", () => {
@@ -124,14 +125,91 @@ describe("composed rules:", () => {
             }))
         )
 
-        const originalModel = [{a: 1, b: 2}]
-        const changedModel = [{...originalModel[0], a: 3}]
+        const originalModel = [{ a: 1, b: 2 }]
+        const changedModel = [{ ...originalModel[0], a: 3 }]
 
         // Act
         const result = applyRule(rule, changedModel, originalModel)
-        
+
         // Assert
-        expect(result).toStrictEqual([{a: 3, b: 103}])
-        
+        expect(result).toStrictEqual([{ a: 3, b: 103 }])
+
+    });
+
+    it("items with unique ids and scope keys:", () => {
+        // Arrange
+        const rule = items(
+            scope(shape({
+                b: computed(item => item.a + 100) |> when(propertyChanged(item => item.a))
+            }))
+        )
+
+        const originalModel = ensureArrayUIDsDeep([{ a: 1, b: 2 }])
+        const changedModel = [{ ...originalModel[0], a: 3 }]
+
+        // Act
+        const result = applyRule(rule, changedModel, originalModel)
+
+        // Assert
+        expect(result).toStrictEqual([{ ...originalModel[0], a: 3, b: 103 }])
+
+    });
+
+
+    it("items with unique ids, delete item and scope keys unchanged:", () => {
+        // Arrange
+        const rule = items(
+            scope(shape({
+                b: computed(item => item.a + 100) |> when(propertyChanged(item => item.a))
+            }))
+        )
+
+        const originalModel = ensureArrayUIDsDeep([{ a: 6, b: 7 }, { a: 1, b: 2 }])
+        const changedModel = [originalModel[1]];
+
+        // Act
+        const result = applyRule(rule, changedModel, originalModel)
+
+        // Assert
+        expect(result).toStrictEqual([{ ...originalModel[1] }])
+
+    });
+
+    it("items with unique ids, delete item and scope keys with rule:", () => {
+        // Arrange
+        const rule = items(
+            scope(shape({
+                b: computed(item => item.a + 100) |> when(propertyChanged(item => item.a))
+            }))
+        )
+
+        const originalModel = ensureArrayUIDsDeep([{ a: 6, b: 7 }, { a: 1, b: 2 }])
+        const changedModel = [{...originalModel[1], a: 2}];
+
+        // Act
+        const result = applyRule(rule, changedModel, originalModel)
+
+        // Assert
+        expect(result).toStrictEqual([{...originalModel[1], a: 2,  b: 102}])
+
+    });
+
+    it("items with unique ids, insert item and scope keys unchanged:", () => {
+        // Arrange
+        const rule = items(
+            scope(shape({
+                b: computed(item => item.a + 100) |> when(propertyChanged(item => item.a))
+            }))
+        )
+
+        const originalModel = ensureArrayUIDsDeep([{ a: 6, b: 7 }])
+        const changedModel = ensureArrayUIDsDeep([{ a: 1, b: 2 }, originalModel[0]]);
+
+        // Act
+        const result = applyRule(rule, changedModel, originalModel)
+
+        // Assert
+        expect(result).toStrictEqual([{...changedModel[0], b: 101}, originalModel[0]])
+
     });
 });

@@ -1,13 +1,13 @@
 import { useProfunctorState } from '@staltz/use-profunctor-state'
 import { RulesEngineProxy } from '../rulesProfunctorProxy';
 import { useMemo, useCallback, useState } from 'react';
-import { applyRule, logTo } from '@totalsoft/pure-rules';
+import { applyRule, logTo, ensureArrayUIDsDeep } from '@totalsoft/pure-rules';
 import * as di from '../dirtyInfo'
+
 
 export function useRulesEngineProfunctor(rules, initialModel, { isLogEnabled = true, logger = console } = {}, deps = []) {
     const [dirtyInfo, setDirtyInfo] = useState(di.create)
-    //const [model, setModel] = useState(initialModel);
-
+    
     const rulesEngine = useMemo(() => {
         let newRules = rules;
 
@@ -18,21 +18,13 @@ export function useRulesEngineProfunctor(rules, initialModel, { isLogEnabled = t
         return newRules
     }, [rules, isLogEnabled, logger, ...deps]); // eslint-disable-line react-hooks/exhaustive-deps
 
-
-    const profunctor = useProfunctorState(initialModel);
-
-    // TBD: Reset model to original when rules change
-    // useEffect(() => {
-    //     if (profunctor.state !== model) {
-    //         resetDirtyInfo();
-    //         profunctor.setState(model);    
-    //     }
-    //     //rulesEngineRef.current = rulesEngine
-    // }, [rulesEngine])
+   
+    const profunctor = useProfunctorState(ensureArrayUIDsDeep(initialModel));
 
     const rulesEngineProfunctor = profunctor.promap(
         model => model,
         (changedModel, prevModel) => {
+            changedModel = ensureArrayUIDsDeep(changedModel);
             setDirtyInfo(di.detectChanges(changedModel, prevModel, dirtyInfo))
             return applyRule(rulesEngine, changedModel, prevModel)
         },
@@ -48,8 +40,7 @@ export function useRulesEngineProfunctor(rules, initialModel, { isLogEnabled = t
         // Reset
         useCallback((newModel) => {
             setDirtyInfo(di.create())
-            profunctor.setState(newModel);
-            //setModel(newModel);
+            profunctor.setState(ensureArrayUIDsDeep(newModel));
         }, [])
     ]
 }
