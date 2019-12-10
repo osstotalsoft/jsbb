@@ -36,12 +36,12 @@ export function findMatchingItem(currentItem, currentKey, otherArray) {
 }
 
 export function toMap(array) {
-    if (!Array.isArray(array)) {
+    if (!Array.isArray(array) || array.length === 0) {
         return {};
     }
 
-    array |> reduceIndexed((acc, crt, index) => {
-        acc[crt[uniqueIdSymbol] || index] = [crt, index]
+    return array |> reduceIndexed((acc, value, index) => {
+        acc[value[uniqueIdSymbol] || index] = { value, index }
         return acc;
     }, {})
 }

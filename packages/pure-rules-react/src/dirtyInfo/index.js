@@ -1,5 +1,5 @@
 import get from 'lodash.get';
-import { findMatchingItem } from '@totalsoft/pure-rules';
+import { toMap } from '@totalsoft/pure-rules';
 
 export function create(isDirty = false) {
     return { isDirty };
@@ -38,7 +38,7 @@ export function merge(sourceDirtyInfo, targetDirtyInfo) {
 }
 
 export function detectChanges(model, prevModel, prevDirtyInfo = create()) {
-    if (typeof (model) !== "object" || typeof (prevModel) !== "object") {
+    if (typeof (model) !== "object" || typeof (prevModel) !== "object" || model === null || prevModel === null) {
         return model !== prevModel
     }
 
@@ -46,53 +46,37 @@ export function detectChanges(model, prevModel, prevDirtyInfo = create()) {
         return detectChangesArray(model, prevModel, prevDirtyInfo)
     }
 
-    const diAfterUpdates = Object.keys(model)
-        .filter(k => k in prevModel && model[k] !== prevModel[k])
+    const newDirtyInfo = Object.keys(model)
         .reduce((acc, prop) =>
-            updateSingleProperty(prop, detectChanges(model[prop], prevModel[prop], prevDirtyInfo[prop]), acc),
+            prop in prevModel
+                ? (
+                    model[prop] === prevModel[prop]
+                        ? updateSingleProperty(prop, prevDirtyInfo[prop], acc)
+                        : updateSingleProperty(prop, detectChanges(model[prop], prevModel[prop], prevDirtyInfo[prop]), acc)
+                )
+                : updateSingleProperty(prop, false, acc),
             prevDirtyInfo)
 
-    const diAfterDeletions = Object.keys(prevModel)
-        .filter(k => !(k in model))
-        .reduce((acc, prop) =>
-            updateSingleProperty(prop, false, acc),
-            diAfterUpdates)
 
-    return diAfterDeletions;
+    return Object.keys(model).length !== Object.keys(prevModel).length ? { ...newDirtyInfo } : newDirtyInfo
 }
 
 function detectChangesArray(model, prevModel, prevDirtyInfo) {
+    const modelMap = toMap(model);
+    const prevModelMap = toMap(prevModel);
 
-    // const modelMap = toMap(model);
-    // const prevModelMap = toMap(prevModel);
-
-    // const diAfterUpdatesOrReorder = Object.keys(model)
-    //     .map(k => [modelMap[k], prevModelMap[k]])
-    //     .filter(([item, matchingItem]) => atchingItem !== undefined)
-    //     .filter(([[itemValue, itemIdex], [matchingItemValue, matchingItemIndex]]) => itemValue !== matchingItemValue || itemIndex !== matchingItemIndex)
-    //     .reduce((acc, [[itemValue, itemIdex], [matchingItemValue, matchingItemIndex]]) => {
-    //         return itemIndex !== matchingItemIndex ? updateSingleProperty(itemIdex, detectChanges(itemValue, matchingItemValue, prevDirtyInfo[itemIdex]), acc)
-    //     }
-    //         ,
-    //         prevDirtyInfo)
-
-
-
-    const diAfterUpdates = Object.keys(model)
-        .map(k => [model[k], findMatchingItem(model[k], k, prevModel), k])
-        .filter(([item, matchingItem]) => (matchingItem !== undefined && item != matchingItem))
-        .reduce((acc, [item, matchingItem, index]) =>
-            updateSingleProperty(index, detectChanges(item, matchingItem, prevDirtyInfo[index]), acc),
+    const newDirtyInfo = Object.keys(modelMap)
+        .reduce((acc, prop) =>
+            prop in prevModelMap
+                ? (
+                    modelMap[prop].value === prevModelMap[prop].value
+                        ? updateSingleProperty(modelMap[prop].index, prevDirtyInfo[prevModelMap[prop].index], acc)
+                        : updateSingleProperty(modelMap[prop].index, detectChanges(modelMap[prop].value, prevModelMap[prop].value, prevDirtyInfo[prevModelMap[prop].index]), acc)
+                )
+                : updateSingleProperty(modelMap[prop].index, false, acc),
             prevDirtyInfo)
 
-
-    const diAfterDeletions = Object.keys(prevModel)
-        .filter(index => findMatchingItem(prevModel[index], index, model) === undefined)
-        .reduce((acc, index) =>
-            updateSingleProperty(index, false, acc),
-            diAfterUpdates)
-
-    return diAfterDeletions;
+    return Object.keys(modelMap).length !== Object.keys(prevModelMap).length ? { ...newDirtyInfo } : newDirtyInfo
 }
 
 export function isPropertyDirty(propertyPath, dirtyInfo) {
