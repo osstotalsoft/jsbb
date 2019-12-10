@@ -9,6 +9,7 @@ export const field = curry(function field(key, rule) {
     return (
         rule
         |> _logFieldPath
+        |> _filterCurrentProp
         |> contramap((model, ctx) => [model[key], _getFieldContext(model, ctx, key)])
         |> mergeParent(key)
     );
@@ -37,6 +38,23 @@ function _logFieldPath(rule) {
         _log(fieldContext, `Rule result is ${result} for path ${fieldContext.fieldPath.join(".")}`);
         return result;
     });
+}
+
+
+function _filterCurrentProp(rule) {
+    return $do(function* () {
+        const [model, { prevModel }] = yield Reader.ask();
+
+        if (_isPrimitiveValue(model) && model !== prevModel) {
+            return model;
+        }
+
+        return yield rule;
+    });
+}
+
+function _isPrimitiveValue(model) {
+    return (typeof (model) !== "object" && !Array.isArray(model)) || model === null || model === undefined
 }
 
 function _getFieldContext(parentModel, parentContext, key) {

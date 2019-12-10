@@ -11,7 +11,7 @@ describe("higher order rules:", () => {
     const model = 1;
 
     // Act
-    const result = applyRule(rule, model, null);
+    const result = applyRule(rule, model, model);
 
     // Assert
     expect(result).toBe(3);
@@ -25,7 +25,7 @@ describe("higher order rules:", () => {
     };
 
     // Act
-    const result = applyRule(rule, model, null);
+    const result = applyRule(rule, model, model);
 
     // Assert
     expect(result.name).toBe("ok");
@@ -39,7 +39,7 @@ describe("higher order rules:", () => {
     };
 
     // Act
-    const result = applyRule(rule, model, null);
+    const result = applyRule(rule, model, model);
 
     // Assert
     expect(result).toBe(model);
@@ -58,7 +58,7 @@ describe("higher order rules:", () => {
     };
 
     // Act
-    const result = applyRule(rule, model, null);
+    const result = applyRule(rule, model, model);
 
     // Assert
     expect(result).toStrictEqual({ name: "name", surname: "surname" });
@@ -74,7 +74,7 @@ describe("higher order rules:", () => {
     const model = null;
 
     // Act
-    const result = applyRule(rule, model, null);
+    const result = applyRule(rule, model, model);
 
     // Assert
     expect(result).toBe(model);
@@ -87,7 +87,7 @@ describe("higher order rules:", () => {
     const model = [1, 2, 3];
 
     // Act
-    const result = applyRule(rule, model, null);
+    const result = applyRule(rule, model, model);
 
     // Assert
     expect(result).toStrictEqual([2, 3, 4]);
@@ -100,7 +100,7 @@ describe("higher order rules:", () => {
     const model = [];
 
     // Act
-    const result = applyRule(rule, model, null);
+    const result = applyRule(rule, model, model);
 
     // Assert
     expect(result).toBe(model);
@@ -113,7 +113,7 @@ describe("higher order rules:", () => {
     const model = [1, 2];
 
     // Act
-    const result = applyRule(rule, model, null);
+    const result = applyRule(rule, model, model);
 
     // Assert
     expect(result).toBe(model);
@@ -125,7 +125,7 @@ describe("higher order rules:", () => {
     const model = { scopeField: "OK" };
 
     // Act
-    const result = applyRule(rule, model, null);
+    const result = applyRule(rule, model, model);
 
     // Assert
     expect(result).toBe("OK");
@@ -152,7 +152,7 @@ describe("higher order rules:", () => {
     const model = null;
 
     // Act
-    const result = applyRule(rule, model, null);
+    const result = applyRule(rule, model, model);
 
     // Assert
     expect(result).toBe("modified");
@@ -165,7 +165,7 @@ describe("higher order rules:", () => {
     const model = null;
 
     // Act
-    const result = applyRule(rule, model, null);
+    const result = applyRule(rule, model, model);
 
     // Assert
     expect(result).toBe("modified");
@@ -178,7 +178,7 @@ describe("higher order rules:", () => {
     const model = "original";
 
     // Act
-    const result = applyRule(rule, model, null);
+    const result = applyRule(rule, model, model);
 
     // Assert
     expect(result).toBe("original");
@@ -191,7 +191,7 @@ describe("higher order rules:", () => {
     const model = null;
 
     // Act
-    const result = applyRule(rule, model, null);
+    const result = applyRule(rule, model, model);
 
     // Assert
     expect(result).toBe("true");
@@ -204,7 +204,7 @@ describe("higher order rules:", () => {
     const model = null;
 
     // Act
-    const result = applyRule(rule, model, null);
+    const result = applyRule(rule, model, model);
 
     // Assert
     expect(result).toBe("false");
@@ -217,7 +217,7 @@ describe("higher order rules:", () => {
     const model = "original";
 
     // Act
-    const result = applyRule(rule, model, null);
+    const result = applyRule(rule, model, model);
 
     // Assert
     expect(result).toBe("true");
@@ -230,7 +230,7 @@ describe("higher order rules:", () => {
     const model = "original";
 
     // Act
-    const result = applyRule(rule, model, null);
+    const result = applyRule(rule, model, model);
 
     // Assert
     expect(result).toBe("false");
@@ -246,7 +246,7 @@ describe("higher order rules:", () => {
     const model = "original";
 
     // Act
-    const result = applyRule(rule, model, null);
+    const result = applyRule(rule, model, model);
 
     // Assert
     expect(result).toBe("false");

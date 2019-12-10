@@ -42,6 +42,25 @@ describe("composed rules:", () => {
         expect(result).toStrictEqual({ ...changedModel, advancePercent: 20, approved: false, person: { ...changedModel.person, fullName: "John Smith" } })
     });
 
+    it("shape should not apply rule for user modified value: ", () => {
+        // Arrange
+        const rule = shape({
+            a: computed(doc => doc.a + 1),
+            b: computed(doc => doc.b + 1)
+        })
+
+        const originalModel = { a: 1, b: 1 }
+
+        const changedModel1 = { ...originalModel, a: 99 }
+
+
+        // Act
+        const result1 = applyRule(rule, changedModel1, originalModel)
+
+        // Assert
+        expect(result1).toStrictEqual({ a: 99, b: 2 })
+    });
+
     it("shape and circular propertyChanged rules - one field changed: ", () => {
         // Arrange
         const rule = shape({
@@ -95,7 +114,8 @@ describe("composed rules:", () => {
         const result = applyRule(rule, changedModel, originalModel)
 
         // Assert
-        expect(result).toStrictEqual({ a: 3, b: 2 })
+        //expect(result).toStrictEqual({ a: 3, b: 2 })
+        expect(result).toStrictEqual({ a: 2, b: 3 })
     });
 
     it("shape and circular propertyChanged cascade changes: ", () => {
@@ -114,7 +134,7 @@ describe("composed rules:", () => {
 
         // Assert
         expect(result).toStrictEqual({ a: 2, b: 0 })
-        expect(result2).toStrictEqual({ a: 3, b: 2 })
+        expect(result2).toStrictEqual({ a: 2, b: 2 })
     });
 
     it("items and scope:", () => {
@@ -173,7 +193,7 @@ describe("composed rules:", () => {
         expect(result).toStrictEqual([{ ...originalModel[0], a: 3, b: 103 }])
 
     });
-    
+
     it("items with unique ids and using computed value from parent:", () => {
         // Arrange
         const rule = items(
@@ -250,22 +270,23 @@ describe("composed rules:", () => {
 
     });
 
-    it("items with unique ids, insert item and scope keys unchanged:", () => {
+    it("items with unique ids, does not apply rule on inserted item:", () => {
         // Arrange
         const rule = items(
             scope(shape({
-                b: computed(item => item.a + 100) |> when(propertyChanged(item => item.a))
+                b: computed(item => item.a + 100) 
             }))
         )
 
         const originalModel = ensureArrayUIDsDeep([{ a: 6, b: 7 }])
         const changedModel = ensureArrayUIDsDeep([{ a: 1, b: 2 }, originalModel[0]]);
-
+      
         // Act
         const result = applyRule(rule, changedModel, originalModel)
 
         // Assert
-        expect(result).toStrictEqual([{ ...changedModel[0], b: 101 }, originalModel[0]])
+        
+        expect(result).toStrictEqual([changedModel[0], {...changedModel[1], b: 106}])
 
     });
 });
