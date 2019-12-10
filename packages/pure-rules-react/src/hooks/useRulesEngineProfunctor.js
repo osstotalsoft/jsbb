@@ -24,9 +24,9 @@ export function useRulesEngineProfunctor(rules, initialModel, { isLogEnabled = t
     const rulesEngineProfunctor = profunctor.promap(
         model => model,
         (changedModel, prevModel) => {
-            changedModel = ensureArrayUIDsDeep(changedModel);
-            setDirtyInfo(di.detectChanges(changedModel, prevModel, dirtyInfo))
-            return applyRule(rulesEngine, changedModel, prevModel)
+            const result = applyRule(rulesEngine, ensureArrayUIDsDeep(changedModel), prevModel)
+            setDirtyInfo(di.detectChanges(result, prevModel, dirtyInfo))
+            return result;
         },
         [profunctor.state, rulesEngine],
     )

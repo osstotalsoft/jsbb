@@ -1,9 +1,9 @@
 import { useState, useCallback, useMemo } from 'react';
-import { useDirtyInfo } from './useDirtyInfo';
+import * as di from '../dirtyInfo'
 import { logTo, applyRule, ensureArrayUIDsDeep } from '@totalsoft/pure-rules'
 
 export function useRulesEngine(rules, initialModel, { isLogEnabled = true, logger = console } = {}, deps = []) {
-    const [dirtyInfo, setDirtyPath, resetDirtyInfo] = useDirtyInfo()
+    const [dirtyInfo, setDirtyInfo] = useState(di.create)
     const [model, setModel] = useState(ensureArrayUIDsDeep(initialModel))
 
     const rulesEngine = useMemo(() => {
@@ -23,20 +23,20 @@ export function useRulesEngine(rules, initialModel, { isLogEnabled = true, logge
 
         // Update property
         useCallback((propertyPath, value) => {
-            setDirtyPath(propertyPath)
-            const changedModel = ensureArrayUIDsDeep(_setInnerProp(model, propertyPath, value))
+            const changedModel = _setInnerProp(model, propertyPath, value)
             if (changedModel === model) {
                 return model;
             }
 
-            const result = applyRule(rulesEngine, changedModel, model)
+            const result = applyRule(rulesEngine, ensureArrayUIDsDeep(changedModel), model)
+            setDirtyInfo(di.detectChanges(result, model, dirtyInfo))
             setModel(result);
             return result;
         }, [model, rulesEngine]),
 
         // Reset
         useCallback((newModel) => {
-            resetDirtyInfo();
+            setDirtyInfo(di.create())
             setModel(ensureArrayUIDsDeep(newModel));
         }, [])
     ]
