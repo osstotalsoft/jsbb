@@ -26,6 +26,18 @@ export function field(key: string): (rule: Rule<any>) => Rule<object>;
 export function fromModel<TModel>(ruleFactory: (model: TModel) => Rule<TModel>): Rule<TModel>;
 
 /**
+ * Useful when you need the parent model in the composition process.
+ * @see https://github.com/osstotalsoft/jsbb/tree/master/packages/pure-rules#fromparent
+ */
+export function fromParent<TModel>(ruleFactory: (parentModel: any) => Rule<TModel>): Rule<TModel>;
+
+/**
+ * Useful when you need the root model in the composition process.
+ * @see https://github.com/osstotalsoft/jsbb/tree/master/packages/pure-rules#fromroot
+ */
+export function fromRoot<TModel>(ruleFactory: (rootModel: any) => Rule<TModel>): Rule<TModel>;
+
+/**
  * Used to create a conditional rule by providing a predicate or condition, a rule for the "true" branch and another for the "false" branch.
  * @see https://github.com/osstotalsoft/jsbb/tree/master/packages/pure-rules#ifThenElse
  */
@@ -64,6 +76,10 @@ export function logTo<TModel>(logger: Logger, rule: Rule<TModel>): Rule<TModel>;
 export function logTo<TModel>(logger: Logger): (rule: Rule<TModel>) => Rule<TModel>;
 
 export type Reader<TContext, TValue> = { computation: (ctx: TContext) => TValue };
+
+export function parent(reader: Reader<any, any>): Reader<any, any>;
+
+export function readFrom<TContext, TValue>(func: (ctx: TContext) => TValue): Reader<TContext, TValue>;
 
 /**
  * Creates a scope over the given rule where the document is substituted by the current value.

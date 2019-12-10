@@ -7,6 +7,10 @@ import logTo from "./logTo";
 import chainRules from "./chainRules";
 import scope from "./scope";
 import ifThenElse from "./ifThenElse"
+import readFrom from "./readFrom"
+import parent from "./parent"
+import fromParent from "./fromParent"
+import fromRoot from "./fromRoot"
 
 export {
   when,
@@ -17,5 +21,10 @@ export {
   chainRules,
   logTo,
   scope,
-  ifThenElse
+  ifThenElse,
+  readFrom,
+  parent,
+  fromParent,
+  fromRoot
 };
+

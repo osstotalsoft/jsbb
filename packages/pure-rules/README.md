@@ -112,6 +112,28 @@ shape({
 });
 ```
 
+#### fromModel
+Useful when you need the parent model in the composition process.
+
+```javascript
+shape({
+    personalInfo: shape({
+        age: fromParent(parent => minimumValue(parent.minimumAllowedAge))
+    })
+});
+```
+
+#### fromRoot
+Useful when you need the root model in the composition process.
+
+```javascript
+shape({
+    personalInfo: shape({
+        age: fromParent(root => minimumValue(root.personalInfo.minimumAllowedAge))
+    })
+});
+```
+
 #### scope
 Creates a scope over the given rule where the document is substituted by the current value.
 

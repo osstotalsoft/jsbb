@@ -82,33 +82,10 @@ describe("useValidation hook", () => {
 
         // Assert
         const dirtyInfo = result.current.di;
-        expect(dirtyInfo).toStrictEqual(di.update("a.b", true, di.create()))
-        
+        expect(dirtyInfo).toStrictEqual(di.detectChanges({ _ruleValue: 1, a: { b: "OK", c: "Initial" } }, initialModel))
+
     });
 
-    
-    it("sets dirty info 1", () => {
-        // Arrange
-        const rule = Rule.of(1);
-        const initialModel = { a: { b: "", c: "Initial" } };
-        const callback = () => {
-            const [rootProf, di] = useRulesEngineProfunctor(rule, initialModel)
-
-            return { rootProf, flieldProf: rootProf.a.b, di };
-        }
-
-        // Act
-        const { result } = renderHook(callback);
-        act(() => {
-            onChanged(result.current.fieldProf)("OK");
-        });
-
-        // Assert
-        const dirtyInfo = result.current.di;
-        expect(dirtyInfo).toStrictEqual(di.update("a.b", true, di.create()))
-        
-    });
-    
 
     it("enforces reference and render economy if updated with same value", () => {
         // Arrange

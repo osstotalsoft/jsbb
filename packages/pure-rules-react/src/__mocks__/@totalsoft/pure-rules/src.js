@@ -7,11 +7,13 @@ mock.applyRule = jest.fn((rule, model, _prevModel) => ({ ...model, _ruleValue: r
 
 mock.logTo = jest.fn(_ => rule => ({ ...rule }));
 mock.ensureArrayUIDsDeep = jest.fn(obj => obj);
+mock.toMap = jest.fn(arr => arr.reduce((acc, value, index) => ({ ...acc, value, index }), {}));
 
 mock.__clearMocks = function () {
   mock.applyRule.mockClear();
   mock.logTo.mockClear();
   mock.ensureArrayUIDsDeep.mockClear();
+  mock.toMap.mockClear();
 };
 
 // eslint-disable-next-line no-undef
