@@ -17,7 +17,7 @@ export const field = curry(function field(key, rule) {
 
 const mergeParent = curry(function mergeParent(field, fieldRule) {
     return $do(function* () {
-        const [model,] = yield Reader.ask();
+        const [model] = yield Reader.ask();
         const fieldValue = yield fieldRule;
 
         if (model[field] === fieldValue) {
@@ -30,7 +30,6 @@ const mergeParent = curry(function mergeParent(field, fieldRule) {
     });
 });
 
-
 function _logFieldPath(rule) {
     return $do(function* () {
         const [, fieldContext] = yield Reader.ask();
@@ -39,7 +38,6 @@ function _logFieldPath(rule) {
         return result;
     });
 }
-
 
 function _filterCurrentProp(rule) {
     return $do(function* () {

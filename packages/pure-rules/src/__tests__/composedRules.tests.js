@@ -133,8 +133,29 @@ describe("composed rules:", () => {
         const result2 = applyRule(rule, result, changedModel)
 
         // Assert
-        expect(result).toStrictEqual({ a: 2, b: 0 })
+        expect(result).toStrictEqual({ a: 2, b: 2 })
         expect(result2).toStrictEqual({ a: 2, b: 2 })
+    });
+
+    it("should apply rules when computed properties change with scope: ", () => {
+        // Arrange
+        const rule = shape({
+            x: scope(shape({
+                a: computed(doc => doc.a + 1),
+                b: computed(doc => doc.a) |> when(propertyChanged(doc => doc.a))
+            }))
+        })
+
+        const originalModel = { x: { a: 1, b: 0, } }
+        const changedModel = { x: { ...originalModel.x } }
+
+        // Act
+        const result = applyRule(rule, changedModel, originalModel)
+        const result2 = applyRule(rule, result, changedModel)
+
+        // Assert
+        expect(result).toStrictEqual({ x: { a: 2, b: 2 } })
+        expect(result2).toStrictEqual({ x: { a: 2, b: 2 } })
     });
 
     it("items and scope:", () => {
@@ -274,19 +295,18 @@ describe("composed rules:", () => {
         // Arrange
         const rule = items(
             scope(shape({
-                b: computed(item => item.a + 100) 
+                b: computed(item => item.a + 100)
             }))
         )
 
         const originalModel = ensureArrayUIDsDeep([{ a: 6, b: 7 }])
         const changedModel = ensureArrayUIDsDeep([{ a: 1, b: 2 }, originalModel[0]]);
-      
+
         // Act
         const result = applyRule(rule, changedModel, originalModel)
 
         // Assert
-        
-        expect(result).toStrictEqual([changedModel[0], {...changedModel[1], b: 106}])
 
+        expect(result).toStrictEqual([changedModel[0], { ...changedModel[1], b: 106 }])
     });
 });

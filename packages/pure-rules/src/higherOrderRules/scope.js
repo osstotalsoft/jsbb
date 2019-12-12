@@ -5,6 +5,8 @@ export default function scope(rule) {
     contramap((model, ctx) => [model, {
       ...ctx,
       document: model,
-      prevDocument: ctx.prevModel
+      prevDocument: ctx.prevModel,
+      scopePath: [...ctx.scopePath, ...ctx.fieldPath],
+      fieldPath: []
     }])
 }
