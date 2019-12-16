@@ -9,6 +9,7 @@ import scope from "./scope";
 import ifThenElse from "./ifThenElse"
 import readFrom from "./readFrom"
 import parent from "./parent"
+import root from "./root"
 import fromParent from "./fromParent"
 import fromRoot from "./fromRoot"
 
@@ -24,6 +25,7 @@ export {
   ifThenElse,
   readFrom,
   parent,
+  root,
   fromParent,
   fromRoot
 };

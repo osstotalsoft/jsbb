@@ -6,7 +6,7 @@ export default function scope(rule) {
       ...ctx,
       document: model,
       prevDocument: ctx.prevModel,
-      scopePath: [...ctx.scopePath, ...ctx.fieldPath],
+      scopePath: [...ctx.scopePath, ...ctx.fieldPath],      
       fieldPath: []
     }])
 }

@@ -14,9 +14,9 @@ Throughout the process of composition, you start with some simple primitive rule
                 propertyChanged(loan => loan.advance),
                 propertyChanged(loan => loan.interestRate)
             ] |> any),
-        person: scope(shape({
+        person: shape({
             fullName: computed(person => `${person.surname} ${person.name}`) |> when(propertiesChanged(person => [person.name, person.surname])),
-        }))
+        })
     }) |> logTo(console)
 ```
 

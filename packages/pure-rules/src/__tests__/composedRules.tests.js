@@ -1,5 +1,5 @@
 import { applyRule } from "../";
-import { when, shape, logTo, scope, chainRules, items, readFrom, fromParent, parent, fromRoot } from "../higherOrderRules";
+import { when, shape, logTo, scope, chainRules, items, readFrom, fromParent, parent, fromRoot,root } from "../higherOrderRules";
 import { constant, computed, maximumValue } from "../primitiveRules";
 import { propertyChanged, any, propertiesChanged } from "../predicates";
 import { ensureArrayUIDsDeep } from "../arrayUtils";
@@ -16,9 +16,9 @@ describe("composed rules:", () => {
                     propertyChanged(loan => loan.advance),
                     propertyChanged(loan => loan.interestRate)
                 ] |> any),
-            person: scope(shape({
+            person: shape({
                 fullName: computed(person => `${person.surname} ${person.name}`) |> when(propertiesChanged(person => [person.name, person.surname])),
-            }))
+            })
         }) |> logTo(console)
 
 
@@ -140,10 +140,10 @@ describe("composed rules:", () => {
     it("should apply rules when computed properties change with scope: ", () => {
         // Arrange
         const rule = shape({
-            x: scope(shape({
+            x: shape({
                 a: computed(doc => doc.a + 1),
                 b: computed(doc => doc.a) |> when(propertyChanged(doc => doc.a))
-            }))
+            })
         })
 
         const originalModel = { x: { a: 1, b: 0, } }
@@ -161,9 +161,9 @@ describe("composed rules:", () => {
     it("items and scope:", () => {
         // Arrange
         const rule = items(
-            scope(shape({
+            shape({
                 b: computed(item => item.a + 100) |> when(propertyChanged(item => item.a))
-            }))
+            })
         )
 
         const originalModel = [{ a: 1, b: 2 }]
@@ -180,9 +180,9 @@ describe("composed rules:", () => {
     it("items with unique ids and scope keys:", () => {
         // Arrange
         const rule = items(
-            scope(shape({
+            shape({
                 b: computed(item => item.a + 100) |> when(propertyChanged(item => item.a))
-            }))
+            })
         )
 
         const originalModel = ensureArrayUIDsDeep([{ a: 1, b: 2 }])
@@ -215,7 +215,51 @@ describe("composed rules:", () => {
 
     });
 
-    it("items with unique ids and using computed value from parent:", () => {
+
+    it("items with unique ids and using parent scope:", () => {
+        // Arrange
+        const rule = shape({
+            children: items(
+                shape({
+                    b: computed(item => item.a + 100) |> when(propertyChanged((item => item.a))) |> scope |> parent |> parent |> parent
+                })
+            )
+        })
+
+        const originalModel = ensureArrayUIDsDeep({ a: 1, children: [{  b: 2 }] })
+        const changedModel = { a: 3, children: [{ ...originalModel.children[0] }] }
+
+        // Act
+        const result = applyRule(rule, changedModel, originalModel)
+
+        // Assert
+        expect(result).toStrictEqual({ ...changedModel, children: [{ ...originalModel.children[0], b: 103 }] })
+
+    });
+
+    
+    it("items with unique ids and using root scope:", () => {
+        // Arrange
+        const rule = shape({
+            children: items(
+                shape({
+                    b: computed(item => item.a + 100) |> when(propertyChanged((item => item.a))) |> scope |> root
+                })
+            )
+        })
+
+        const originalModel = ensureArrayUIDsDeep({ a: 1, children: [{  b: 2 }] })
+        const changedModel = { a: 3, children: [{ ...originalModel.children[0] }] }
+
+        // Act
+        const result = applyRule(rule, changedModel, originalModel)
+
+        // Assert
+        expect(result).toStrictEqual({ ...changedModel, children: [{ ...originalModel.children[0], b: 103 }] })
+
+    });
+
+    it("items with unique ids and using computed value from (redundant) parent:", () => {
         // Arrange
         const rule = items(
             shape({
@@ -234,31 +278,12 @@ describe("composed rules:", () => {
 
     });
 
-    it("items with unique ids and using computed value from root:", () => {
-        // Arrange
-        const rule = items(
-            shape({
-                b: fromRoot(array => constant(array[0].a + 100)) |> when(propertyChanged(item => item.a) |> scope |> parent)
-            })
-        )
-
-        const originalModel = ensureArrayUIDsDeep([{ a: 1, b: 2 }])
-        const changedModel = [{ ...originalModel[0], a: 3 }]
-
-        // Act
-        const result = applyRule(rule, changedModel, originalModel)
-
-        // Assert
-        expect(result).toStrictEqual([{ ...originalModel[0], a: 3, b: 103 }])
-
-    });
-
     it("items with unique ids, delete item and scope keys unchanged:", () => {
         // Arrange
         const rule = items(
-            scope(shape({
+            shape({
                 b: computed(item => item.a + 100) |> when(propertyChanged(item => item.a))
-            }))
+            })
         )
 
         const originalModel = ensureArrayUIDsDeep([{ a: 6, b: 7 }, { a: 1, b: 2 }])
@@ -275,9 +300,9 @@ describe("composed rules:", () => {
     it("items with unique ids, delete item and scope keys with rule:", () => {
         // Arrange
         const rule = items(
-            scope(shape({
+            shape({
                 b: computed(item => item.a + 100) |> when(propertyChanged(item => item.a) |> readFrom |> parent)
-            }))
+            })
         )
 
         const originalModel = ensureArrayUIDsDeep([{ a: 6, b: 7 }, { a: 1, b: 2 }])
@@ -294,9 +319,9 @@ describe("composed rules:", () => {
     it("items with unique ids, does not apply rule on inserted item:", () => {
         // Arrange
         const rule = items(
-            scope(shape({
+            shape({
                 b: computed(item => item.a + 100)
-            }))
+            })
         )
 
         const originalModel = ensureArrayUIDsDeep([{ a: 6, b: 7 }])

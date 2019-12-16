@@ -1,10 +1,10 @@
 import Reader from "@totalsoft/zion/data/reader";
-import { map } from "ramda";
+import { map, compose } from "ramda";
 import { $do } from "@totalsoft/zion";
 import { field, chainRules } from "./";
+import scope from "./scope"
 
-
-export default function shape(ruleObj) {
+function _shape(ruleObj) {
     return $do(function* () {
         const [model] = yield Reader.ask();
         if (model === null || model === undefined) {
@@ -16,3 +16,5 @@ export default function shape(ruleObj) {
             |> chainRules;
     });
 }
+
+export default compose(scope, _shape)
