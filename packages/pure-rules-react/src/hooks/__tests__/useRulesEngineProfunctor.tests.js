@@ -1,6 +1,6 @@
 import { renderHook, act } from "@testing-library/react-hooks";
 import { Rule, applyRule, logTo, __clearMocks } from "@totalsoft/pure-rules";
-import { onChanged, getValue } from "../../rulesProfunctorProxy";
+import { setValue, getValue } from "../../rulesProfunctorProxy";
 import { useRulesEngineProfunctor } from "../";
 import * as di from "../../dirtyInfo"
 
@@ -22,7 +22,7 @@ describe("useValidation hook", () => {
         // Act
         const { result } = renderHook(callback);
         act(() => {
-            onChanged(result.current.fieldProf)("OK");
+            setValue(result.current.fieldProf)("OK");
         });
 
         // Assert
@@ -51,7 +51,7 @@ describe("useValidation hook", () => {
         // Act
         const { result } = renderHook(callback);
         act(() => {
-            onChanged(result.current.fieldProfs[0])("OK");
+            setValue(result.current.fieldProfs[0])("OK");
         });
 
         // Assert
@@ -77,7 +77,7 @@ describe("useValidation hook", () => {
         // Act
         const { result } = renderHook(callback);
         act(() => {
-            onChanged(result.current.fieldProf)("OK");
+            setValue(result.current.fieldProf)("OK");
         });
 
         // Assert
@@ -101,11 +101,11 @@ describe("useValidation hook", () => {
         // Act
         const { result } = renderHook(callback);
         act(() => {
-            onChanged(result.current.fieldProf)("OK");
+            setValue(result.current.fieldProf)("OK");
         });
         const model1 = result.current.rootProf;
         act(() => {
-            onChanged(result.current.fieldProf)("OK");
+            setValue(result.current.fieldProf)("OK");
         });
         const model2 = result.current.rootProf;
         // // Assert
@@ -146,7 +146,7 @@ describe("useValidation hook", () => {
         const { result } = renderHook(callback);
         act(() => {
             const { fieldProf } = result.current;
-            onChanged(fieldProf, "OK")
+            setValue(fieldProf, "OK")
         });
         const { rootProf: rootProf1 } = result.current;
         act(() => {
@@ -177,7 +177,7 @@ describe("useValidation hook", () => {
         const { result, rerender } = renderHook(renderCallack);
         act(() => {
             const { fieldProf } = result.current;
-            onChanged(fieldProf, "OK")
+            setValue(fieldProf, "OK")
         });
         rerender();
 
@@ -198,7 +198,7 @@ describe("useValidation hook", () => {
         const { result } = renderHook(renderCallack);
         act(() => {
             const { fieldProf } = result.current;
-            onChanged(fieldProf)("OK")
+            setValue(fieldProf)("OK")
         });
 
         // Assert
@@ -232,14 +232,14 @@ describe("useValidation hook", () => {
         const { result, rerender } = renderHook(() => useRulesEngineProfunctor(ruleValue, initialModel, { logger }));
         const [prof1] = result.current;
         act(() => {
-            onChanged(prof1, { value: "a" })
+            setValue(prof1, { value: "a" })
         });
         const [prof2] = result.current;
         ruleValue = Rule.of(2);
         rerender()
         const [prof3] = result.current;
         act(() => {
-            onChanged(prof3, { value: "b" })
+            setValue(prof3, { value: "b" })
         });
         const [prof4] = result.current;
 

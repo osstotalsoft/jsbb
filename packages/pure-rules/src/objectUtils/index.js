@@ -10,6 +10,10 @@ export const setInnerProp = curry(function setInnerProp(obj, path, value) {
         return _immutableAssign(obj, prop, newValue);
     }
 
+    if (typeof path === "string") {
+        path = path.split(".")
+    }
+
     return inner(obj, path);
 });
 

@@ -3,8 +3,8 @@ import { ProfunctorState } from "@staltz/use-profunctor-state";
 
 export function eject(rulesProfunctorProxy: RulesProfunctorProxy): object;
 
-export function onChanged<TValue>(rulesProfunctorProxy: RulesProfunctorProxy, newValue: TValue): ChangeHandler<TValue>;
-export function onChanged<TValue>(rulesProfunctorProxy: RulesProfunctorProxy): (newValue: TValue) => ChangeHandler<TValue>;
+export function setValue<TValue>(rulesProfunctorProxy: RulesProfunctorProxy, newValue: TValue): ChangeHandler<TValue>;
+export function setValue<TValue>(rulesProfunctorProxy: RulesProfunctorProxy): (newValue: TValue) => ChangeHandler<TValue>;
 
 export function getValue(rulesProfunctorProxy: RulesProfunctorProxy): any;
 

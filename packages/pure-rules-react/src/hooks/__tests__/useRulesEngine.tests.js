@@ -2,6 +2,7 @@ import { renderHook, act } from "@testing-library/react-hooks";
 import { useRulesEngine } from "../";
 import { Rule, applyRule, logTo, __clearMocks } from "@totalsoft/pure-rules";
 
+
 describe("useRulesEngine hook", () => {
     afterEach(() => {
         __clearMocks();
@@ -24,7 +25,7 @@ describe("useRulesEngine hook", () => {
         const [model] = result.current;
         expect(applyRule.mock.calls.length).toBe(1);
         expect(model).toBe(returnedModel);
-        expect(model.a.b).toBe("OK");
+        expect(model._innerProp).toBe("OK");
         expect(model._ruleValue).toBe(1);
     });
 
@@ -51,7 +52,6 @@ describe("useRulesEngine hook", () => {
         expect(model1._ruleValue).toBe(1);
     });
 
-
     it("returns initial model when rule is not run", () => {
         // Arrange
         const rule = Rule.of(1);
@@ -66,7 +66,6 @@ describe("useRulesEngine hook", () => {
         expect(model).toBe(initialModel);
 
     });
-
 
     it("returns initial model after reset", () => {
         // Arrange
@@ -90,8 +89,6 @@ describe("useRulesEngine hook", () => {
         expect(model1).not.toBe(initialModel);
         expect(model2).toBe(initialModel);
     });
-
-
 
     it("should minimize the number of renders", () => {
         // Arrange
@@ -207,7 +204,6 @@ describe("useRulesEngine hook", () => {
         expect(reset1).toBe(reset2);
     });
 
-
     it("changes the validation function when the logging flag changes", () => {
         // Arrange
         const initialModel = {}
@@ -230,7 +226,6 @@ describe("useRulesEngine hook", () => {
         expect(updateField1).not.toBe(updateField2);
         expect(reset1).toBe(reset2);
     });
-
 
     it("changes the validation function when  other deps change", () => {
         // Arrange

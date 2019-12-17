@@ -1,6 +1,6 @@
 import { useProfunctorState } from '@staltz/use-profunctor-state'
 import { renderHook, act } from "@testing-library/react-hooks";
-import { RulesEngineProxy, eject, getValue, onChanged } from "..";
+import { RulesEngineProxy, eject, getValue, setValue } from "..";
 
 jest.unmock("@totalsoft/pure-validations");
 
@@ -40,7 +40,7 @@ describe("validation proxy", () => {
 
         // Act
         act(() => {
-            onChanged(profunctorProxy)(otherModel);
+            setValue(profunctorProxy)(otherModel);
         });
 
         // Assert
@@ -60,7 +60,7 @@ describe("validation proxy", () => {
 
         // Act
         act(() => {
-            onChanged(result.current, "OK")
+            setValue(result.current, "OK")
         });
 
         // Assert

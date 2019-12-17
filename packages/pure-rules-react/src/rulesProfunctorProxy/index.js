@@ -1,6 +1,6 @@
 import { ProfunctorState } from "@staltz/use-profunctor-state";
 
-const onChangedSymbol = Symbol("onChanged")
+const setValueSymbol = Symbol("setValue")
 const getValueSymbol = Symbol("getValue")
 const targetSymbol = Symbol("target")
 const cachedPropPrefix = "__@@";
@@ -20,7 +20,7 @@ const handler = {
             case getValueSymbol: {
                 return target.state;
             }
-            case onChangedSymbol: {
+            case setValueSymbol: {
                 return target.setState;
             }
             default: {
@@ -63,12 +63,6 @@ function _immutableAssign(obj, prop, value) {
 }
 
 function getFieldScope(profunctor, fieldName) {
-    // return profunctor.promap(
-    //     model => model[fieldName],
-    //     (fieldValue, model) => _immutableAssign(model, fieldName, fieldValue),
-    //     [false]
-    // )
-
     return promapWithoutMemo(profunctor)(
         model => model && model[fieldName],
         (fieldValue, model) => _immutableAssign(model, fieldName, fieldValue)
@@ -102,11 +96,11 @@ export function eject(proxy) {
     return proxy[targetSymbol]
 }
 
-export function onChanged(proxy, newValue = undefined) {
+export function setValue(proxy, newValue = undefined) {
     if (newValue !== undefined) {
-        return proxy[onChangedSymbol](newValue)
+        return proxy[setValueSymbol](newValue)
     } else {
-        return proxy[onChangedSymbol]
+        return proxy[setValueSymbol]
     }
 }
 

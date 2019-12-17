@@ -278,6 +278,25 @@ describe("composed rules:", () => {
 
     });
 
+    it("items with unique ids and using computed value from root and implicit parent scope:", () => {
+        // Arrange
+        const rule = items(
+            shape({
+                b: fromRoot(array => constant(array[0].a + 100)) |> when(propertyChanged(item => item.a))
+            })
+        )
+
+        const originalModel = ensureArrayUIDsDeep([{ a: 1, b: 2 }])
+        const changedModel = [{ ...originalModel[0], a: 3 }]
+
+        // Act
+        const result = applyRule(rule, changedModel, originalModel)
+
+        // Assert
+        expect(result).toStrictEqual([{ ...originalModel[0], a: 3, b: 103 }])
+
+    });
+
     it("items with unique ids, delete item and scope keys unchanged:", () => {
         // Arrange
         const rule = items(

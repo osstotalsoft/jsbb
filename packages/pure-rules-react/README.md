@@ -9,32 +9,30 @@ npm install '@totalsoft/pure-rules-react'
 
 ## info
 The library provides three hooks:
- - useRulesEngine: usage without dirty fields info
- - useRulesEngineProfunctor: usage with dirty fields info
+ - useRulesEngine: applies the rule engine by updating a value at the given property path
+ - useRulesEngineProfunctor: applies the rule by changing the
  - useDirtyInfo: usage with dirty fields info
 
 ## useRulesEngineProfunctor hook
 ```jsx
-const validator = shape({
-  fullName: computed(doc => doc.firstName + doc.lastName),
-  
-  ),
+const rules = shape({
+  fullName: computed(doc => doc.firstName + doc.lastName)
 });
 
 const SomeComponent = props => {
-  const [prof, dirtyInfo, reset] = useRulesEngineProfunctor(rules, {});
+  const [person, dirtyInfo, reset] = useRulesEngineProfunctor(rules, {});
   return (
     <>
-      {getValue(prof.fullName)}
+      {getValue(person.fullName)}
       <TextField
-            value={getValue(prof.firstName)}
-            onChange={onTextBoxChange(onChanged(prof.firstName))}
+            value={getValue(person.firstName)}
+            onChange={onTextBoxChange(setValue(person.firstName))}
       />
-   <TextField
-            value={getValue(prof.lastName)}
-            onChange={onTextBoxChange(onChanged(prof.lastName))}
+      <TextField
+            value={getValue(person.lastName)}
+            onChange={onTextBoxChange(setValue(person.lastName))}
       />
-      <DetailsComp prof={prof.details} />
+      <DetailsComp person={person.details} />
     </>
   );
 };
