@@ -112,7 +112,7 @@ shape({
 });
 ```
 
-#### fromModel
+#### fromParent
 Useful when you need the parent model in the composition process.
 
 ```javascript
@@ -135,15 +135,17 @@ shape({
 ```
 
 #### scope
-Creates a scope over the given rule where the document is substituted by the current value.
+Creates a scope over the given rule where the document is substituted by the current value. 
+It can be used together with "root" and "parent" modifiers.
 
 ```javascript
 shape({
-    loan: scope(
-        shape({
-            advance: computed(loan => loan.amount * loan.advancePercent) |> when(propertiesChanged(loan => [loan.amount, loan.advancePercent]))
-        })
-    )
+    loan: shape({
+        advance: computed(root => root.loan.amount * root.advancePercent) 
+            |> when(propertiesChanged(root => [root.loan.amount, root.advancePercent])) 
+            |> scope |> root
+    })
+    
 });
 ```
 
