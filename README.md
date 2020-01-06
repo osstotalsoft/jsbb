@@ -8,6 +8,7 @@
   - [`pure-validations`](./packages/pure-validations#readme)
   - [`pure-validations-react`](./packages/pure-validations-react#readme)
   - [`pure-rules`](./packages/pure-rules#readme)
+  - [`pure-rules-react`](./packages/pure-rules-react#readme)
 
 ## Bootstrap
 ```javascript
