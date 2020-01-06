@@ -1,6 +1,6 @@
 {
   "name": "@totalsoft/pure-rules",
-  "version": "2.3.1",
+  "version": "2.4.0",
   "description": "Business rules api via functional composition",
   "main": "index.js",
   "scripts": {

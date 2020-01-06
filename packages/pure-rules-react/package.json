@@ -1,6 +1,6 @@
 {
   "name": "@totalsoft/pure-rules-react",
-  "version": "2.3.1",
+  "version": "2.4.0",
   "description": "React extensions for the \"pure-rules\" business rules api",
   "main": "index.js",
   "scripts": {
@@ -29,8 +29,8 @@
     "react-test-renderer": "^16.9.0"
   },
   "dependencies": {
-    "@totalsoft/pure-rules": "^2.3.0",
-    "@staltz/use-profunctor-state": "^1.2.0"
+    "@staltz/use-profunctor-state": "^1.2.0",
+    "@totalsoft/pure-rules": "^2.4.0"
   },
   "peerDependencies": {
     "react": "^16.9.0"
