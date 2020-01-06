@@ -16,6 +16,8 @@
       "paths": {
         "@totalsoft/pure-validations": ["./packages/pure-validations/src"],
         "@totalsoft/pure-validations-react": ["./packages/pure-validations-react/src"],
+        "@totalsoft/pure-rules": ["./packages/pure-rules/src"],
+        "@totalsoft/pure-rules-react": ["./packages/pure-rules-react/src"],
         "@totalsoft/zion": ["./packages/zion/src"],
         "@totalsoft/zion/*": ["./packages/zion/src/*"]
       }
