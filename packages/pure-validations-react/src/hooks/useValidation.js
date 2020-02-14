@@ -1,7 +1,7 @@
 import { useState, useCallback, useMemo, useEffect } from 'react';
 import { Success, validate, logTo, filterFields } from '@totalsoft/pure-validations';
 import { ValidationProxy, isValid } from '../validationProxy';
-import { useTranslation } from 'react-i18next/hooks';
+import { useTranslation } from 'react-i18next';
 
 
 export function useValidation(rules, { isLogEnabled = true, logger = console, fieldFilterFunc = undefined } = {}, deps = []) {

@@ -33,6 +33,6 @@
     "@totalsoft/pure-rules": "^2.4.0"
   },
   "peerDependencies": {
-    "react": "^16.9.0"
+    "react": ">= 16.9.0"
   }
 }

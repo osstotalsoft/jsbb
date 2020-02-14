@@ -30,6 +30,6 @@
     "fantasy-land": "^4.0.1"
   },
   "peerDependencies": {
-    "i18next": "^17.0.11"
+    "i18next": ">= 17.0.11"
   }
 }
