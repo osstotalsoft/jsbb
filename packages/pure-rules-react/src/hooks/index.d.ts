@@ -1,12 +1,11 @@
-import { Rule, Logger } from "@totalsoft/pure-rules";
-import { RuleContext } from "packages/pure-rules/src/rule";
+import { Rule, Logger } from "packages/pure-rules/src";
 import { DirtyInfo } from "../dirtyInfo";
 import { Proxy, RulesProfunctorProxy } from "../rulesProfunctorProxy";
 
 /**
  * React hook for field dirty info tracking.
  * Returns a stateful dirty info object, a function that sets the property path as dirty and a function that resets the dirty info state.
- * @see https://github.com/osstotalsoft/jsbb/tree/master/packages/pure-rules-react#useDirtyInfo-hook
+ * @see https://github.com/osstotalsoft/jsbb/tree/master/packages/rules-algebra-react#useDirtyInfo-hook
  */
 export function useDirtyInfo(): [
   // DirtyInfo
@@ -20,12 +19,12 @@ export function useDirtyInfo(): [
 ];
 
 /**
- * React hook that applies the buisiness rules and keeps track of user modified values (dirty field info).
+ * React hook that applies the business rules and keeps track of user modified values (dirty field info).
  * Receives the rules, the initial model. Optional arguments are the settings and dependencies
  * Returns a stateful rule application result, a dirty info object, a function that sets a value for the given property path and a function that resets the rule engine state.
- * @see https://github.com/osstotalsoft/jsbb/tree/master/packages/pure-rules-react#userulesengine-hook
+ * @see https://github.com/osstotalsoft/jsbb/tree/master/packages/rules-algebra-react#useRules-hook
  */
-export function useRulesEngine(
+export function useRules(
   rules: Rule<any>,
   initialModel: any,
   options?: { isLogEnabled: boolean; logger: Logger; },
@@ -44,12 +43,12 @@ export function useRulesEngine(
 ];
 
 /**
- * React hook that applies the buisiness rules and keeps track of user modified values (dirty field info).
+ * React hook that applies the business rules and keeps track of user modified values (dirty field info).
  * Receives the rules, the initial model. Optional arguments are the settings and dependencies
  * Returns a stateful profunctor with the rule application result, a dirty info object and a function that resets the rule engine state.
- * @see https://github.com/osstotalsoft/jsbb/tree/master/packages/pure-rules-react#userulesengineprofunctor-hook
+ * @see https://github.com/osstotalsoft/jsbb/tree/master/packages/rules-algebra-react#useRulesprofunctor-hook
  */
-export function useRulesEngineProfunctor(
+export function useRulesProfunctor(
   rules: Rule<any>,
   initialModel: any,
   options?: { isLogEnabled: boolean; logger: Logger; },

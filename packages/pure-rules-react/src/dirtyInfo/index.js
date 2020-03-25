@@ -1,5 +1,5 @@
 import get from 'lodash.get';
-import { toMap } from '@totalsoft/pure-rules';
+import { toMap } from '@totalsoft/rules-algebra';
 
 export function create(isDirty = false) {
     return { isDirty };

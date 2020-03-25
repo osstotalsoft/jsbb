@@ -1,23 +1,23 @@
-# pure-rules-react
-React extensions for pure-rules.
+# rules-algebra-react
+React extensions for rules-algebra.
 
 
 ## installation
 ```javascript
-npm install '@totalsoft/pure-rules-react'
+npm install '@totalsoft/rules-algebra-react'
 ```
 
 ## info
 The library provides three hooks:
- - useRulesEngine: applies the rule engine after updating a value at the given property path
- - useRulesEngineProfunctor: applies the rule engine after updating the model through a profunctor lens 
+ - useRules: applies the rule engine after updating a value at the given property path
+ - useRulesProfunctor: applies the rule engine after updating the model through a profunctor lens 
  - useDirtyInfo: keeps track of modified properties of a model
 
 
-## useRulesEngine hook
-React hook that applies the buisiness rules and keeps track of user modified values (dirty field info).
+## useRules hook
+React hook that applies the business rules and keeps track of user modified values (dirty field info).
 * Arguments:
-  1. The rules object (see pure-rules library)
+  1. The rules object (see rules-algebra library)
   2. The initial value of the model
   3. Settings (optional)
   4. Dependencies (optional)
@@ -30,14 +30,14 @@ React hook that applies the buisiness rules and keeps track of user modified val
 Usage example:
 
 ```jsx
-import { useRulesEngine } from "@totalsoft/pure-rules-react";
+import { useRules } from "@totalsoft/rules-algebra-react";
 
 const rules = shape({
   fullName: computed(doc => doc.firstName + doc.lastName)
 });
 
 const SomeComponent = props => {
-  const [person, dirtyInfo, updateProperty, reset] = useRulesEngine(rules, {});
+  const [person, dirtyInfo, updateProperty, reset] = useRules(rules, {});
 
   const onPropertyChange = propPath => value => {
     updateProperty(propPath, value)
@@ -61,10 +61,10 @@ const SomeComponent = props => {
 };
 ```
 
-## useRulesEngineProfunctor hook
-React hook that applies the buisiness rules and keeps track of user modified values (dirty field info).
+## useRulesProfunctor hook
+React hook that applies the business rules and keeps track of user modified values (dirty field info).
 * Arguments:
-  1. The rules object (see pure-rules library)
+  1. The rules object (see rules-algebra library)
   2. The initial value of the model
   3. Settings (optional)
   4. Dependencies (optional)
@@ -74,14 +74,14 @@ React hook that applies the buisiness rules and keeps track of user modified val
   3. A function that resets the rule engine state.
 
 ```jsx
-import { useRulesEngineProfunctor, setValue, getValue } from "@totalsoft/pure-rules-react";
+import { useRulesProfunctor, setValue, getValue } from "@totalsoft/rules-algebra-react";
 
 const rules = shape({
   fullName: computed(doc => doc.firstName + doc.lastName)
 });
 
 const SomeComponent = props => {
-  const [person, dirtyInfo, reset] = useRulesEngineProfunctor(rules, {});
+  const [person, dirtyInfo, reset] = useRulesProfunctor(rules, {});
   return (
     <>
       Full name: {getValue(person.fullName)}
@@ -108,8 +108,8 @@ It returns a stateful dirty info object, a function that sets the property path 
 Usage example:
 
 ```jsx
-import { useDirtyInfo } from "@totalsoft/pure-rules-react";
-import * as di from "@totalsoft/pure-rules-react/dirtyInfo"
+import { useDirtyInfo } from "@totalsoft/rules-algebra-react";
+import * as di from "@totalsoft/rules-algebra-react/dirtyInfo"
 
 const SomeComponent = props => {
   const [person, setPerson] = useState({});

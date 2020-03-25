@@ -1,4 +1,4 @@
-# pure-rules
+# rules-algebra
 Lightweight business rules library using just simple functional composition.
 
 ## Philosophy
@@ -22,12 +22,12 @@ Throughout the process of composition, you start with some simple primitive rule
 
 ## Installation
 ```javascript
-npm install '@totalsoft/pure-rules'
+npm install '@totalsoft/rules-algebra'
 ```
 
 ## Usage
 ```javascript
-import { applyRule, minimumValue, maximumValue, chainRules } from '@totalsoft/pure-rules';
+import { applyRule, minimumValue, maximumValue, chainRules } from '@totalsoft/rules-algebra';
 
 const percent = -1
 const rule = [minimumValue(0), maximumValue(100)] |> chainRules

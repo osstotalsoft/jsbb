@@ -9,60 +9,60 @@ export const unchanged: Rule<any>;
 
 /**
  * A rule that returns the spciffied value regardless of the model.
- * @see https://github.com/osstotalsoft/jsbb/tree/master/packages/pure-rules#constant
+ * @see https://github.com/osstotalsoft/jsbb/tree/master/packages/rules-algebra#constant
  */
 export function constant<TValue>(value: TValue): Rule<TValue>;
 
 /**
  * A rule that returns a value computed based on the "document" in scope and its previous value.
- * @see https://github.com/osstotalsoft/jsbb/tree/master/packages/pure-rules#computed
+ * @see https://github.com/osstotalsoft/jsbb/tree/master/packages/rules-algebra#computed
  */
 export function computed<TValue>(computation: Computation<any, TValue>): Rule<TValue>;
 
 /**
  * A rule that returns the minimum of two properties or values.
- * @see https://github.com/osstotalsoft/jsbb/tree/master/packages/pure-rules#min
+ * @see https://github.com/osstotalsoft/jsbb/tree/master/packages/rules-algebra#min
  */
 export function min<TDocument, TValue>(first: TValue | Computation<TDocument, TValue>, second: TValue | Computation<TDocument, TValue>): Rule<TValue>;
 
 /**
  * A rule that returns the minimum of two properties or values.
- * @see https://github.com/osstotalsoft/jsbb/tree/master/packages/pure-rules#min
+ * @see https://github.com/osstotalsoft/jsbb/tree/master/packages/rules-algebra#min
  */
 export function min<TDocument, TValue>(first: TValue | Computation<TDocument, TValue>): (second: TValue | Computation<TDocument, TValue>) => Rule<TValue>;
 
 /**
  * A rule that returns the maximum of two properties or values.
- * @see https://github.com/osstotalsoft/jsbb/tree/master/packages/pure-rules#max
+ * @see https://github.com/osstotalsoft/jsbb/tree/master/packages/rules-algebra#max
  */
 export function max<TDocument, TValue>(first: TValue | Computation<TDocument, TValue>, second: TValue | Computation<TDocument, TValue>): Rule<TValue>;
 
 /**
  * A rule that returns the maximum of two properties or values.
- * @see https://github.com/osstotalsoft/jsbb/tree/master/packages/pure-rules#max
+ * @see https://github.com/osstotalsoft/jsbb/tree/master/packages/rules-algebra#max
  */
 export function max<TDocument, TValue>(first: TValue | Computation<TDocument, TValue>): (second: TValue | Computation<TDocument, TValue>) => Rule<TValue>;
 
 /**
  * A rule that returns the sum between two prperties or values.
- * @see https://github.com/osstotalsoft/jsbb/tree/master/packages/pure-rules#sum
+ * @see https://github.com/osstotalsoft/jsbb/tree/master/packages/rules-algebra#sum
  */
 export function sum<TDocument, TValue>(first: TValue | Computation<TDocument, TValue>, second: TValue | Computation<TDocument, TValue>): Rule<TValue>;
 
 /**
  * A rule that returns the sum between two prperties or values.
- * @see https://github.com/osstotalsoft/jsbb/tree/master/packages/pure-rules#sum
+ * @see https://github.com/osstotalsoft/jsbb/tree/master/packages/rules-algebra#sum
  */
 export function sum<TDocument, TValue>(first: TValue | Computation<TDocument, TValue>): (second: TValue | Computation<TDocument, TValue>) => Rule<TValue>;
 
 /**
  * A rule that returns the minimum between the current value and the argument.
- * @see https://github.com/osstotalsoft/jsbb/tree/master/packages/pure-rules#minimumValue
+ * @see https://github.com/osstotalsoft/jsbb/tree/master/packages/rules-algebra#minimumValue
  */
 export function minimumValue<TValue>(other: TValue | Computation<any, TValue>): Rule<TValue>;
 
 /**
  * A rule that returns the maximum between the current value and the argument.
- * @see https://github.com/osstotalsoft/jsbb/tree/master/packages/pure-rules#maximumValue
+ * @see https://github.com/osstotalsoft/jsbb/tree/master/packages/rules-algebra#maximumValue
  */
 export function maximumValue<TValue>(other: TValue | Computation<any, TValue>): Rule<TValue>;

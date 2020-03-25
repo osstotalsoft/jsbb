@@ -1,4 +1,4 @@
-const mock = jest.genMockFromModule("@totalsoft/pure-rules");
+const mock = jest.genMockFromModule("@totalsoft/rules-algebra");
 
 mock.Rule = {
   of: value => ({ value })

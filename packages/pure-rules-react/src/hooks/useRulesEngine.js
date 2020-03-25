@@ -1,8 +1,8 @@
 import { useState, useCallback, useMemo } from 'react';
 import * as di from '../dirtyInfo'
-import { logTo, applyRule, ensureArrayUIDsDeep, setInnerProp } from '@totalsoft/pure-rules'
+import { logTo, applyRule, ensureArrayUIDsDeep, setInnerProp } from '@totalsoft/rules-algebra'
 
-export function useRulesEngine(rules, initialModel, { isLogEnabled = true, logger = console } = {}, deps = []) {
+export function useRules(rules, initialModel, { isLogEnabled = true, logger = console } = {}, deps = []) {
     const [dirtyInfo, setDirtyInfo] = useState(di.create)
     const [model, setModel] = useState(ensureArrayUIDsDeep(initialModel))
 

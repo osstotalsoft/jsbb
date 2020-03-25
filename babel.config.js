@@ -5,7 +5,7 @@ module.exports = api => {
   const defaultAlias = {
     "@totalsoft/zion": "@totalsoft/zion/src",
     "@totalsoft/pure-validations": "@totalsoft/pure-validations/src",
-    "@totalsoft/pure-rules": "@totalsoft/pure-rules/src"
+    "@totalsoft/rules-algebra": "@totalsoft/rules-algebra/src"
   };
 
 
