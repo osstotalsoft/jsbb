@@ -26,7 +26,6 @@ export function equals<TDocument, TValue>(first: Selector<TDocument, TValue>, se
 
 /**
  * Checks if all the selected values are true.
-.
  * @see https://github.com/osstotalsoft/jsbb/tree/master/packages/pure-rules#all
  */
 export function all<TDocument, TValue>(...predicates: Array<Predicate<TDocument, TValue> | TValue>): Predicate<TDocument, TValue>;

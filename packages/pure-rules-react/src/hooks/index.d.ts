@@ -20,11 +20,11 @@ export function useDirtyInfo(): [
 ];
 
 /**
-* React hook that applies the buisiness rules and keeps track of user modified values (dirty field info).
-* Receives the rules, the initial model. Optional arguments are the settings and dependencies
-* Returns a stateful rule application result, a dirty info object, a function that sets a value for the given property path and a function that resets the rule engine state.
-* @see https://github.com/osstotalsoft/jsbb/tree/master/packages/pure-rules-react#userulesengine-hook
-*/
+ * React hook that applies the buisiness rules and keeps track of user modified values (dirty field info).
+ * Receives the rules, the initial model. Optional arguments are the settings and dependencies
+ * Returns a stateful rule application result, a dirty info object, a function that sets a value for the given property path and a function that resets the rule engine state.
+ * @see https://github.com/osstotalsoft/jsbb/tree/master/packages/pure-rules-react#userulesengine-hook
+ */
 export function useRulesEngine(
   rules: Rule<any>,
   initialModel: any,
