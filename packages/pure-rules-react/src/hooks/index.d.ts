@@ -5,7 +5,7 @@ import { Proxy, RulesProfunctorProxy } from "../rulesProfunctorProxy";
 
 /**
  * React hook for field dirty info tracking.
- * Returns a statefull dirty info object, a function that performs sets the property path as dirty and a function that resets the dirty info state.
+ * Returns a stateful dirty info object, a function that sets the property path as dirty and a function that resets the dirty info state.
  * @see https://github.com/osstotalsoft/jsbb/tree/master/packages/pure-rules-react#useDirtyInfo-hook
  */
 export function useDirtyInfo(): [
@@ -20,13 +20,14 @@ export function useDirtyInfo(): [
 ];
 
 /**
- * React hook that applies the buisiness rules and keeps track of user modified values (dirty field info).
- * Returns a statefull rule application result, a dirty info object, a function that sets a value for the given property
- * path and a function that resets the rule engine state.
- * @see https://github.com/osstotalsoft/jsbb/tree/master/packages/pure-validations-react#usedirtyfieldvalidation-hook
- */
+* React hook that applies the buisiness rules and keeps track of user modified values (dirty field info).
+* Receives the rules, the initial model. Optional arguments are the settings and dependencies
+* Returns a stateful rule application result, a dirty info object, a function that sets a value for the given property path and a function that resets the rule engine state.
+* @see https://github.com/osstotalsoft/jsbb/tree/master/packages/pure-rules-react#userulesengine-hook
+*/
 export function useRulesEngine(
   rules: Rule<any>,
+  initialModel: any,
   options?: { isLogEnabled: boolean; logger: Logger; },
   deps?: any[]
 ): [
@@ -44,11 +45,13 @@ export function useRulesEngine(
 
 /**
  * React hook that applies the buisiness rules and keeps track of user modified values (dirty field info).
- * Returns a statefull profunctor with the rule application result, a dirty info object path and a function that resets the rule engine state.
- * @see https://github.com/osstotalsoft/jsbb/tree/master/packages/pure-validations-react#usedirtyfieldvalidation-hook
+ * Receives the rules, the initial model. Optional arguments are the settings and dependencies
+ * Returns a stateful profunctor with the rule application result, a dirty info object and a function that resets the rule engine state.
+ * @see https://github.com/osstotalsoft/jsbb/tree/master/packages/pure-rules-react#userulesengineprofunctor-hook
  */
 export function useRulesEngineProfunctor(
   rules: Rule<any>,
+  initialModel: any,
   options?: { isLogEnabled: boolean; logger: Logger; },
   deps?: any[]
 ): [

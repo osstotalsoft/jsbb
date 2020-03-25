@@ -15,7 +15,23 @@ The library provides three hooks:
 
 
 ## useRulesEngine hook
+React hook that applies the buisiness rules and keeps track of user modified values (dirty field info).
+* Arguments:
+  1. The rules object (see pure-rules library)
+  2. The initial value of the model
+  3. Settings (optional)
+  4. Dependencies (optional)
+* Return values:
+  1. A stateful rule application result (changed model) 
+  2. A dirty info object to track the model changes
+  3. A function that sets a value for the given property path 
+  4. A function that resets the rule engine state.
+
+Usage example:
+
 ```jsx
+import { useRulesEngine } from "@totalsoft/pure-rules-react";
+
 const rules = shape({
   fullName: computed(doc => doc.firstName + doc.lastName)
 });
@@ -29,13 +45,13 @@ const SomeComponent = props => {
 
   return (
     <>
-      Full name: {person.fullName}
-      <TextField
-            value={getValue(person.firstName)}
+     Full name: {person.fullName}
+     <TextField
+            value={person.firstName}
             onChange={onTextBoxChange(onPropertyChange("firstName"))}
       />
       <TextField
-            value={getValue(person.lastName)}
+            value={person.lastName}
             onChange={onTextBoxChange(onPropertyChange("lastName"))}
       />
 
@@ -46,7 +62,20 @@ const SomeComponent = props => {
 ```
 
 ## useRulesEngineProfunctor hook
+React hook that applies the buisiness rules and keeps track of user modified values (dirty field info).
+* Arguments:
+  1. The rules object (see pure-rules library)
+  2. The initial value of the model
+  3. Settings (optional)
+  4. Dependencies (optional)
+* Return values:
+  1. A stateful profunctor with the rule application result
+  2. A dirty info object  
+  3. A function that resets the rule engine state.
+
 ```jsx
+import { useRulesEngineProfunctor, setValue, getValue } from "@totalsoft/pure-rules-react";
+
 const rules = shape({
   fullName: computed(doc => doc.firstName + doc.lastName)
 });
@@ -71,13 +100,22 @@ const SomeComponent = props => {
 ```
 
 ## useDirtyInfo hook
+
+A react hook for field change tracking. 
+
+It returns a stateful dirty info object, a function that sets the property path as dirty and a function that resets the dirty info state. 
+
+Usage example:
+
 ```jsx
+import { useDirtyInfo } from "@totalsoft/pure-rules-react";
+import * as di from "@totalsoft/pure-rules-react/dirtyInfo"
 
 const SomeComponent = props => {
   const [person, setPerson] = useState({});
   const [dirtyInfo, setDirtyInfoPath] = useDirtyInfo();
 
-const handleChange = useCallback(
+  const handleChange = useCallback(
     propPath => event => {
       setDirtyInfoPath(propPath);
       setModel({ ...person, [propPath]: event.target.value });
@@ -86,13 +124,14 @@ const handleChange = useCallback(
 
   return (
     <>
-      Full name: {person.fullName}
+      FirstName dirty: {di.isPropertyDirty("firstName", dirtyInfo)}
       <TextField
-            value={getValue(person.firstName)}
+            value={person.firstName}
             onChange={handleChange("firstName")}
       />
+      LastName dirty: {di.isPropertyDirty("lastName", dirtyInfo)}
       <TextField
-            value={getValue(person.lastName)}
+            value={person.lastName}
             onChange={handleChange("lastName")}
       />
     </>
