@@ -1,4 +1,4 @@
-import { Rule, Logger } from "packages/pure-rules/src";
+import { Rule, Logger } from "@totalsoft/rules-algebra";
 import { DirtyInfo } from "../dirtyInfo";
 import { Proxy, RulesProfunctorProxy } from "../rulesProfunctorProxy";
 
