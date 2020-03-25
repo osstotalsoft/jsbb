@@ -1,11 +1,11 @@
 import { useProfunctorState } from '@staltz/use-profunctor-state'
 import { RulesEngineProxy } from '../rulesProfunctorProxy';
 import { useMemo, useCallback, useState } from 'react';
-import { applyRule, logTo, ensureArrayUIDsDeep } from '@totalsoft/pure-rules';
+import { applyRule, logTo, ensureArrayUIDsDeep } from '@totalsoft/rules-algebra';
 import * as di from '../dirtyInfo'
 
 
-export function useRulesEngineProfunctor(rules, initialModel, { isLogEnabled = true, logger = console } = {}, deps = []) {
+export function useRulesProfunctor(rules, initialModel, { isLogEnabled = true, logger = console } = {}, deps = []) {
     const [dirtyInfo, setDirtyInfo] = useState(di.create)
     
     const rulesEngine = useMemo(() => {

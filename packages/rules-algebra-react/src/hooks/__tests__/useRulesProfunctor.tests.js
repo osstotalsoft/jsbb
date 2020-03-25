@@ -1,7 +1,7 @@
 import { renderHook, act } from "@testing-library/react-hooks";
-import { Rule, applyRule, logTo, __clearMocks } from "@totalsoft/pure-rules";
+import { Rule, applyRule, logTo, __clearMocks } from "@totalsoft/rules-algebra";
 import { setValue, getValue } from "../../rulesProfunctorProxy";
-import { useRulesEngineProfunctor } from "../";
+import { useRulesProfunctor } from "..";
 import * as di from "../../dirtyInfo"
 
 describe("useValidation hook", () => {
@@ -14,7 +14,7 @@ describe("useValidation hook", () => {
         const rule = Rule.of(1);
         const initialModel = { a: { b: "" } };
         const callback = () => {
-            const [rootProf] = useRulesEngineProfunctor(rule, initialModel)
+            const [rootProf] = useRulesProfunctor(rule, initialModel)
 
             return { rootProf, fieldProf: rootProf.a.b };
         }
@@ -40,7 +40,7 @@ describe("useValidation hook", () => {
         const rule = Rule.of(1);
         const initialModel = { a: [1, 2, 3] };
         const callback = () => {
-            const [rootProf] = useRulesEngineProfunctor(rule, initialModel)
+            const [rootProf] = useRulesProfunctor(rule, initialModel)
 
             let array = getValue(rootProf.a)
             let fieldProfs = array.map((item, idx) => rootProf.a[idx]);
@@ -69,7 +69,7 @@ describe("useValidation hook", () => {
         const rule = Rule.of(1);
         const initialModel = { a: { b: "", c: "Initial" } };
         const callback = () => {
-            const [rootProf, di] = useRulesEngineProfunctor(rule, initialModel)
+            const [rootProf, di] = useRulesProfunctor(rule, initialModel)
 
             return { rootProf, fieldProf: rootProf.a.b, di };
         }
@@ -93,7 +93,7 @@ describe("useValidation hook", () => {
         const initialModel = { a: { b: "" } };
 
         const callback = () => {
-            const [rootProf] = useRulesEngineProfunctor(rule, initialModel)
+            const [rootProf] = useRulesProfunctor(rule, initialModel)
 
             return { rootProf, fieldProf: rootProf.a.b };
         }
@@ -121,7 +121,7 @@ describe("useValidation hook", () => {
         const initialModel = { a: { b: "" } };
 
         // Act
-        const { result } = renderHook(() => useRulesEngineProfunctor(rule, initialModel));
+        const { result } = renderHook(() => useRulesProfunctor(rule, initialModel));
 
 
         // Assert
@@ -137,7 +137,7 @@ describe("useValidation hook", () => {
         const initialModel = { a: { b: "" } };
 
         const callback = () => {
-            const [rootProf, , resetFunc] = useRulesEngineProfunctor(rule, initialModel)
+            const [rootProf, , resetFunc] = useRulesProfunctor(rule, initialModel)
 
             return { rootProf, fieldProf: rootProf.a.b, resetFunc };
         }
@@ -169,7 +169,7 @@ describe("useValidation hook", () => {
         let renderNo = 0;
         function renderCallack() {
             renderNo = renderNo + 1;
-            const [rootProf] = useRulesEngineProfunctor(rule, initialModel)
+            const [rootProf] = useRulesProfunctor(rule, initialModel)
             return { rootProf, fieldProf: rootProf.a.b, };
         }
 
@@ -191,7 +191,7 @@ describe("useValidation hook", () => {
         const logger = { log: _ => { } };
         const initialModel = { a: { b: "" } };
         function renderCallack() {
-            const [rootProf] = useRulesEngineProfunctor(rule, initialModel, { logger })
+            const [rootProf] = useRulesProfunctor(rule, initialModel, { logger })
             return { rootProf, fieldProf: rootProf.a.b, };
         }
         // Act
@@ -211,7 +211,7 @@ describe("useValidation hook", () => {
         const initialModel = { a: { b: "" } };
 
         // Act
-        const { result, rerender } = renderHook(() => useRulesEngineProfunctor(rule, initialModel));
+        const { result, rerender } = renderHook(() => useRulesProfunctor(rule, initialModel));
         const [prof1, dirtyInfo1, reset1] = result.current;
         rerender();
         const [prof2, dirtyInfo2, reset2] = result.current;
@@ -229,7 +229,7 @@ describe("useValidation hook", () => {
         let ruleValue = Rule.of(1);
 
         // Act
-        const { result, rerender } = renderHook(() => useRulesEngineProfunctor(ruleValue, initialModel, { logger }));
+        const { result, rerender } = renderHook(() => useRulesProfunctor(ruleValue, initialModel, { logger }));
         const [prof1] = result.current;
         act(() => {
             setValue(prof1, { value: "a" })
@@ -257,7 +257,7 @@ describe("useValidation hook", () => {
         // Arrange
         const initialModel = {}
         const logger = {}
-        const callback = () => useRulesEngineProfunctor(Rule.of(1), initialModel, { logger });
+        const callback = () => useRulesProfunctor(Rule.of(1), initialModel, { logger });
 
         // Act
         const { result, rerender } = renderHook(callback);
@@ -276,7 +276,7 @@ describe("useValidation hook", () => {
         // Arrange
         const rule = Rule.of(1);
         const logger = {}
-        const callback = () => useRulesEngineProfunctor(rule, {}, { logger });
+        const callback = () => useRulesProfunctor(rule, {}, { logger });
 
         // Act
         const { result, rerender } = renderHook(callback);
@@ -298,7 +298,7 @@ describe("useValidation hook", () => {
         let isLogEnabled = true;
         const callback = () => {
             isLogEnabled = !isLogEnabled;
-            return useRulesEngineProfunctor(rule, initialModel, { isLogEnabled: !isLogEnabled });
+            return useRulesProfunctor(rule, initialModel, { isLogEnabled: !isLogEnabled });
         }
 
         // Act
@@ -321,7 +321,7 @@ describe("useValidation hook", () => {
         let depFlag = true;
         const callback = () => {
             depFlag = !depFlag;
-            return useRulesEngineProfunctor(rule, initialModel, {}, [depFlag]);
+            return useRulesProfunctor(rule, initialModel, {}, [depFlag]);
         }
 
         // Act

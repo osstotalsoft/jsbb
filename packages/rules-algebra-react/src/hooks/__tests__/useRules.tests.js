@@ -1,9 +1,9 @@
 import { renderHook, act } from "@testing-library/react-hooks";
-import { useRulesEngine } from "../";
-import { Rule, applyRule, logTo, __clearMocks } from "@totalsoft/pure-rules";
+import { useRules } from "../";
+import { Rule, applyRule, logTo, __clearMocks } from "@totalsoft/rules-algebra";
 
 
-describe("useRulesEngine hook", () => {
+describe("useRules hook", () => {
     afterEach(() => {
         __clearMocks();
     });
@@ -15,7 +15,7 @@ describe("useRulesEngine hook", () => {
         const initialModel = { a: { b: "" } };
 
         // Act
-        const { result } = renderHook(() => useRulesEngine(rule, initialModel));
+        const { result } = renderHook(() => useRules(rule, initialModel));
         act(() => {
             const [, , updateField] = result.current;
             returnedModel = updateField("a.b", "OK");
@@ -35,7 +35,7 @@ describe("useRulesEngine hook", () => {
         const initialModel = { a: { b: "" } };
 
         // Act
-        const { result } = renderHook(() => useRulesEngine(rule, initialModel));
+        const { result } = renderHook(() => useRules(rule, initialModel));
         act(() => {
             const [, , updateField] = result.current;
             updateField("a.b", "OK");
@@ -58,7 +58,7 @@ describe("useRulesEngine hook", () => {
         const initialModel = { a: { b: "" } };
 
         // Act
-        const { result } = renderHook(() => useRulesEngine(rule, initialModel));
+        const { result } = renderHook(() => useRules(rule, initialModel));
 
 
         // Assert
@@ -73,7 +73,7 @@ describe("useRulesEngine hook", () => {
         const initialModel = { a: { b: "" } };
 
         // Act
-        const { result } = renderHook(() => useRulesEngine(rule, initialModel));
+        const { result } = renderHook(() => useRules(rule, initialModel));
         act(() => {
             const [, , updateField] = result.current;
             updateField("a.b", "OK");
@@ -97,7 +97,7 @@ describe("useRulesEngine hook", () => {
         let renderNo = 0;
         function renderCallack() {
             renderNo = renderNo + 1;
-            return useRulesEngine(rule, initialModel);
+            return useRules(rule, initialModel);
         }
 
         // Act
@@ -119,7 +119,7 @@ describe("useRulesEngine hook", () => {
         const initialModel = { a: { b: "" } };
 
         // Act
-        const { result } = renderHook(() => useRulesEngine(rule, initialModel, { isLogEnabled: true, logger }));
+        const { result } = renderHook(() => useRules(rule, initialModel, { isLogEnabled: true, logger }));
         act(() => {
             const [, , updateField] = result.current;
             updateField("a.b", "OK");
@@ -135,7 +135,7 @@ describe("useRulesEngine hook", () => {
         const initialModel = { a: { b: "" } };
 
         // Act
-        const { result, rerender } = renderHook(() => useRulesEngine(rule, initialModel));
+        const { result, rerender } = renderHook(() => useRules(rule, initialModel));
         const [model1, rule1, updateField1, reset1] = result.current;
         rerender();
         const [model2, rule2, updateField2, reset2] = result.current;
@@ -151,7 +151,7 @@ describe("useRulesEngine hook", () => {
         // Arrange
         const initialModel = {}
         const logger = {}
-        const callback = () => useRulesEngine(Rule.of(1), initialModel, { logger });
+        const callback = () => useRules(Rule.of(1), initialModel, { logger });
 
         // Act
         const { result, rerender } = renderHook(callback);
@@ -170,7 +170,7 @@ describe("useRulesEngine hook", () => {
         // Arrange
         const initialModel = {}
         const rule = Rule.of(1);
-        const callback = () => useRulesEngine(rule, initialModel, { logger: {} });
+        const callback = () => useRules(rule, initialModel, { logger: {} });
 
         // Act
         const { result, rerender } = renderHook(callback);
@@ -189,7 +189,7 @@ describe("useRulesEngine hook", () => {
         // Arrange
         const rule = Rule.of(1);
         const logger = {}
-        const callback = () => useRulesEngine(rule, {}, { logger });
+        const callback = () => useRules(rule, {}, { logger });
 
         // Act
         const { result, rerender } = renderHook(callback);
@@ -211,7 +211,7 @@ describe("useRulesEngine hook", () => {
         let isLogEnabled = true;
         const callback = () => {
             isLogEnabled = !isLogEnabled;
-            return useRulesEngine(rule, initialModel, { isLogEnabled: !isLogEnabled });
+            return useRules(rule, initialModel, { isLogEnabled: !isLogEnabled });
         }
         
         // Act
@@ -234,7 +234,7 @@ describe("useRulesEngine hook", () => {
         let depFlag = true;
         const callback = () => {
             depFlag = !depFlag;
-            return useRulesEngine(rule, initialModel, {}, [depFlag]);
+            return useRules(rule, initialModel, {}, [depFlag]);
         }
         
         // Act

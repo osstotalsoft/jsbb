@@ -2,6 +2,6 @@ const base = require("../../jest.config.js");
 
 module.exports = {
     ...base,
-    name: "pure-rules-react",
-    displayName: "pure-rules-react"
+    name: "rules-algebra-react",
+    displayName: "rules-algebra-react"
 };
