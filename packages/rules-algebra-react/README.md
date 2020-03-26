@@ -9,9 +9,9 @@ npm install '@totalsoft/rules-algebra-react'
 
 ## info
 The library provides three hooks:
- - useRules: applies the rule engine after updating a value at the given property path
- - useRulesProfunctor: applies the rule engine after updating the model through a profunctor lens 
- - useDirtyInfo: keeps track of modified properties of a model
+ - **useRules** - applies the rule engine after updating a value at the given property path
+ - **useRulesProfunctor** - applies the rule engine after updating the model through a profunctor lens 
+ - **useDirtyInfo** - keeps track of modified properties of a model
 
 
 ## useRules hook

@@ -98,7 +98,7 @@ const rule = sum(doc => doc.amount, doc => doc.taxes)
 
 
 
-### Higher order rules
+### Higher order rules 
 A HoR is just a function that takes rules as inputs and returns rules.
 
 The library provides the following HoR's:
@@ -110,8 +110,8 @@ const rule = computed(loan => loan.advance * 100 / loan.aquisitionPrice), maximu
 ```
 
 #### when
-Used to create a conditional rule by providing a predicate or condition and a rule.
-For details on predicates see the "Predicates" section
+Used to create a conditional rule by providing a predicate or condition and a rule.  
+For details on predicates see the [predicates](#predicates) section
 
 ```javascript
 const rule = when(doc => doc.isValueComputed, computed(doc => doc.amount * doc.percent));
@@ -119,6 +119,7 @@ const rule = when(doc => doc.isValueComputed, computed(doc => doc.amount * doc.p
 
 #### ifThenElse
 Used to create a conditional rule by providing a predicate or condition, a rule for the "true" branch and another for the "false" branch.
+
 For details on predicates see the [predicates](#predicates) section
 
 ```javascript
@@ -192,9 +193,9 @@ const rule =
 
 #### scope
 Creates a scope over the given rule where the document is substituted by the specified value. 
-It can be used together with "root" and "parent" modifiers.
-Note 1: The "shape" rule is implicitly scoped to the current object. There is no need to specify " |> scope |> parent " for fields.
-Note 2: You can chain multiple "parent" modifiers to go up the hierarchy. eg: |> scope |> parent |> parent
+It can be used together with **"root"** and **"parent"** modifiers.  
+* *Note 1*: The [shape](#shape) rule is implicitly scoped to the current object. There is no need to specify **" |> scope |> parent "** for fields.  
+* *Note 2*: You can chain multiple "parent" modifiers to go up the hierarchy. eg: **|> scope |> parent |> parent**
 
 ```javascript
 const rule = 
@@ -244,6 +245,8 @@ Checks if the selected properties in the current models differ from the same pro
 ```javascript
 const predicate = propertiesChanged(doc => [doc.property1, doc.property2]);
 ```
+
+### Predicate combinators
 
 #### not
 Negates the selected value:
