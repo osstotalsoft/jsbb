@@ -1,4 +1,4 @@
-import { not, equals, all, Predicate, propertiesChanged, propertyChanged } from "..";
+import { not, equals, isNumber, all, Predicate, propertiesChanged, propertyChanged } from "..";
 import Reader from "@totalsoft/zion/data/reader";
 
 describe("predicates:", () => {
@@ -42,6 +42,18 @@ describe("predicates:", () => {
     // Arrange
     const model = -1;
     const predicate = equals(doc => doc.a + 1, _ => 7);
+
+    // Act
+    const newModel = predicate.runReader(model, { document: { a: 6 } });
+
+    // Assert
+    expect(newModel).toBe(true);
+  });
+
+  it("isNumber", () => {
+    // Arrange
+    const model = -1;
+    const predicate = isNumber(doc => doc.a);
 
     // Act
     const newModel = predicate.runReader(model, { document: { a: 6 } });

@@ -106,7 +106,7 @@ The library provides the following HoR's:
 Used to reduce a list of rules. It applies all rules by chaining outputs to inputs.
 
 ```javascript
-const rule = computed(loan => loan.advance * 100 / loan.aquisitionPrice), maximumValue(100)] |> chainRules
+const rule = [computed(loan => loan.advance * 100 / loan.aquisitionPrice), maximumValue(100)] |> chainRules
 ```
 
 #### when
