@@ -34,7 +34,8 @@ function _logFieldPath(rule) {
     return $do(function* () {
         const [, fieldContext] = yield Reader.ask();
         const result = yield rule;
-        _log(fieldContext, `Rule result is ${result} for path ${fieldContext.fieldPath.join(".")}`);
+        if (result !== Object(result))
+            _log(fieldContext, `Rule result is ${result} for path ${[...fieldContext.scopePath, ...fieldContext.fieldPath].join(".")}`);
         return result;
     });
 }
