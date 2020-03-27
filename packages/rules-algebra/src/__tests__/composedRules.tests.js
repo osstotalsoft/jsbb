@@ -49,10 +49,10 @@ describe("composed rules:", () => {
                 [computed(loan => loan.advance * 100 / loan.aquisitionPrice), maximumValue(100)] |> chainRules
                 |> when(propertiesChanged(loan => [loan.advance, loan.aquisitionPrice])),
             approved: constant(false) |> when(propertyChanged(loan => loan.advance)),
-            persons: shape({
+            persons: items(shape({
                 fullName: computed(person => person.surname + " " + person.name) |> when(propertiesChanged(person => [person.surname, person.name])),
                 isCompanyRep: computed(loan => loan.isCompanyLoan) |> when(propertyChanged(loan => loan.isCompanyLoan)) |> scope |> root
-            }) |> items
+            }))
         }) |> logTo(console)
 
         const originalLoan = {
