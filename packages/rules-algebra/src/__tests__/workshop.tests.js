@@ -6,8 +6,8 @@ import { } from "../predicates" // import { propertyChanged, any, all, propertie
 import { ensureArrayUIDsDeep } from "../arrayUtils";
 
 
-describe("composed rules:", () => {
-    it("workshop: ", () => {
+describe("workshop examples:", () => {
+    it("workshop example: ", () => {
         // Arrange
         const rule = unchanged
 
