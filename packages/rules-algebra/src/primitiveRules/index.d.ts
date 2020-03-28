@@ -66,3 +66,9 @@ export function minimumValue<TValue>(other: TValue | Computation<any, TValue>): 
  * @see https://github.com/osstotalsoft/jsbb/tree/master/packages/rules-algebra#maximumValue
  */
 export function maximumValue<TValue>(other: TValue | Computation<any, TValue>): Rule<TValue>;
+
+/**
+ * A rule that returns a string produced according to the provided format.
+ * @see https://github.com/osstotalsoft/jsbb/tree/master/packages/rules-algebra#sprintf
+ */
+export function sprintf(format: string): Rule<string>;

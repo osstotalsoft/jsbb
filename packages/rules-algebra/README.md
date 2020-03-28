@@ -96,6 +96,12 @@ A rule that returns the sum between two prperties or values
 const rule = sum(doc => doc.amount, doc => doc.taxes)
 ```
 
+#### sprintf
+A rule that returns a string produced according to the provided format
+```javascript
+const rule = sprintf('{{name}} {{surname}}')
+```
+
 
 
 ### Higher order rules 
