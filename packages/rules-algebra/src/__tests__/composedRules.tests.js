@@ -1,6 +1,6 @@
 import { applyRule } from "../";
 import { when, shape, logTo, scope, chainRules, items, readFrom, fromParent, parent, fromRoot,root } from "../higherOrderRules";
-import { constant, computed, maximumValue } from "../primitiveRules";
+import { constant, computed, maximumValue, sprintf} from "../primitiveRules";
 import { propertyChanged, any, propertiesChanged } from "../predicates";
 import { ensureArrayUIDsDeep } from "../arrayUtils";
 
@@ -40,6 +40,55 @@ describe("composed rules:", () => {
 
         // Assert
         expect(result).toStrictEqual({ ...changedModel, advancePercent: 20, approved: false, person: { ...changedModel.person, fullName: "John Smith" } })
+    });
+
+    it("complex example: ", () => {
+        // Arrange
+        const rule = shape({
+            advancePercent: 
+                [computed(loan => loan.advance * 100 / loan.aquisitionPrice), maximumValue(100)] |> chainRules
+                |> when(propertiesChanged(loan => [loan.advance, loan.aquisitionPrice])),
+            approved: constant(false) |> when(propertyChanged(loan => loan.advance)),
+            persons: items(shape({
+                fullName: sprintf("{{surname}} {{name}}"),
+                isCompanyRep: computed(loan => loan.isCompanyLoan) |> when(propertyChanged(loan => loan.isCompanyLoan)) |> scope |> root
+            }))
+        }) |> logTo(console)
+
+        const originalLoan = {
+            aquisitionPrice: 100,
+            interestRate: 0.05,
+            advance: 10,
+            approved: true,
+            persons: [
+                { name: "Doe", surname: "John" }, 
+                { name: "Klaus", surname: "John"}
+            ]
+        } |> ensureArrayUIDsDeep
+
+        const changedLoan = { 
+            ...originalLoan, 
+            advance: 20, 
+            isCompanyLoan: false,
+            persons: [
+                { ...originalLoan.persons[0], name: "Smith" },
+                { ...originalLoan.persons[1], surname: "Santa" },
+            ] 
+        }
+
+        // Act
+        const result = applyRule(rule, changedLoan, originalLoan)
+
+        // Assert
+        expect(result).toStrictEqual({ 
+            ...changedLoan, 
+            advancePercent: 20, 
+            approved: false, 
+            persons: [
+                { ...changedLoan.persons[0], fullName: "John Smith", isCompanyRep: false },
+                { ...changedLoan.persons[1], fullName: "Santa Klaus", isCompanyRep: false }
+            ]
+        })
     });
 
     it("shape should not apply rule for user modified value: ", () => {
