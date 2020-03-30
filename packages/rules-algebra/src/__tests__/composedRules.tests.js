@@ -1,6 +1,6 @@
 import { applyRule } from "../";
 import { when, shape, logTo, scope, chainRules, items, readFrom, fromParent, parent, fromRoot,root } from "../higherOrderRules";
-import { constant, computed, maximumValue } from "../primitiveRules";
+import { constant, computed, maximumValue, sprintf} from "../primitiveRules";
 import { propertyChanged, any, propertiesChanged } from "../predicates";
 import { ensureArrayUIDsDeep } from "../arrayUtils";
 
@@ -50,7 +50,7 @@ describe("composed rules:", () => {
                 |> when(propertiesChanged(loan => [loan.advance, loan.aquisitionPrice])),
             approved: constant(false) |> when(propertyChanged(loan => loan.advance)),
             persons: items(shape({
-                fullName: computed(person => person.surname + " " + person.name) |> when(propertiesChanged(person => [person.surname, person.name])),
+                fullName: sprintf("{{surname}} {{name}}"),
                 isCompanyRep: computed(loan => loan.isCompanyLoan) |> when(propertyChanged(loan => loan.isCompanyLoan)) |> scope |> root
             }))
         }) |> logTo(console)
