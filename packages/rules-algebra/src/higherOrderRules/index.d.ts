@@ -106,3 +106,15 @@ export function when<TModel>(condition: boolean | ((model: TModel, ctx?: any) =>
  * @see https://github.com/osstotalsoft/jsbb/tree/master/packages/rules-algebra#when
  */
 export function when<TModel>(condition: boolean | ((model: TModel, ctx?: any) => boolean)): (rule: Rule<TModel>) => Rule<TModel>;
+
+/**
+ * Used to create a rule that repeats the provided rule until the condition is true.
+ * @see https://github.com/osstotalsoft/jsbb/tree/master/packages/rules-algebra#until
+ */
+export function until<TModel>(condition: boolean | ((model: TModel, ctx?: any) => boolean), rule: Rule<TModel>): Rule<TModel>;
+
+/**
+ * Used to create a rule that repeats the provided rule until the condition is true.
+ * @see https://github.com/osstotalsoft/jsbb/tree/master/packages/rules-algebra#until
+ */
+export function until<TModel>(condition: boolean | ((model: TModel, ctx?: any) => boolean)): (rule: Rule<TModel>) => Rule<TModel>;
