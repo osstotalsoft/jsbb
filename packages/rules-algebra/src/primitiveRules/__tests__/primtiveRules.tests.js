@@ -1,5 +1,5 @@
 import { applyRule } from "../../rule";
-import { min, max, constant, minimumValue, maximumValue, computed, unchanged } from "..";
+import { min, max, constant, minimumValue, maximumValue, computed, unchanged, sprintf } from "..";
 
 describe("primitive rules:", () => {
   it("computed rule using current model value", () => {
@@ -232,5 +232,33 @@ describe("primitive rules:", () => {
 
     // Assert
     expect(newModel).toBe(6);
+  });
+
+  it("sprintf rule", () => {
+    // Arrange
+    const model = {name:'John', surname:'Smith'};
+    const rule = sprintf('{{name}} {{surname}}');
+
+    // Act
+    const newModel = applyRule(rule, model, null);
+
+    // Assert
+    expect(newModel).toBe('John Smith');
+  });
+
+  it("sprintf rule evaluates only when properties changed", () => {
+    // Arrange
+    const model = {name:'John', surname:'Smith', address:'x'};
+    const prevModel1 = {name:'John', surname:'Smith', address:'y'};
+    const prevModel2 = {name:'John', surname:'Smith1', address:'y'};
+    const rule = sprintf('{{name}} {{surname}}');
+
+    // Act
+    const result1 = applyRule(rule, model, prevModel1);
+    const result2 = applyRule(rule, model, prevModel2);
+
+    // Assert
+    expect(result1).toBe(model);
+    expect(result2).not.toBe(model);
   });
 });
