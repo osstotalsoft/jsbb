@@ -1,4 +1,5 @@
 import when from "./when";
+import until from "./until";
 import fromModel from "./fromModel";
 import field from "./field";
 import shape from "./shape";
@@ -15,6 +16,7 @@ import fromRoot from "./fromRoot"
 
 export {
   when,
+  until,
   fromModel,
   field,
   shape,

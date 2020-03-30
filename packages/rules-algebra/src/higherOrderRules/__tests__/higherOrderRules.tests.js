@@ -1,5 +1,5 @@
 import { Rule, applyRule } from "../../rule";
-import { chainRules, field, shape, when, scope, items, ifThenElse } from "..";
+import { chainRules, field, shape, when, scope, items, ifThenElse, until } from "..";
 
 describe("higher order rules:", () => {
   it("chainRules uses chains output to input: ", () => {
@@ -7,7 +7,7 @@ describe("higher order rules:", () => {
     const rule1 = Rule(x => x * 2);
     const rule2 = Rule(x => x + 1);
 
-    const rule = [rule1, rule2] |> chainRules
+    const rule = [rule1, rule2] |> chainRules;
     const model = 1;
 
     // Act
@@ -49,12 +49,12 @@ describe("higher order rules:", () => {
     // Arrange
     const rule = shape({
       name: Rule.of("name"),
-      surname: Rule.of("surname"),
+      surname: Rule.of("surname")
     });
 
     const model = {
       name: null,
-      surname: null,
+      surname: null
     };
 
     // Act
@@ -68,7 +68,7 @@ describe("higher order rules:", () => {
     // Arrange
     const rule = shape({
       name: Rule.of("name"),
-      surname: Rule.of("surname"),
+      surname: Rule.of("surname")
     });
 
     const model = null;
@@ -131,7 +131,6 @@ describe("higher order rules:", () => {
     expect(result).toBe("OK");
   });
 
-  
   it("scope maps previous document to previous model: ", () => {
     // Arrange
     const rule = scope(Rule((model, ctx) => ctx.prevDocument.scopeField));
@@ -144,10 +143,9 @@ describe("higher order rules:", () => {
     expect(result).toBe("OK");
   });
 
-
   it("when applies rule when condition is true: ", () => {
     // Arrange
-    const rule = when(true, Rule.of("modified"))
+    const rule = when(true, Rule.of("modified"));
 
     const model = null;
 
@@ -160,7 +158,7 @@ describe("higher order rules:", () => {
 
   it("when applies rule when predicate returns true: ", () => {
     // Arrange
-    const rule = when(() => true, Rule.of("modified"))
+    const rule = when(() => true, Rule.of("modified"));
 
     const model = null;
 
@@ -173,7 +171,7 @@ describe("higher order rules:", () => {
 
   it("when does not appy rule when  predicate returns false: ", () => {
     // Arrange
-    const rule = when(() => false, Rule.of("name"))
+    const rule = when(() => false, Rule.of("name"));
 
     const model = "original";
 
@@ -186,7 +184,7 @@ describe("higher order rules:", () => {
 
   it("ifThenElse applies rule when predicate returns true: ", () => {
     // Arrange
-    const rule = ifThenElse(() => true, Rule.of("true"), Rule.of("false"))
+    const rule = ifThenElse(() => true, Rule.of("true"), Rule.of("false"));
 
     const model = null;
 
@@ -199,7 +197,7 @@ describe("higher order rules:", () => {
 
   it("ifThenElse applies rule when predicate returns false: ", () => {
     // Arrange
-    const rule = ifThenElse(() => false, Rule.of("true"), Rule.of("false"))
+    const rule = ifThenElse(() => false, Rule.of("true"), Rule.of("false"));
 
     const model = null;
 
@@ -212,7 +210,7 @@ describe("higher order rules:", () => {
 
   it("ifThenElse applies rule when condition is true: ", () => {
     // Arrange
-    const rule = ifThenElse(true, Rule.of("true"), Rule.of("false"))
+    const rule = ifThenElse(true, Rule.of("true"), Rule.of("false"));
 
     const model = "original";
 
@@ -225,7 +223,7 @@ describe("higher order rules:", () => {
 
   it("ifThenElse applies rule when condition is false: ", () => {
     // Arrange
-    const rule = ifThenElse(false, Rule.of("true"), Rule.of("false"))
+    const rule = ifThenElse(false, Rule.of("true"), Rule.of("false"));
 
     const model = "original";
 
@@ -236,12 +234,11 @@ describe("higher order rules:", () => {
     expect(result).toBe("false");
   });
 
-
   it("ifThenElse rule shotcircuit: ", () => {
     // Arrange
     const trueFn = jest.fn(() => "true");
     const falseFn = jest.fn(() => "false");
-    const rule = ifThenElse(false, Rule(trueFn), Rule(falseFn))
+    const rule = ifThenElse(false, Rule(trueFn), Rule(falseFn));
 
     const model = "original";
 
@@ -252,5 +249,18 @@ describe("higher order rules:", () => {
     expect(result).toBe("false");
     expect(trueFn.mock.calls.length).toBe(0);
     expect(falseFn.mock.calls.length).toBe(1);
+  });
+
+  it("until applies rule until condition is true: ", () => {
+    // Arrange
+    const rule = Rule(x => x * x) |> until(x => x >= 100);
+
+    const model = 2;
+
+    // Act
+    const result = applyRule(rule, model);
+
+    // Assert
+    expect(result).toBe(256);
   });
 });

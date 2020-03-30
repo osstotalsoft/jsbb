@@ -131,6 +131,15 @@ For details on predicates see the [predicates](#predicates) section
 ```javascript
 const rule = ifThenElse(doc => doc.isNewVersion, constant(2), constant(0));
 ```
+
+#### until
+Used to create a rule that repeats the provided rule until the condition is true.  
+For details on predicates see the [predicates](#predicates) section
+
+```javascript
+const rule = Rule(x => x * x) |> until(x => x >= 100)
+```
+
 #### field
 Used to apply a rule for just a field of the model.
 
