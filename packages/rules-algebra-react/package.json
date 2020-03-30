@@ -1,6 +1,6 @@
 {
   "name": "@totalsoft/rules-algebra-react",
-  "version": "3.0.0",
+  "version": "3.1.0",
   "description": "React extensions for the \"rules-algebra\" business rules api",
   "main": "index.js",
   "scripts": {
@@ -30,7 +30,7 @@
   },
   "dependencies": {
     "@staltz/use-profunctor-state": "^1.2.0",
-    "@totalsoft/rules-algebra": "^3.0.0"
+    "@totalsoft/rules-algebra": "^3.1.0"
   },
   "peerDependencies": {
     "react": ">= 16.9.0"
