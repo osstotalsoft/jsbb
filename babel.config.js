@@ -47,6 +47,7 @@ module.exports = api => {
             }
           ]
         ],
+        plugins: [["@babel/plugin-transform-runtime"]]
       },
       esm: {
         plugins: [["@babel/plugin-transform-runtime", { useESModules: true }]]
