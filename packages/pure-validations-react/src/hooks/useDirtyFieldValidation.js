@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react';
 import { useValidation } from './'
-import * as di from '../dirtyInfo';
+import { isPropertyDirty } from '@totalsoft/change-tracking'
 
 export function useDirtyFieldValidation(rules, options = {}, deps = []) {
     const [dirtyOnly, setDirtyOnly] = useState(true)
@@ -10,7 +10,7 @@ export function useDirtyFieldValidation(rules, options = {}, deps = []) {
             return true
         }
 
-        return di.isPropertyDirty(context.fieldPath.join("."), context.dirtyInfo) ? true : false
+        return isPropertyDirty(context.fieldPath.join("."), context.dirtyInfo) ? true : false
     }, [])
 
     const [validation, validate, reset] =

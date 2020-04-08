@@ -1,6 +1,7 @@
 import { renderHook, act } from "@testing-library/react-hooks";
 import { useDirtyInfo } from "../";
 
+jest.unmock("@totalsoft/change-tracking")
 
 describe("useDirtyInfo hook", () => {
     it("should set dirtyInfo property", () => {

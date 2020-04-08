@@ -1,7 +1,7 @@
 {
-  "name": "@totalsoft/rules-algebra",
+  "name": "@totalsoft/change-tracking",
   "version": "3.1.1",
-  "description": "Business rules api via functional composition",
+  "description": "Change tracking library for models including objects and arrays",
   "main": "index.js",
   "scripts": {
     "prebuild": "rimraf build",
@@ -14,24 +14,17 @@
     "typescript": "tslint -p tsconfig.json \"{src,test}/**/*.{ts,tsx}\""
   },
   "author": "TotalSoft",
-  "homepage": "https://github.com/osstotalsoft/jsbb/tree/master/packages/rules-algebra",
+  "homepage": "https://github.com/osstotalsoft/jsbb/tree/master/packages/change-tracking",
   "repository": {
     "type": "git",
     "url": "https://github.com/osstotalsoft/jsbb.git",
-    "directory": "packages/rules-algebra"
+    "directory": "packages/change-tracking"
   },
   "license": "ISC",
   "publishConfig": {
     "access": "public"
   },
   "dependencies": {
-    "@totalsoft/zion": "^3.1.1",
-    "@totalsoft/change-tracking": "^3.1.1",
-    "daggy": "^1.4.0",
-    "fantasy-land": "^4.0.1",
     "uniqid": "^5.2.0"
-  },
-  "peerDependencies": {
-    "i18next": ">= 17.0.11"
   }
 }

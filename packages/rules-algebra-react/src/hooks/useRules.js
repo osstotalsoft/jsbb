@@ -1,9 +1,9 @@
 import { useState, useCallback, useMemo } from 'react';
-import * as di from '../dirtyInfo'
-import { logTo, applyRule, ensureArrayUIDsDeep, setInnerProp } from '@totalsoft/rules-algebra'
+import { create, detectChanges, ensureArrayUIDsDeep, setInnerProp} from '@totalsoft/change-tracking'
+import { logTo, applyRule } from '@totalsoft/rules-algebra'
 
 export function useRules(rules, initialModel, { isLogEnabled = true, logger = console } = {}, deps = []) {
-    const [dirtyInfo, setDirtyInfo] = useState(di.create)
+    const [dirtyInfo, setDirtyInfo] = useState(create)
     const [model, setModel] = useState(ensureArrayUIDsDeep(initialModel))
 
     const rulesEngine = useMemo(() => {
@@ -21,23 +21,25 @@ export function useRules(rules, initialModel, { isLogEnabled = true, logger = co
 
         dirtyInfo,
 
-        // Update property
-        useCallback((propertyPath, value) => {
-            const changedModel = setInnerProp(model, propertyPath, value)
+        // Update model or property
+        useCallback((value, propertyPath = undefined) => {
+            const changedModel = propertyPath ? setInnerProp(model, propertyPath, value) : value
             if (changedModel === model) {
                 return model;
             }
 
             const result = applyRule(rulesEngine, ensureArrayUIDsDeep(changedModel), model)
-            setDirtyInfo(di.detectChanges(result, model, dirtyInfo))
+            setDirtyInfo(detectChanges(result, model, dirtyInfo))
             setModel(result);
             return result;
-        }, [model, rulesEngine]),
+        }, [model, dirtyInfo, rulesEngine]),
 
         // Reset
-        useCallback((newModel) => {
-            setDirtyInfo(di.create())
-            setModel(ensureArrayUIDsDeep(newModel));
+        useCallback((newModel = undefined)  => {
+            setDirtyInfo(create())
+            if (newModel !== undefined) {
+                setModel(ensureArrayUIDsDeep(newModel));
+            }
         }, [])
     ]
 }

@@ -3,7 +3,7 @@ import { } from "../higherOrderRules"; // import { when, shape, logTo, scope, ch
 import { unchanged } from "../primitiveRules"; // import { constant, computed, maximumValue, unchanged } from "../primitiveRules";
 import { } from "../predicates" // import { propertyChanged, any, all, propertiesChanged } from "../predicates";
 
-import { ensureArrayUIDsDeep } from "../arrayUtils";
+import { ensureArrayUIDsDeep } from "@totalsoft/change-tracking";
 
 
 describe("workshop examples:", () => {

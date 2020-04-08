@@ -14,6 +14,8 @@
       "noErrorTruncation": true,
       "allowJs": true,
       "paths": {
+        "@totalsoft/change-tracking": ["./packages/change-tracking/src"],
+        "@totalsoft/change-tracking-react": ["./packages/change-tracking-react/src"],
         "@totalsoft/pure-validations": ["./packages/pure-validations/src"],
         "@totalsoft/pure-validations-react": ["./packages/pure-validations-react/src"],
         "@totalsoft/rules-algebra": ["./packages/rules-algebra/src"],

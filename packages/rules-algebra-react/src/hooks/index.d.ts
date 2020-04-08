@@ -1,22 +1,6 @@
 import { Rule, Logger } from "@totalsoft/rules-algebra";
-import { DirtyInfo } from "../dirtyInfo";
+import { DirtyInfo } from "@totalsoft/change-tracking";
 import { Proxy, RulesProfunctorProxy } from "../rulesProfunctorProxy";
-
-/**
- * React hook for field dirty info tracking.
- * Returns a stateful dirty info object, a function that sets the property path as dirty and a function that resets the dirty info state.
- * @see https://github.com/osstotalsoft/jsbb/tree/master/packages/rules-algebra-react#useDirtyInfo-hook
- */
-export function useDirtyInfo(): [
-  // DirtyInfo
-  DirtyInfo,
-
-  // Set dirty info for the property path
-  (propertyPath: string) => void,
-
-  // Reset dirty info
-  () => void
-];
 
 /**
  * React hook that applies the business rules and keeps track of user modified values (dirty field info).

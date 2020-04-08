@@ -35,7 +35,7 @@ export function findMatchingItem(currentItem, currentKey, otherArray) {
         : otherArray[currentKey];
 }
 
-export function toMap(array) {
+export function toUniqueIdMap(array) {
     if (!Array.isArray(array) || array.length === 0) {
         return {};
     }

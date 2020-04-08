@@ -1,11 +1,13 @@
 import { renderHook, act } from "@testing-library/react-hooks";
 import { useRules } from "../";
-import { Rule, applyRule, logTo, __clearMocks } from "@totalsoft/rules-algebra";
+import { Rule, applyRule, logTo, __clearMocks as clearRulesMocks } from "@totalsoft/rules-algebra";
+import { __clearMocks as clearChangeTrackingMocks } from "@totalsoft/change-tracking";
 
 
 describe("useRules hook", () => {
     afterEach(() => {
-        __clearMocks();
+        clearRulesMocks();
+        clearChangeTrackingMocks();
     });
 
     it("returns model with rule applied to it", () => {
@@ -18,7 +20,7 @@ describe("useRules hook", () => {
         const { result } = renderHook(() => useRules(rule, initialModel));
         act(() => {
             const [, , updateField] = result.current;
-            returnedModel = updateField("a.b", "OK");
+            returnedModel = updateField("OK", "a.b");
         });
 
         // Assert
@@ -38,12 +40,12 @@ describe("useRules hook", () => {
         const { result } = renderHook(() => useRules(rule, initialModel));
         act(() => {
             const [, , updateField] = result.current;
-            updateField("a.b", "OK");
+            updateField("OK", "a.b");
         });
         const [model1] = result.current;
         act(() => {
             const [, , updateField] = result.current;
-            updateField("a.b", "OK");
+            updateField("OK", "a.b");
         });
         const [model2] = result.current;
         // Assert
@@ -76,7 +78,7 @@ describe("useRules hook", () => {
         const { result } = renderHook(() => useRules(rule, initialModel));
         act(() => {
             const [, , updateField] = result.current;
-            updateField("a.b", "OK");
+            updateField("OK", "a.b");
         });
         const [model1] = result.current;
         act(() => {
@@ -104,7 +106,7 @@ describe("useRules hook", () => {
         const { result, rerender } = renderHook(renderCallack);
         act(() => {
             const [, , updateField] = result.current;
-            updateField("a.b", "OK");
+            updateField("OK", "a.b");
         });
         rerender();
 
@@ -122,7 +124,7 @@ describe("useRules hook", () => {
         const { result } = renderHook(() => useRules(rule, initialModel, { isLogEnabled: true, logger }));
         act(() => {
             const [, , updateField] = result.current;
-            updateField("a.b", "OK");
+            updateField("OK", "a.b");
         });
 
         // Assert

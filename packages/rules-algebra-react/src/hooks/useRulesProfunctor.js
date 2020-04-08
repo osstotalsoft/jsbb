@@ -1,12 +1,12 @@
 import { useProfunctorState } from '@staltz/use-profunctor-state'
 import { RulesEngineProxy } from '../rulesProfunctorProxy';
 import { useMemo, useCallback, useState } from 'react';
-import { applyRule, logTo, ensureArrayUIDsDeep } from '@totalsoft/rules-algebra';
-import * as di from '../dirtyInfo'
+import { applyRule, logTo } from '@totalsoft/rules-algebra';
+import { create, detectChanges, ensureArrayUIDsDeep} from '@totalsoft/change-tracking'
 
 
 export function useRulesProfunctor(rules, initialModel, { isLogEnabled = true, logger = console } = {}, deps = []) {
-    const [dirtyInfo, setDirtyInfo] = useState(di.create)
+    const [dirtyInfo, setDirtyInfo] = useState(create)
     
     const rulesEngine = useMemo(() => {
         let newRules = rules;
@@ -14,7 +14,7 @@ export function useRulesProfunctor(rules, initialModel, { isLogEnabled = true, l
         if (isLogEnabled) {
             newRules = logTo(logger)(newRules)
         }
-
+        
         return newRules
     }, [rules, isLogEnabled, logger, ...deps]); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -25,7 +25,7 @@ export function useRulesProfunctor(rules, initialModel, { isLogEnabled = true, l
         model => model,
         (changedModel, prevModel) => {
             const result = applyRule(rulesEngine, ensureArrayUIDsDeep(changedModel), prevModel)
-            setDirtyInfo(di.detectChanges(result, prevModel, dirtyInfo))
+            setDirtyInfo(detectChanges(result, prevModel, dirtyInfo))
             return result;
         },
         [profunctor.state, rulesEngine],
@@ -39,7 +39,7 @@ export function useRulesProfunctor(rules, initialModel, { isLogEnabled = true, l
 
         // Reset
         useCallback((newModel) => {
-            setDirtyInfo(di.create())
+            setDirtyInfo(create())
             profunctor.setState(ensureArrayUIDsDeep(newModel));
         }, [])
     ]

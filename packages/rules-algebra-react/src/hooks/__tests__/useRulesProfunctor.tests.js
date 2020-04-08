@@ -1,12 +1,13 @@
 import { renderHook, act } from "@testing-library/react-hooks";
-import { Rule, applyRule, logTo, __clearMocks } from "@totalsoft/rules-algebra";
+import { Rule, applyRule, logTo, __clearMocks as clearRulesMocks } from "@totalsoft/rules-algebra";
 import { setValue, getValue } from "../../rulesProfunctorProxy";
 import { useRulesProfunctor } from "..";
-import * as di from "../../dirtyInfo"
+import { detectChanges, __clearMocks as clearChangeTrackingMocks } from "@totalsoft/change-tracking";
 
 describe("useValidation hook", () => {
     afterEach(() => {
-        __clearMocks();
+        clearRulesMocks();
+        clearChangeTrackingMocks();
     });
 
     it("returns model with rule applied to it", () => {
@@ -18,7 +19,7 @@ describe("useValidation hook", () => {
 
             return { rootProf, fieldProf: rootProf.a.b };
         }
-
+        
         // Act
         const { result } = renderHook(callback);
         act(() => {
@@ -82,7 +83,7 @@ describe("useValidation hook", () => {
 
         // Assert
         const dirtyInfo = result.current.di;
-        expect(dirtyInfo).toStrictEqual(di.detectChanges({ _ruleValue: 1, a: { b: "OK", c: "Initial" } }, initialModel))
+        expect(dirtyInfo).toStrictEqual(detectChanges({ _ruleValue: 1, a: { b: "OK", c: "Initial" } }, initialModel))
 
     });
 

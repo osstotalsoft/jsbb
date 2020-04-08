@@ -2,7 +2,9 @@ import { applyRule } from "../";
 import { when, shape, logTo, scope, chainRules, items, readFrom, fromParent, parent, fromRoot,root } from "../higherOrderRules";
 import { constant, computed, maximumValue, sprintf} from "../primitiveRules";
 import { propertyChanged, any, propertiesChanged } from "../predicates";
-import { ensureArrayUIDsDeep } from "../arrayUtils";
+import { ensureArrayUIDsDeep } from "@totalsoft/change-tracking";
+
+jest.unmock("@totalsoft/change-tracking")
 
 describe("composed rules:", () => {
     it("readme rules: ", () => {
@@ -44,6 +46,7 @@ describe("composed rules:", () => {
 
     it("complex example: ", () => {
         // Arrange
+        const console = { log: () => { } };
         const rule = shape({
             advancePercent: 
                 [computed(loan => loan.advance * 100 / loan.aquisitionPrice), maximumValue(100)] |> chainRules

@@ -1,8 +1,10 @@
 import get from 'lodash.get';
-import { toMap } from '@totalsoft/rules-algebra';
+import { toUniqueIdMap } from '../arrayUtils';
+
+const isDirtySymbol = Symbol("isDirty");
 
 export function create(isDirty = false) {
-    return { isDirty };
+    return { [isDirtySymbol]: isDirty };
 }
 
 export function update(propertyPath, propertyDirtyInfo, dirtyInfo) {
@@ -29,7 +31,7 @@ export function merge(sourceDirtyInfo, targetDirtyInfo) {
     }
 
     const result = Object.keys(sourceDirtyInfo)
-        .filter(x => x !== "isDirty")
+        .filter(x => x !== isDirtySymbol)
         .reduce(
             (accumulator, property) => updateSingleProperty(property, merge(sourceDirtyInfo[property], targetDirtyInfo[property]), accumulator),
             targetDirtyInfo
@@ -62,8 +64,8 @@ export function detectChanges(model, prevModel, prevDirtyInfo = create()) {
 }
 
 function detectChangesArray(model, prevModel, prevDirtyInfo) {
-    const modelMap = toMap(model);
-    const prevModelMap = toMap(prevModel);
+    const modelMap = toUniqueIdMap(model);
+    const prevModelMap = toUniqueIdMap(prevModel);
 
     const newDirtyInfo = Object.keys(modelMap)
         .reduce((acc, prop) =>
@@ -80,7 +82,11 @@ function detectChangesArray(model, prevModel, prevDirtyInfo) {
 }
 
 export function isPropertyDirty(propertyPath, dirtyInfo) {
-    return getIsDirty(get(dirtyInfo, propertyPath));
+    return getIsDirty(get(dirtyInfo, propertyPath)) || false;
+}
+
+export function isDirty(dirtyInfo) {
+    return getIsDirty(dirtyInfo) || false;
 }
 
 function updateSingleProperty(property, propertyDirtyInfo, dirtyInfo) {
@@ -97,18 +103,18 @@ function updateSingleProperty(property, propertyDirtyInfo, dirtyInfo) {
     return isDirtyChanged
         ? {
             ...result,
-            isDirty: reduceIsDirty(result)
+            [isDirtySymbol]: reduceIsDirty(result)
         }
         : result;
 }
 
 function reduceIsDirty(dirtyInfo) {
-    const isDirty = Object.keys(dirtyInfo).filter(x => x !== "isDirty").some(x => getIsDirty(dirtyInfo[x]));
+    const isDirty = Object.keys(dirtyInfo).filter(x => x !== isDirtySymbol).some(x => getIsDirty(dirtyInfo[x]));
     return isDirty;
 }
 
 function getIsDirty(dirtyInfo) {
     return typeof dirtyInfo === "boolean"
         ? dirtyInfo
-        : dirtyInfo && dirtyInfo.isDirty;
+        : dirtyInfo && dirtyInfo[isDirtySymbol];
 }
