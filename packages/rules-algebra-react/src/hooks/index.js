@@ -1,2 +1,2 @@
 export * from './useRules'
-export * from './useRulesProfunctor'
+export * from './useRulesLens'

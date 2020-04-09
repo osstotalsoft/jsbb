@@ -1,5 +1,6 @@
 import get from 'lodash.get';
 import { toUniqueIdMap } from '../arrayUtils';
+import { curry } from "ramda";
 
 const isDirtySymbol = Symbol("isDirty");
 
@@ -7,7 +8,7 @@ export function create(isDirty = false) {
     return { [isDirtySymbol]: isDirty };
 }
 
-export function update(propertyPath, propertyDirtyInfo, dirtyInfo) {
+export const update = curry(function update(propertyPath, propertyDirtyInfo, dirtyInfo) {
     const path = Array.isArray(propertyPath) ? propertyPath : propertyPath.split(".");
 
     const [property, ...rest] = path;
@@ -15,9 +16,9 @@ export function update(propertyPath, propertyDirtyInfo, dirtyInfo) {
     const innerPropDirtyInfo = rest.length === 0 ? propertyDirtyInfo : update(rest, propertyDirtyInfo, innerDirtyInfo)
 
     return updateSingleProperty(property, innerPropDirtyInfo, dirtyInfo);
-}
+})
 
-export function merge(sourceDirtyInfo, targetDirtyInfo) {
+export const merge = curry(function merge(sourceDirtyInfo, targetDirtyInfo) {
     if (sourceDirtyInfo === targetDirtyInfo || sourceDirtyInfo === null || sourceDirtyInfo === undefined) {
         return targetDirtyInfo;
     }
@@ -37,9 +38,9 @@ export function merge(sourceDirtyInfo, targetDirtyInfo) {
             targetDirtyInfo
         );
     return result;
-}
+})
 
-export function detectChanges(model, prevModel, prevDirtyInfo = create()) {
+export const detectChanges = curry(function detectChanges(model, prevModel, prevDirtyInfo = create()) {
     if (typeof (model) !== "object" || typeof (prevModel) !== "object" || model === null || prevModel === null) {
         return model !== prevModel
     }
@@ -61,6 +62,14 @@ export function detectChanges(model, prevModel, prevDirtyInfo = create()) {
 
 
     return Object.keys(model).length !== Object.keys(prevModel).length ? { ...newDirtyInfo } : newDirtyInfo
+})
+
+export function isPropertyDirty(propertyPath, dirtyInfo) {
+    return getIsDirty(get(dirtyInfo, propertyPath)) || false;
+}
+
+export function isDirty(dirtyInfo) {
+    return getIsDirty(dirtyInfo) || false;
 }
 
 function detectChangesArray(model, prevModel, prevDirtyInfo) {
@@ -79,14 +88,6 @@ function detectChangesArray(model, prevModel, prevDirtyInfo) {
             prevDirtyInfo)
 
     return Object.keys(modelMap).length !== Object.keys(prevModelMap).length ? { ...newDirtyInfo } : newDirtyInfo
-}
-
-export function isPropertyDirty(propertyPath, dirtyInfo) {
-    return getIsDirty(get(dirtyInfo, propertyPath)) || false;
-}
-
-export function isDirty(dirtyInfo) {
-    return getIsDirty(dirtyInfo) || false;
 }
 
 function updateSingleProperty(property, propertyDirtyInfo, dirtyInfo) {

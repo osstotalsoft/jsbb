@@ -10,7 +10,7 @@ npm install '@totalsoft/rules-algebra-react'
 ## info
 The library provides three hooks:
  - **useRules** - applies the rule engine after updating a value at the given property path
- - **useRulesProfunctor** - applies the rule engine after updating the model through a profunctor lens 
+ - **useRulesLens** - applies the rule engine after updating the model through a profunctor lens 
  - **useDirtyInfo** - keeps track of modified properties of a model
 
 
@@ -61,7 +61,7 @@ const SomeComponent = props => {
 };
 ```
 
-## useRulesProfunctor hook
+## useRulesLens hook
 React hook that applies the business rules and keeps track of user modified values (dirty field info).
 * Arguments:
   1. The rules object (see rules-algebra library)
@@ -69,19 +69,19 @@ React hook that applies the business rules and keeps track of user modified valu
   3. Settings (optional)
   4. Dependencies (optional)
 * Return values:
-  1. A stateful profunctor with the rule application result
+  1. A stateful profunctor lens with the rule application result
   2. A dirty info object  
   3. A function that resets the rule engine state.
 
 ```jsx
-import { useRulesProfunctor, setValue, getValue } from "@totalsoft/rules-algebra-react";
+import { useRulesLens, setValue, getValue } from "@totalsoft/rules-algebra-react";
 
 const rules = shape({
   fullName: computed(doc => doc.firstName + doc.lastName)
 });
 
 const SomeComponent = props => {
-  const [person, dirtyInfo, reset] = useRulesProfunctor(rules, {});
+  const [person, dirtyInfo, reset] = useRulesLens(rules, {});
   return (
     <>
       Full name: {getValue(person.fullName)}
@@ -94,46 +94,6 @@ const SomeComponent = props => {
             onChange={onTextBoxChange(setValue(person.lastName))}
       />
       <DetailsComp personDetails={person.details} />
-    </>
-  );
-};
-```
-
-## useDirtyInfo hook
-
-A react hook for field change tracking. 
-
-It returns a stateful dirty info object, a function that sets the property path as dirty and a function that resets the dirty info state. 
-
-Usage example:
-
-```jsx
-import { useDirtyInfo } from "@totalsoft/rules-algebra-react";
-import * as di from "@totalsoft/rules-algebra-react/dirtyInfo"
-
-const SomeComponent = props => {
-  const [person, setPerson] = useState({});
-  const [dirtyInfo, setDirtyInfoPath] = useDirtyInfo();
-
-  const handleChange = useCallback(
-    propPath => event => {
-      setDirtyInfoPath(propPath);
-      setModel({ ...person, [propPath]: event.target.value });
-    }, [person]
-  );
-
-  return (
-    <>
-      FirstName dirty: {di.isPropertyDirty("firstName", dirtyInfo)}
-      <TextField
-            value={person.firstName}
-            onChange={handleChange("firstName")}
-      />
-      LastName dirty: {di.isPropertyDirty("lastName", dirtyInfo)}
-      <TextField
-            value={person.lastName}
-            onChange={handleChange("lastName")}
-      />
     </>
   );
 };

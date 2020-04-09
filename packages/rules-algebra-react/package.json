@@ -29,8 +29,8 @@
     "react-test-renderer": "^16.9.0"
   },
   "dependencies": {
-    "@staltz/use-profunctor-state": "^1.2.0",
-    "@totalsoft/rules-algebra": "^3.1.1"
+    "@totalsoft/rules-algebra": "^3.1.1",
+    "@totalsoft/change-tracking-react": "^3.1.1"
   },
   "peerDependencies": {
     "react": ">= 16.9.0"

@@ -25,14 +25,14 @@ export function ensureArrayUIDs(array) {
     return array.map(_ensureUniqueId)
 }
 
-export function findMatchingItem(currentItem, currentKey, otherArray) {
+export function findMatchingItem(currentItem, currentIndex, otherArray) {
     if (!Array.isArray(otherArray)) {
         return undefined;
     }
 
     return typeof (currentItem) === "object" && uniqueIdSymbol in currentItem
         ? otherArray |> find(prevItem => prevItem[uniqueIdSymbol] === currentItem[uniqueIdSymbol])
-        : otherArray[currentKey];
+        : otherArray[currentIndex];
 }
 
 export function toUniqueIdMap(array) {

@@ -1,9 +1,8 @@
-import { Rule, Logger } from "@totalsoft/rules-algebra";
 import { DirtyInfo } from "@totalsoft/change-tracking";
-import { Proxy, RulesProfunctorProxy } from "../rulesProfunctorProxy";
+import { LensProxy } from "../lensProxy";
 
 /**
- * React hook for field dirty info tracking.
+ * Keeps track of modified properties of an external model.
  * Returns a stateful dirty info object, a function that sets the property path as dirty and a function that resets the dirty info state.
  * @see https://github.com/osstotalsoft/jsbb/tree/master/packages/change-tracking-react#useDirtyInfo-hook
  */
@@ -19,7 +18,7 @@ export function useDirtyInfo(): [
 ];
 
 /**
- * React hook for change tracking a model.
+ * Provides a stateful model with change tracking.
  * Returns a stateful model,  stateful dirty info object, a function that sets the model or property value and a function that resets the change tracking.
  * @see https://github.com/osstotalsoft/jsbb/tree/master/packages/change-tracking-react#useChangeTrackingState-hook
  */
@@ -34,5 +33,24 @@ export function useChangeTrackingState(): [
   (model: any, propertyPath?: string|string[]) => void,
 
   // Reset dirty info
+  (newModel?: any) => void
+];
+
+/**
+ * Provides a stateful model with change tracking using a profunctor lens.
+ * Receives the initial model
+ * Returns a stateful profunctor lens with the rule application result, a dirty info object and a function that resets the rule engine state.
+ * @see https://github.com/osstotalsoft/jsbb/tree/master/packages/change-tracking-react#useChangeTrackingLens-hook
+ */
+export function useChangeTrackingLens(
+  initialModel: any,
+): [
+  // Model lens
+  LensProxy,
+
+  // DirtyInfo object
+  DirtyInfo,
+
+  // Resets the change tracking and optionally sets a new model
   (newModel?: any) => void
 ];
