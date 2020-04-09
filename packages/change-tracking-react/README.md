@@ -53,9 +53,9 @@ const SomeComponent = props => {
 };
 ```
 ## useChangeTrackingLens hook
-React hook for change tracking a model.
+Provides a stateful model with change tracking using a profunctor lens.
 
-It Returns a stateful model,  stateful dirty info object, a function that sets the model or property value and a function that resets the change tracking.
+It returns a stateful model, stateful dirty info object, and a function that resets the change tracking.
 
 Usage example:
 
@@ -121,6 +121,7 @@ const SomeComponent = props => {
             value={person.lastName}
             onChange={handleChange("lastName")}
       />
+      <ChildComponent details={person.details} onChange={handleChange} />
     </>
   );
 };

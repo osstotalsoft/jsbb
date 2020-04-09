@@ -71,7 +71,7 @@ React hook that applies the business rules and keeps track of user modified valu
 * Return values:
   1. A stateful profunctor lens with the rule application result
   2. A dirty info object  
-  3. A function that resets the rule engine state.
+  3. A function that resets the rule engine state. It receives an optional new model.
 
 ```jsx
 import { useRulesLens, setValue, getValue } from "@totalsoft/rules-algebra-react";

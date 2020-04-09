@@ -1,4 +1,4 @@
-# rules-algebra
+# change-tracking
 Lightweight change tracking library for models including objects and arrays.
 
 ## Installation
@@ -8,7 +8,7 @@ npm install '@totalsoft/change-tracking'
 
 ## Usage
 ```javascript
-import { create, isPropertyDirty } from '@totalsoft/change-tracking';
+import { create, update, isPropertyDirty } from '@totalsoft/change-tracking';
 
 let dirtyInfo = create()
 dirtyInfo = update("person.name", true, dirtyInfo)
@@ -79,6 +79,8 @@ Ensures unique identifiers for object items in the given array.
 It returns the same array as the modeinputl but it attaches unique identifiers to items.
 Only items of type "object" will have identifiers added.
 ```javascript
+import { ensureArrayUIDs } from '@totalsoft/change-tracking'
+
 let persons = [{name: "John", surname:"Doe"}, {name: "Bob", surname:"Smith"}]
 let newPersons = ensureArrayUIDs(persons)
 ```
@@ -91,6 +93,8 @@ The received model can be an object that contains arrays in the nesting hierarch
 It returns the same object hierarcy as the model but it attaches unique identifiers to array items.
 Only items of type "object" will have identifiers added.
 ```javascript
+import { ensureArrayUIDsDeep } from '@totalsoft/change-tracking'
+
 let model = { persons: [{name: "John", surname:"Doe"}, {name: "Bob", surname:"Smith"}] }
 let newModel = ensureArrayUIDsDeep(model)
 ```

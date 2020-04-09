@@ -39,7 +39,7 @@ export function useChangeTrackingState(): [
 /**
  * Provides a stateful model with change tracking using a profunctor lens.
  * Receives the initial model
- * Returns a stateful profunctor lens with the rule application result, a dirty info object and a function that resets the rule engine state.
+ * Returns a stateful profunctor lens with the rule application result, a dirty info object and a function that resets the change tracking.
  * @see https://github.com/osstotalsoft/jsbb/tree/master/packages/change-tracking-react#useChangeTrackingLens-hook
  */
 export function useChangeTrackingLens(

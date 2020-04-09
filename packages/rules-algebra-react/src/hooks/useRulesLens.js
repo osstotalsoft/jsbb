@@ -39,9 +39,11 @@ export function useRulesLens(rules, initialModel, { isLogEnabled = true, logger 
         dirtyInfo,
 
         // Reset
-        useCallback((newModel) => {
+        useCallback((newModel = undefined) => {
             setDirtyInfo(create())
-            profunctor.setState(ensureArrayUIDsDeep(newModel));
+            if (newModel !== undefined) {
+                profunctor.setState(ensureArrayUIDsDeep(newModel));
+            }
         }, [])
     ]
 }
