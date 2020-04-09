@@ -1,10 +1,6 @@
 # rules-algebra
 Lightweight change tracking library for models including objects and arrays.
 
-## Philosophy
-```javascript
-```
-
 ## Installation
 ```javascript
 npm install '@totalsoft/change-tracking'
@@ -13,6 +9,7 @@ npm install '@totalsoft/change-tracking'
 ## Usage
 ```javascript
 import { create, isPropertyDirty } from '@totalsoft/change-tracking';
+
 let dirtyInfo = create()
 dirtyInfo = update("person.name", true, dirtyInfo)
 let isDirtyName = isPropertyDirty("person.name")
@@ -23,7 +20,7 @@ let isDirtyName = isPropertyDirty("person.name")
 ### Dirty Info
 It is an object that mimics the structure of the tracked model and specifies the "dirty" status of the properties
 
-The following methods are available to manipulate the DirtyInfo data:
+The following operations are available to manipulate the DirtyInfo data:
 
 #### create
 Creates a new DirtyInfo object initialized with the value of the "isDirty" parameter.
@@ -65,3 +62,41 @@ It also takes into account the previous dirtyInfo object if specified.
 ```javascript
 let newDirtyInfo = detectChanges(model, prevModel, prevDirtyInfo)
 ```
+
+### Array items unique ids
+Unique identifiers for object items in arrays are useful to keep track of array items in the following operations:
+- Inserts
+- Deletions
+- Reordering
+
+Change tracking of array items cannot be performed based on index alone. A unique identifier is essentintial
+to determine if an item was changed or just moved in the array.
+
+The following methods are available:
+#### ensureArrayUIDs
+Ensures unique identifiers for object items in the given array.
+
+It returns the same array as the modeinputl but it attaches unique identifiers to items.
+Only items of type "object" will have identifiers added.
+```javascript
+let persons = [{name: "John", surname:"Doe"}, {name: "Bob", surname:"Smith"}]
+let newPersons = ensureArrayUIDs(persons)
+```
+
+#### ensureArrayUIDsDeep
+Ensures unique identifiers for object items in arrays. 
+
+The received model can be an object that contains arrays in the nesting hierarchy
+
+It returns the same object hierarcy as the model but it attaches unique identifiers to array items.
+Only items of type "object" will have identifiers added.
+```javascript
+let model = { persons: [{name: "John", surname:"Doe"}, {name: "Bob", surname:"Smith"}] }
+let newModel = ensureArrayUIDsDeep(model)
+```
+
+#### toUniqueIdMap
+Transforms an array with object items that have uids to a map where uids are keys.
+
+#### findMatchingItem
+Gets the item with the same uid if it has one or the item at the same index otherwise.

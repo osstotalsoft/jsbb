@@ -1,6 +1,6 @@
 import { useProfunctorState } from '@staltz/use-profunctor-state'
 import { renderHook, act } from "@testing-library/react-hooks";
-import { LensProxy, eject, getValue, setValue } from "..";
+import { LensProxy, eject, getValue, setValue, overValue } from "..";
 
 describe("lens proxy", () => {
     it("eject returns inner profunctopr", () => {
@@ -29,20 +29,36 @@ describe("lens proxy", () => {
         expect(value).toBe(profunctor.state)
     });
 
-    it("onChange sets the profunctor state", () => {
+    it("setValue sets the profunctor state", () => {
         // Arrange
         const initialModel = { a: { b: "" } };
         const otherModel = {};
         const {result} = renderHook(() => useProfunctorState(initialModel));
-        const profunctorProxy = LensProxy(result.current)
+        const lensProxy = LensProxy(result.current)
 
         // Act
         act(() => {
-            setValue(profunctorProxy)(otherModel);
+            setValue(lensProxy)(otherModel);
         });
 
         // Assert
         expect(otherModel).toBe(result.current.state)
+    });
+
+    it("overValue modifies the profunctor state", () => {
+        // Arrange
+        const initialModel = { a: { b: "" } };
+        const {result} = renderHook(() => useProfunctorState(initialModel));
+        const lensProxy = LensProxy(result.current)
+        const changeFn = x => x + "OK"
+
+        // Act
+        act(() => {
+            overValue(lensProxy.a.b)(changeFn);
+        });
+
+        // Assert
+        expect(result.current.state.a.b).toBe("OK")
     });
 
     it("inner field profunctor state", () => {

@@ -1,13 +1,14 @@
 /**
  * Ensures unique identifiers for object items in arrays.
- * The received model can be an object that contains arrays in the nesting hierarchy
- * Returns the same object hierarcy as the model with arrays that have unique ids as keys.
+ * It returns the same object hierarcy as the model but it attaches unique identifiers to array items.
+ * Only items of type "object" will have identifiers added.
  */
 export function ensureArrayUIDsDeep(model: any): any;
 
 /**
  * Ensures unique identifiers for object items in the given array.
- * Returns the same array with unique ids as keys.
+ * It returns the same array as the modeinputl but it attaches unique identifiers to items.
+ * Only items of type "object" will have identifiers added.
  */
 export function ensureArrayUIDs(array: any[]): any[];
 
