@@ -1,11 +1,14 @@
 import get from 'lodash.get';
-import { toMap } from '@totalsoft/rules-algebra';
+import { toUniqueIdMap } from '../arrayUtils';
+import { curry } from "ramda";
+
+const isDirtySymbol = Symbol("isDirty");
 
 export function create(isDirty = false) {
-    return { isDirty };
+    return { [isDirtySymbol]: isDirty };
 }
 
-export function update(propertyPath, propertyDirtyInfo, dirtyInfo) {
+export const update = curry(function update(propertyPath, propertyDirtyInfo, dirtyInfo) {
     const path = Array.isArray(propertyPath) ? propertyPath : propertyPath.split(".");
 
     const [property, ...rest] = path;
@@ -13,9 +16,9 @@ export function update(propertyPath, propertyDirtyInfo, dirtyInfo) {
     const innerPropDirtyInfo = rest.length === 0 ? propertyDirtyInfo : update(rest, propertyDirtyInfo, innerDirtyInfo)
 
     return updateSingleProperty(property, innerPropDirtyInfo, dirtyInfo);
-}
+})
 
-export function merge(sourceDirtyInfo, targetDirtyInfo) {
+export const merge = curry(function merge(sourceDirtyInfo, targetDirtyInfo) {
     if (sourceDirtyInfo === targetDirtyInfo || sourceDirtyInfo === null || sourceDirtyInfo === undefined) {
         return targetDirtyInfo;
     }
@@ -29,15 +32,15 @@ export function merge(sourceDirtyInfo, targetDirtyInfo) {
     }
 
     const result = Object.keys(sourceDirtyInfo)
-        .filter(x => x !== "isDirty")
+        .filter(x => x !== isDirtySymbol)
         .reduce(
             (accumulator, property) => updateSingleProperty(property, merge(sourceDirtyInfo[property], targetDirtyInfo[property]), accumulator),
             targetDirtyInfo
         );
     return result;
-}
+})
 
-export function detectChanges(model, prevModel, prevDirtyInfo = create()) {
+export const detectChanges = curry(function detectChanges(model, prevModel, prevDirtyInfo = create()) {
     if (typeof (model) !== "object" || typeof (prevModel) !== "object" || model === null || prevModel === null) {
         return model !== prevModel
     }
@@ -59,11 +62,19 @@ export function detectChanges(model, prevModel, prevDirtyInfo = create()) {
 
 
     return Object.keys(model).length !== Object.keys(prevModel).length ? { ...newDirtyInfo } : newDirtyInfo
+})
+
+export function isPropertyDirty(propertyPath, dirtyInfo) {
+    return getIsDirty(get(dirtyInfo, propertyPath)) || false;
+}
+
+export function isDirty(dirtyInfo) {
+    return getIsDirty(dirtyInfo) || false;
 }
 
 function detectChangesArray(model, prevModel, prevDirtyInfo) {
-    const modelMap = toMap(model);
-    const prevModelMap = toMap(prevModel);
+    const modelMap = toUniqueIdMap(model);
+    const prevModelMap = toUniqueIdMap(prevModel);
 
     const newDirtyInfo = Object.keys(modelMap)
         .reduce((acc, prop) =>
@@ -77,10 +88,6 @@ function detectChangesArray(model, prevModel, prevDirtyInfo) {
             prevDirtyInfo)
 
     return Object.keys(modelMap).length !== Object.keys(prevModelMap).length ? { ...newDirtyInfo } : newDirtyInfo
-}
-
-export function isPropertyDirty(propertyPath, dirtyInfo) {
-    return getIsDirty(get(dirtyInfo, propertyPath));
 }
 
 function updateSingleProperty(property, propertyDirtyInfo, dirtyInfo) {
@@ -97,18 +104,18 @@ function updateSingleProperty(property, propertyDirtyInfo, dirtyInfo) {
     return isDirtyChanged
         ? {
             ...result,
-            isDirty: reduceIsDirty(result)
+            [isDirtySymbol]: reduceIsDirty(result)
         }
         : result;
 }
 
 function reduceIsDirty(dirtyInfo) {
-    const isDirty = Object.keys(dirtyInfo).filter(x => x !== "isDirty").some(x => getIsDirty(dirtyInfo[x]));
+    const isDirty = Object.keys(dirtyInfo).filter(x => x !== isDirtySymbol).some(x => getIsDirty(dirtyInfo[x]));
     return isDirty;
 }
 
 function getIsDirty(dirtyInfo) {
     return typeof dirtyInfo === "boolean"
         ? dirtyInfo
-        : dirtyInfo && dirtyInfo.isDirty;
+        : dirtyInfo && dirtyInfo[isDirtySymbol];
 }

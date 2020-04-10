@@ -1,4 +1,5 @@
 import { ProfunctorState } from "@staltz/use-profunctor-state";
+import { curry } from "ramda";
 
 const setValueSymbol = Symbol("setValue")
 const getValueSymbol = Symbol("getValue")
@@ -33,7 +34,7 @@ const handler = {
                     return target[cachedPropName]
                 }
 
-                const proxy = RulesEngineProxy(getFieldScope(target, name))
+                const proxy = LensProxy(getFieldScope(target, name))
                 target[cachedPropName] = proxy; // cache value
                 return proxy
             }
@@ -96,6 +97,7 @@ export function eject(proxy) {
     return proxy[targetSymbol]
 }
 
+// Manual curry workaround
 export function setValue(proxy, newValue = undefined) {
     if (newValue !== undefined) {
         return proxy[setValueSymbol](newValue)
@@ -108,6 +110,11 @@ export function getValue(proxy) {
     return proxy[getValueSymbol]
 }
 
-export function RulesEngineProxy(ruleEngineProfunctor) {
+export const overValue = curry(function overValue(proxy, func) {
+    let value = getValue(proxy);
+    return setValue(proxy, func(value))
+})
+
+export function LensProxy(ruleEngineProfunctor) {
     return new Proxy(ruleEngineProfunctor, handler)
 }

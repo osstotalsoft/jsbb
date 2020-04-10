@@ -1,12 +1,13 @@
 import { renderHook, act } from "@testing-library/react-hooks";
-import { Rule, applyRule, logTo, __clearMocks } from "@totalsoft/rules-algebra";
-import { setValue, getValue } from "../../rulesProfunctorProxy";
-import { useRulesProfunctor } from "..";
-import * as di from "../../dirtyInfo"
+import { Rule, applyRule, logTo, __clearMocks as clearRulesMocks } from "@totalsoft/rules-algebra";
+import { setValue, getValue } from "../../rulesLensProxy";
+import { useRulesLens } from "..";
+import { detectChanges, __clearMocks as clearChangeTrackingMocks } from "@totalsoft/change-tracking";
 
-describe("useValidation hook", () => {
+describe("useRulesLens hook", () => {
     afterEach(() => {
-        __clearMocks();
+        clearRulesMocks();
+        clearChangeTrackingMocks();
     });
 
     it("returns model with rule applied to it", () => {
@@ -14,11 +15,11 @@ describe("useValidation hook", () => {
         const rule = Rule.of(1);
         const initialModel = { a: { b: "" } };
         const callback = () => {
-            const [rootProf] = useRulesProfunctor(rule, initialModel)
+            const [rootProf] = useRulesLens(rule, initialModel)
 
             return { rootProf, fieldProf: rootProf.a.b };
         }
-
+        
         // Act
         const { result } = renderHook(callback);
         act(() => {
@@ -40,7 +41,7 @@ describe("useValidation hook", () => {
         const rule = Rule.of(1);
         const initialModel = { a: [1, 2, 3] };
         const callback = () => {
-            const [rootProf] = useRulesProfunctor(rule, initialModel)
+            const [rootProf] = useRulesLens(rule, initialModel)
 
             let array = getValue(rootProf.a)
             let fieldProfs = array.map((item, idx) => rootProf.a[idx]);
@@ -69,7 +70,7 @@ describe("useValidation hook", () => {
         const rule = Rule.of(1);
         const initialModel = { a: { b: "", c: "Initial" } };
         const callback = () => {
-            const [rootProf, di] = useRulesProfunctor(rule, initialModel)
+            const [rootProf, di] = useRulesLens(rule, initialModel)
 
             return { rootProf, fieldProf: rootProf.a.b, di };
         }
@@ -82,7 +83,7 @@ describe("useValidation hook", () => {
 
         // Assert
         const dirtyInfo = result.current.di;
-        expect(dirtyInfo).toStrictEqual(di.detectChanges({ _ruleValue: 1, a: { b: "OK", c: "Initial" } }, initialModel))
+        expect(dirtyInfo).toStrictEqual(detectChanges({ _ruleValue: 1, a: { b: "OK", c: "Initial" } }, initialModel))
 
     });
 
@@ -93,7 +94,7 @@ describe("useValidation hook", () => {
         const initialModel = { a: { b: "" } };
 
         const callback = () => {
-            const [rootProf] = useRulesProfunctor(rule, initialModel)
+            const [rootProf] = useRulesLens(rule, initialModel)
 
             return { rootProf, fieldProf: rootProf.a.b };
         }
@@ -121,7 +122,7 @@ describe("useValidation hook", () => {
         const initialModel = { a: { b: "" } };
 
         // Act
-        const { result } = renderHook(() => useRulesProfunctor(rule, initialModel));
+        const { result } = renderHook(() => useRulesLens(rule, initialModel));
 
 
         // Assert
@@ -137,7 +138,7 @@ describe("useValidation hook", () => {
         const initialModel = { a: { b: "" } };
 
         const callback = () => {
-            const [rootProf, , resetFunc] = useRulesProfunctor(rule, initialModel)
+            const [rootProf, , resetFunc] = useRulesLens(rule, initialModel)
 
             return { rootProf, fieldProf: rootProf.a.b, resetFunc };
         }
@@ -169,7 +170,7 @@ describe("useValidation hook", () => {
         let renderNo = 0;
         function renderCallack() {
             renderNo = renderNo + 1;
-            const [rootProf] = useRulesProfunctor(rule, initialModel)
+            const [rootProf] = useRulesLens(rule, initialModel)
             return { rootProf, fieldProf: rootProf.a.b, };
         }
 
@@ -191,7 +192,7 @@ describe("useValidation hook", () => {
         const logger = { log: _ => { } };
         const initialModel = { a: { b: "" } };
         function renderCallack() {
-            const [rootProf] = useRulesProfunctor(rule, initialModel, { logger })
+            const [rootProf] = useRulesLens(rule, initialModel, { logger })
             return { rootProf, fieldProf: rootProf.a.b, };
         }
         // Act
@@ -211,7 +212,7 @@ describe("useValidation hook", () => {
         const initialModel = { a: { b: "" } };
 
         // Act
-        const { result, rerender } = renderHook(() => useRulesProfunctor(rule, initialModel));
+        const { result, rerender } = renderHook(() => useRulesLens(rule, initialModel));
         const [prof1, dirtyInfo1, reset1] = result.current;
         rerender();
         const [prof2, dirtyInfo2, reset2] = result.current;
@@ -229,7 +230,7 @@ describe("useValidation hook", () => {
         let ruleValue = Rule.of(1);
 
         // Act
-        const { result, rerender } = renderHook(() => useRulesProfunctor(ruleValue, initialModel, { logger }));
+        const { result, rerender } = renderHook(() => useRulesLens(ruleValue, initialModel, { logger }));
         const [prof1] = result.current;
         act(() => {
             setValue(prof1, { value: "a" })
@@ -253,11 +254,11 @@ describe("useValidation hook", () => {
         expect(secondChange).toStrictEqual({ value: "b", _ruleValue: 2 })
     });
 
-    it("changes the profunctor when the rule changes", () => {
+    it("changes the profunctor lens when the rule changes", () => {
         // Arrange
         const initialModel = {}
         const logger = {}
-        const callback = () => useRulesProfunctor(Rule.of(1), initialModel, { logger });
+        const callback = () => useRulesLens(Rule.of(1), initialModel, { logger });
 
         // Act
         const { result, rerender } = renderHook(callback);
@@ -276,7 +277,7 @@ describe("useValidation hook", () => {
         // Arrange
         const rule = Rule.of(1);
         const logger = {}
-        const callback = () => useRulesProfunctor(rule, {}, { logger });
+        const callback = () => useRulesLens(rule, {}, { logger });
 
         // Act
         const { result, rerender } = renderHook(callback);
@@ -291,14 +292,14 @@ describe("useValidation hook", () => {
     });
 
 
-    it("changes the profunctor when the logging flag changes", () => {
+    it("changes the profunctor lens when the logging flag changes", () => {
         // Arrange
         const initialModel = {}
         const rule = Rule.of(1);
         let isLogEnabled = true;
         const callback = () => {
             isLogEnabled = !isLogEnabled;
-            return useRulesProfunctor(rule, initialModel, { isLogEnabled: !isLogEnabled });
+            return useRulesLens(rule, initialModel, { isLogEnabled: !isLogEnabled });
         }
 
         // Act
@@ -314,14 +315,14 @@ describe("useValidation hook", () => {
     });
 
 
-    it("changes the profunctor  when  other deps change", () => {
+    it("changes the profunctor lens when  other deps change", () => {
         // Arrange
         const initialModel = {}
         const rule = Rule.of(1);
         let depFlag = true;
         const callback = () => {
             depFlag = !depFlag;
-            return useRulesProfunctor(rule, initialModel, {}, [depFlag]);
+            return useRulesLens(rule, initialModel, {}, [depFlag]);
         }
 
         // Act

@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import {create, update} from '../dirtyInfo';
+import { create, update } from '@totalsoft/change-tracking';
 
 export function useDirtyInfo() {
     const [dirtyInfo, setDirtyInfo] = useState(create)

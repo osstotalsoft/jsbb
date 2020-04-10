@@ -9,6 +9,8 @@
   - [`pure-validations-react`](./packages/pure-validations-react#readme)
   - [`rules-algebra`](./packages/rules-algebra#readme)
   - [`rules-algebra-react`](./packages/rules-algebra-react#readme)
+  - [`change-tracking`](./packages/change-tracking#readme)
+  - [`change-tracking-react`](./packages/change-tracking-react#readme)
 
 ## Bootstrap
 ```javascript

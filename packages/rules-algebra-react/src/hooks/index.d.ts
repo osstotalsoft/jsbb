@@ -1,22 +1,6 @@
 import { Rule, Logger } from "@totalsoft/rules-algebra";
-import { DirtyInfo } from "../dirtyInfo";
-import { Proxy, RulesProfunctorProxy } from "../rulesProfunctorProxy";
-
-/**
- * React hook for field dirty info tracking.
- * Returns a stateful dirty info object, a function that sets the property path as dirty and a function that resets the dirty info state.
- * @see https://github.com/osstotalsoft/jsbb/tree/master/packages/rules-algebra-react#useDirtyInfo-hook
- */
-export function useDirtyInfo(): [
-  // DirtyInfo
-  DirtyInfo,
-
-  // Set dirty info for the property path
-  (propertyPath: string) => void,
-
-  // Reset dirty info
-  () => void
-];
+import { DirtyInfo } from "@totalsoft/change-tracking";
+import { RulesLensProxy } from "../rulesLensProxy";
 
 /**
  * React hook that applies the business rules and keeps track of user modified values (dirty field info).
@@ -45,17 +29,17 @@ export function useRules(
 /**
  * React hook that applies the business rules and keeps track of user modified values (dirty field info).
  * Receives the rules, the initial model. Optional arguments are the settings and dependencies
- * Returns a stateful profunctor with the rule application result, a dirty info object and a function that resets the rule engine state.
- * @see https://github.com/osstotalsoft/jsbb/tree/master/packages/rules-algebra-react#useRulesprofunctor-hook
+ * Returns a stateful profunctor lens with the rule application result, a dirty info object and a function that resets the rule engine state.
+ * @see https://github.com/osstotalsoft/jsbb/tree/master/packages/rules-algebra-react#useRulesLens-hook
  */
-export function useRulesProfunctor(
+export function useRulesLens(
   rules: Rule<any>,
   initialModel: any,
   options?: { isLogEnabled: boolean; logger: Logger; },
   deps?: any[]
 ): [
-  // Validation result
-  RulesProfunctorProxy,
+  // Model lens
+  RulesLensProxy,
 
   DirtyInfo,
 

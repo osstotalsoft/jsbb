@@ -26,6 +26,7 @@
   },
   "dependencies": {
     "@totalsoft/zion": "^3.1.1",
+    "@totalsoft/change-tracking": "^3.1.1",
     "daggy": "^1.4.0",
     "fantasy-land": "^4.0.1",
     "uniqid": "^5.2.0"

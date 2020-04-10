@@ -2,7 +2,7 @@ import Reader from "@totalsoft/zion/data/reader";
 import { curry } from "ramda";
 import { contramap, $do } from "@totalsoft/zion";
 import { checkRules } from "../_utils";
-import { findMatchingItem } from "../arrayUtils";
+import { findMatchingItem } from "@totalsoft/change-tracking";
 
 export const field = curry(function field(key, rule) {
     checkRules(rule);

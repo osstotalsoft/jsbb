@@ -1,15 +1,13 @@
 import { useProfunctorState } from '@staltz/use-profunctor-state'
 import { renderHook, act } from "@testing-library/react-hooks";
-import { RulesEngineProxy, eject, getValue, setValue } from "..";
+import { LensProxy, eject, getValue, setValue, overValue } from "..";
 
-jest.unmock("@totalsoft/pure-validations");
-
-describe("validation proxy", () => {
+describe("lens proxy", () => {
     it("eject returns inner profunctopr", () => {
         // Arrange
         const initialModel = { a: { b: "" } };
         const profunctor = renderHook(() => useProfunctorState(initialModel));
-        const proxy = RulesEngineProxy(profunctor)
+        const proxy = LensProxy(profunctor)
 
         // Act
         const innerProfunctor = eject(proxy);
@@ -22,7 +20,7 @@ describe("validation proxy", () => {
         // Arrange
         const initialModel = { a: { b: "" } };
         const profunctor = renderHook(() => useProfunctorState(initialModel));
-        const proxy = RulesEngineProxy(profunctor)
+        const proxy = LensProxy(profunctor)
 
         // Act
         const value = getValue(proxy);
@@ -31,20 +29,36 @@ describe("validation proxy", () => {
         expect(value).toBe(profunctor.state)
     });
 
-    it("onChange sets the profunctor state", () => {
+    it("setValue sets the profunctor state", () => {
         // Arrange
         const initialModel = { a: { b: "" } };
         const otherModel = {};
         const {result} = renderHook(() => useProfunctorState(initialModel));
-        const profunctorProxy = RulesEngineProxy(result.current)
+        const lensProxy = LensProxy(result.current)
 
         // Act
         act(() => {
-            setValue(profunctorProxy)(otherModel);
+            setValue(lensProxy)(otherModel);
         });
 
         // Assert
         expect(otherModel).toBe(result.current.state)
+    });
+
+    it("overValue modifies the profunctor state", () => {
+        // Arrange
+        const initialModel = { a: { b: "" } };
+        const {result} = renderHook(() => useProfunctorState(initialModel));
+        const lensProxy = LensProxy(result.current)
+        const changeFn = x => x + "OK"
+
+        // Act
+        act(() => {
+            overValue(lensProxy.a.b)(changeFn);
+        });
+
+        // Assert
+        expect(result.current.state.a.b).toBe("OK")
     });
 
     it("inner field profunctor state", () => {
@@ -52,7 +66,7 @@ describe("validation proxy", () => {
         const initialModel = { a: { b: "" } };
         const callback = () => {
             const prof = useProfunctorState(initialModel)
-            const profProxy = RulesEngineProxy(prof)
+            const profProxy = LensProxy(prof)
             const fieldProfProxy = profProxy.a.b;
             return fieldProfProxy;
         }
