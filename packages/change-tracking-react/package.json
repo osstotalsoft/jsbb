@@ -1,6 +1,6 @@
 {
   "name": "@totalsoft/change-tracking-react",
-  "version": "3.1.1",
+  "version": "4.0.0",
   "description": "React extensions for the \"change-tracking\" library",
   "main": "index.js",
   "scripts": {
@@ -30,7 +30,7 @@
   },
   "dependencies": {
     "@staltz/use-profunctor-state": "^1.2.0",
-    "@totalsoft/change-tracking": "^3.1.1"
+    "@totalsoft/change-tracking": "^4.0.0"
   },
   "peerDependencies": {
     "react": ">= 16.9.0"

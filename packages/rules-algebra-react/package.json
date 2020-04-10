@@ -1,6 +1,6 @@
 {
   "name": "@totalsoft/rules-algebra-react",
-  "version": "3.1.1",
+  "version": "4.0.0",
   "description": "React extensions for the \"rules-algebra\" business rules api",
   "main": "index.js",
   "scripts": {
@@ -29,8 +29,8 @@
     "react-test-renderer": "^16.9.0"
   },
   "dependencies": {
-    "@totalsoft/rules-algebra": "^3.1.1",
-    "@totalsoft/change-tracking-react": "^3.1.1"
+    "@totalsoft/change-tracking-react": "^4.0.0",
+    "@totalsoft/rules-algebra": "^4.0.0"
   },
   "peerDependencies": {
     "react": ">= 16.9.0"
