@@ -1,6 +1,6 @@
 {
   "name": "@totalsoft/rules-algebra-react",
-  "version": "4.0.0",
+  "version": "4.0.1",
   "description": "React extensions for the \"rules-algebra\" business rules api",
   "main": "index.js",
   "scripts": {
