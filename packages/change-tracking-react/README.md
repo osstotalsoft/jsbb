@@ -8,7 +8,7 @@ npm install '@totalsoft/change-tracking-react'
 ```
 
 ## info
-The library provides two hooks:
+The library provides three hooks:
 - **useChangeTrackingState** - provides a stateful model with change tracking
 - **useChangeTrackingLens** - provides a stateful model with change tracking using a profunctor lens
 - **useDirtyInfo** - keeps track of modified properties of an external model
