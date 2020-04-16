@@ -74,7 +74,7 @@ React hook that applies the business rules and keeps track of user modified valu
   3. A function that resets the rule engine state. It receives an optional new model.
 
 ```jsx
-import { useRulesLens, setValue, getValue } from "@totalsoft/rules-algebra-react";
+import { useRulesLens, set, get } from "@totalsoft/rules-algebra-react";
 
 const rules = shape({
   fullName: computed(doc => doc.firstName + doc.lastName)
@@ -84,14 +84,14 @@ const SomeComponent = props => {
   const [person, dirtyInfo, reset] = useRulesLens(rules, {});
   return (
     <>
-      Full name: {getValue(person.fullName)}
+      Full name: {person.fullName |> get}
       <TextField
-            value={getValue(person.firstName)}
-            onChange={onTextBoxChange(setValue(person.firstName))}
+            value={person.firstName |> get}
+            onChange={person.firstName |> set |> onTextBoxChange}
       />
       <TextField
-            value={getValue(person.lastName)}
-            onChange={onTextBoxChange(setValue(person.lastName))}
+            value={person.lastName |> get}
+            onChange={person.lastName |> set |> onTextBoxChange}
       />
       <DetailsComp personDetails={person.details} />
     </>

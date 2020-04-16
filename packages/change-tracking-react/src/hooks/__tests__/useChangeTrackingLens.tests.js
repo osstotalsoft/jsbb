@@ -1,5 +1,5 @@
 import { renderHook, act } from "@testing-library/react-hooks";
-import { setValue, getValue } from "../../lensProxy";
+import { set, get } from "../../lensProxy";
 import { useChangeTrackingLens } from "..";
 import { detectChanges, __clearMocks as clearChangeTrackingMocks } from "@totalsoft/change-tracking";
 
@@ -20,12 +20,12 @@ describe("useChangeTrackingLens hook", () => {
         // Act
         const { result } = renderHook(callback);
         act(() => {
-            setValue(result.current.fieldProf)("OK");
+            set(result.current.fieldProf)("OK");
         });
 
         // Assert
-        const root = getValue(result.current.rootProf);
-        const field = getValue(result.current.fieldProf);
+        const root = get(result.current.rootProf);
+        const field = get(result.current.fieldProf);
         expect(field).toBe("OK");
         expect(root.a.b).toBe("OK");
         expect(root).not.toBe(initialModel);
@@ -37,7 +37,7 @@ describe("useChangeTrackingLens hook", () => {
         const callback = () => {
             const [rootProf] = useChangeTrackingLens( initialModel)
 
-            let array = getValue(rootProf.a)
+            let array = get(rootProf.a)
             let fieldProfs = array.map((item, idx) => rootProf.a[idx]);
 
             return { rootProf, fieldProfs };
@@ -46,12 +46,12 @@ describe("useChangeTrackingLens hook", () => {
         // Act
         const { result } = renderHook(callback);
         act(() => {
-            setValue(result.current.fieldProfs[0])("OK");
+            set(result.current.fieldProfs[0])("OK");
         });
 
         // Assert
-        const root = getValue(result.current.rootProf);
-        const field = getValue(result.current.fieldProfs[0]);
+        const root = get(result.current.rootProf);
+        const field = get(result.current.fieldProfs[0]);
         expect(field).toBe("OK");
         expect(root.a[0]).toBe("OK");
         expect(root).not.toBe(initialModel);
@@ -69,7 +69,7 @@ describe("useChangeTrackingLens hook", () => {
         // Act
         const { result } = renderHook(callback);
         act(() => {
-            setValue(result.current.fieldProf)("OK");
+            set(result.current.fieldProf)("OK");
         });
 
         // Assert
@@ -92,11 +92,11 @@ describe("useChangeTrackingLens hook", () => {
         // Act
         const { result } = renderHook(callback);
         act(() => {
-            setValue(result.current.fieldProf)("OK");
+            set(result.current.fieldProf)("OK");
         });
         const model1 = result.current.rootProf;
         act(() => {
-            setValue(result.current.fieldProf)("OK");
+            set(result.current.fieldProf)("OK");
         });
         const model2 = result.current.rootProf;
         
@@ -115,7 +115,7 @@ describe("useChangeTrackingLens hook", () => {
 
         // Assert
         const [model] = result.current;
-        expect(getValue(model)).toBe(initialModel);
+        expect(get(model)).toBe(initialModel);
 
     });
 
@@ -134,7 +134,7 @@ describe("useChangeTrackingLens hook", () => {
         const { result } = renderHook(callback);
         act(() => {
             const { fieldProf } = result.current;
-            setValue(fieldProf, "OK")
+            set(fieldProf, "OK")
         });
         const { rootProf: rootProf1 } = result.current;
         act(() => {
@@ -144,8 +144,8 @@ describe("useChangeTrackingLens hook", () => {
 
         // Assert
         const { rootProf: rootProf2 } = result.current;
-        expect(getValue(rootProf1)).not.toBe(initialModel);
-        expect(getValue(rootProf2)).toBe(initialModel);
+        expect(get(rootProf1)).not.toBe(initialModel);
+        expect(get(rootProf2)).toBe(initialModel);
     });
 
     it("should minimize the number of renders", () => {
@@ -162,7 +162,7 @@ describe("useChangeTrackingLens hook", () => {
         const { result, rerender } = renderHook(renderCallack);
         act(() => {
             const { fieldProf } = result.current;
-            setValue(fieldProf, "OK")
+            set(fieldProf, "OK")
         });
         rerender();
 

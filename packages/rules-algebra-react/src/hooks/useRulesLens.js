@@ -1,5 +1,5 @@
 import { useProfunctorState } from '@staltz/use-profunctor-state'
-import { RulesLensProxy } from '../rulesLensProxy';
+import { LensProxy } from '@totalsoft/change-tracking-react/lensProxy';
 import { useMemo, useCallback, useState } from 'react';
 import { applyRule, logTo } from '@totalsoft/rules-algebra';
 import { create, detectChanges, ensureArrayUIDsDeep} from '@totalsoft/change-tracking'
@@ -32,10 +32,10 @@ export function useRulesLens(rules, initialModel, { isLogEnabled = true, logger 
         [profunctor.state, rulesEngine],
     )
 
-    const profunctoProxy = useMemo(() => RulesLensProxy(rulesEngineProfunctor), [rulesEngineProfunctor]);
+    const lens = useMemo(() => LensProxy(rulesEngineProfunctor), [rulesEngineProfunctor]);
 
     return [
-        profunctoProxy,
+        lens,
         dirtyInfo,
 
         // Reset

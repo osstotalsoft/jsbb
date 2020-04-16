@@ -1,2 +1,2 @@
 export * from './hooks'
-export * from './rulesLensProxy'
+export * from "@totalsoft/change-tracking-react/lensProxy";

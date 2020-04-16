@@ -60,7 +60,7 @@ It returns a stateful model, stateful dirty info object, and a function that res
 Usage example:
 
 ```jsx
-import { useChangeTrackingLens, getValue, setValue } from "@totalsoft/change-tracking-react";
+import { useChangeTrackingLens, get, set } from "@totalsoft/change-tracking-react";
 import { isPropertyDirty } from "@totalsoft/change-tracking"
 
 const onTextBoxChange = onPropertyChange => event => onPropertyChange(event.target.value)
@@ -72,13 +72,13 @@ const SomeComponent = props => {
     <>
       FirstName dirty: {isPropertyDirty("firstName", dirtyInfo)}
       <TextField
-            value={getValue(personLens.firstName)}
-            onChange={onTextBoxChange(setValue(personLens.firstName))}
+            value={personLens.firstName |> get}
+            onChange={personLens.firstName |> set |> onTextBoxChange}
       />
       LastName dirty: {isPropertyDirty("lastName", dirtyInfo)}
       <TextField
-            value={getValue(personLens.lastName)}
-            onChange={onTextBoxChange(setValue(personLens.lastName))}
+            value={personLens.lastName |> get}
+            onChange={personLens.lastName |> set |> onTextBoxChange}
       />
       <ChildComponent detailsLens={personLens.details} />
     </>

@@ -8,6 +8,7 @@ module.exports = api => {
     "@totalsoft/rules-algebra": "@totalsoft/rules-algebra/src",
     "@totalsoft/change-tracking": "@totalsoft/change-tracking/src",
     "@totalsoft/change-tracking-react": "@totalsoft/change-tracking-react/src",
+    "@totalsoft/change-tracking-react/lensProxy": "@totalsoft/change-tracking-react/src/lensProxy",
   };
 
 

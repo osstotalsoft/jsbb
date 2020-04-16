@@ -1,6 +1,6 @@
 import { renderHook, act } from "@testing-library/react-hooks";
 import { Rule, applyRule, logTo, __clearMocks as clearRulesMocks } from "@totalsoft/rules-algebra";
-import { setValue, getValue } from "../../rulesLensProxy";
+import { set, get } from "@totalsoft/change-tracking-react/lensProxy";
 import { useRulesLens } from "..";
 import { detectChanges, __clearMocks as clearChangeTrackingMocks } from "@totalsoft/change-tracking";
 
@@ -23,12 +23,12 @@ describe("useRulesLens hook", () => {
         // Act
         const { result } = renderHook(callback);
         act(() => {
-            setValue(result.current.fieldProf)("OK");
+            set(result.current.fieldProf)("OK");
         });
 
         // Assert
-        const root = getValue(result.current.rootProf);
-        const field = getValue(result.current.fieldProf);
+        const root = get(result.current.rootProf);
+        const field = get(result.current.fieldProf);
         expect(applyRule.mock.calls.length).toBe(1);
         expect(field).toBe("OK");
         expect(root.a.b).toBe("OK");
@@ -43,7 +43,7 @@ describe("useRulesLens hook", () => {
         const callback = () => {
             const [rootProf] = useRulesLens(rule, initialModel)
 
-            let array = getValue(rootProf.a)
+            let array = get(rootProf.a)
             let fieldProfs = array.map((item, idx) => rootProf.a[idx]);
 
             return { rootProf, fieldProfs };
@@ -52,12 +52,12 @@ describe("useRulesLens hook", () => {
         // Act
         const { result } = renderHook(callback);
         act(() => {
-            setValue(result.current.fieldProfs[0])("OK");
+            set(result.current.fieldProfs[0])("OK");
         });
 
         // Assert
-        const root = getValue(result.current.rootProf);
-        const field = getValue(result.current.fieldProfs[0]);
+        const root = get(result.current.rootProf);
+        const field = get(result.current.fieldProfs[0]);
         expect(applyRule.mock.calls.length).toBe(1);
         expect(field).toBe("OK");
         expect(root.a[0]).toBe("OK");
@@ -78,7 +78,7 @@ describe("useRulesLens hook", () => {
         // Act
         const { result } = renderHook(callback);
         act(() => {
-            setValue(result.current.fieldProf)("OK");
+            set(result.current.fieldProf)("OK");
         });
 
         // Assert
@@ -102,17 +102,17 @@ describe("useRulesLens hook", () => {
         // Act
         const { result } = renderHook(callback);
         act(() => {
-            setValue(result.current.fieldProf)("OK");
+            set(result.current.fieldProf)("OK");
         });
         const model1 = result.current.rootProf;
         act(() => {
-            setValue(result.current.fieldProf)("OK");
+            set(result.current.fieldProf)("OK");
         });
         const model2 = result.current.rootProf;
         // // Assert
         expect(applyRule.mock.calls.length).toBe(1);
         expect(model1).toBe(model2);
-        expect(getValue(model1)._ruleValue).toBe(1);
+        expect(get(model1)._ruleValue).toBe(1);
     });
 
 
@@ -127,7 +127,7 @@ describe("useRulesLens hook", () => {
 
         // Assert
         const [model] = result.current;
-        expect(getValue(model)).toBe(initialModel);
+        expect(get(model)).toBe(initialModel);
 
     });
 
@@ -147,7 +147,7 @@ describe("useRulesLens hook", () => {
         const { result } = renderHook(callback);
         act(() => {
             const { fieldProf } = result.current;
-            setValue(fieldProf, "OK")
+            set(fieldProf, "OK")
         });
         const { rootProf: rootProf1 } = result.current;
         act(() => {
@@ -157,8 +157,8 @@ describe("useRulesLens hook", () => {
 
         // Assert
         const { rootProf: rootProf2 } = result.current;
-        expect(getValue(rootProf1)).not.toBe(initialModel);
-        expect(getValue(rootProf2)).toBe(initialModel);
+        expect(get(rootProf1)).not.toBe(initialModel);
+        expect(get(rootProf2)).toBe(initialModel);
     });
 
 
@@ -178,7 +178,7 @@ describe("useRulesLens hook", () => {
         const { result, rerender } = renderHook(renderCallack);
         act(() => {
             const { fieldProf } = result.current;
-            setValue(fieldProf, "OK")
+            set(fieldProf, "OK")
         });
         rerender();
 
@@ -199,7 +199,7 @@ describe("useRulesLens hook", () => {
         const { result } = renderHook(renderCallack);
         act(() => {
             const { fieldProf } = result.current;
-            setValue(fieldProf)("OK")
+            set(fieldProf)("OK")
         });
 
         // Assert
@@ -233,20 +233,20 @@ describe("useRulesLens hook", () => {
         const { result, rerender } = renderHook(() => useRulesLens(ruleValue, initialModel, { logger }));
         const [prof1] = result.current;
         act(() => {
-            setValue(prof1, { value: "a" })
+            set(prof1, { value: "a" })
         });
         const [prof2] = result.current;
         ruleValue = Rule.of(2);
         rerender()
         const [prof3] = result.current;
         act(() => {
-            setValue(prof3, { value: "b" })
+            set(prof3, { value: "b" })
         });
         const [prof4] = result.current;
 
         // Assert
-        const firstChange = getValue(prof2)
-        const secondChange = getValue(prof4)
+        const firstChange = get(prof2)
+        const secondChange = get(prof4)
         expect(prof2).not.toBe(prof3)
         expect(applyRule.mock.calls.length).toBe(2);
         expect(firstChange).not.toBe(secondChange);

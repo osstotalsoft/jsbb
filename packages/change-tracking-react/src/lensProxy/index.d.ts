@@ -1,19 +1,33 @@
 import { ProfunctorState } from "@staltz/use-profunctor-state";
 
-export function eject(rulesProfunctorProxy: LensProxy): object;
+export function eject<TValue>(lens: LensProxy<TValue>): ProfunctorState<TValue>;
 
-export function setValue<TValue>(LensProxy: LensProxy, newValue: TValue): ChangeHandler<TValue>;
-export function setValue<TValue>(LensProxy: LensProxy): (newValue: TValue) => ChangeHandler<TValue>;
+export function set<TValue, TResult>(lens: LensProxy<TValue>, newValue: TResult): void;
+export function set<TValue, TResult>(lens: LensProxy<TValue>): (newValue: TResult) => void;
 
-export function getValue(LensProxy: LensProxy): any;
+export function get<TValue>(lens: LensProxy<TValue>): TValue;
 
-export function overValue<TValue>(LensProxy: LensProxy, func: (value: TValue) => TValue): void;
-export function overValue<TValue>(LensProxy: LensProxy): (func: (value: TValue) => TValue) => void;
+export function over<TValue, TResult>(lens: LensProxy<TValue>, func: (value: TValue) => TResult): void;
+export function over<TValue, TResult>(lens: LensProxy<TValue>): (func: (value: TValue) => TResult) => void;
+
+export function promap<TValue, TResult>(
+  get: (value: TValue) => TResult,
+  set: (newValue: TResult, oldState: TValue) => void,
+  lens: LensProxy<TValue>
+): LensProxy<TResult>;
+
+export function lmap<TValue, TResult>(get: (value: TValue) => TResult, lens: LensProxy<TValue>): LensProxy<TResult>;
+
+export function rmap<TValue, TResult>(set: (newValue: TResult, oldState: TValue) => void, lens: LensProxy<TValue>): LensProxy<TResult>;
+
+export function sequence<TValue>(lens: LensProxy<TValue[]>): LensProxy<TValue>[];
+
+export function LensProxy<TValue>(profunctor: ProfunctorState<TValue>): LensProxy<TValue>;
 
 export type Proxy<T> = {
   [k in keyof T]: T[k];
 };
 
-export type ChangeHandler<TValue> = (newValue: TValue) => void;
-export type LensProxy = Proxy<ProfunctorState<any>>;
-export function LensProxy(ruleResult: any): LensProxy;
+
+export type LensProxy<TValue> = Proxy<ProfunctorState<TValue>>;
+

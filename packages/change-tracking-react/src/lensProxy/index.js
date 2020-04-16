@@ -1,44 +1,45 @@
 import { ProfunctorState } from "@staltz/use-profunctor-state";
 import { curry } from "ramda";
 
-const setValueSymbol = Symbol("setValue")
-const getValueSymbol = Symbol("getValue")
 const targetSymbol = Symbol("target")
-const cachedPropPrefix = "__@@";
+const cacheSymbol = Symbol("cache")
 const ignoredPrefixes = ["@@", "$$"];
 
 const handler = {
-    get: function (target, name) {
-        switch (name) {
-            case "state":
-            case "setState":
-            case "promap": {
-                return target[name]
-            }
+    ownKeys(_target) {
+        return [];
+    },
+    get: function (target, prop) {
+        switch (prop) {
             case targetSymbol: {
-                return target
-            }
-            case getValueSymbol: {
-                return target.state;
-            }
-            case setValueSymbol: {
-                return target.setState;
+                return target;
             }
             default: {
-                if (isIgnoredProp(name)) {
-                    return target[name];
+                if (isIgnoredProp(prop)) {
+                    return target[prop];
                 }
 
-                const cachedPropName = `${cachedPropPrefix}${name}`
-                if (cachedPropName in target) {
-                    return target[cachedPropName]
+                if (!target[cacheSymbol]) {
+                    target[cacheSymbol] = {};
                 }
+                if (prop in target[cacheSymbol]) {
+                    return target[cacheSymbol][prop];
+                }
+                const propLens = getFieldScope(target, prop);
+                const proxy = LensProxy(propLens);
 
-                const proxy = LensProxy(getFieldScope(target, name))
-                target[cachedPropName] = proxy; // cache value
-                return proxy
+                target[cacheSymbol][prop] = proxy; // cache value
+                return proxy;
             }
         }
+    },
+    set(target, prop, value) {
+        if (isIgnoredProp(prop)) {
+            return false;
+        }
+        const propTarget = getFieldScope(target, prop);
+        propTarget.setState(value);
+        return true;
     }
 }
 
@@ -54,7 +55,15 @@ function isIgnoredProp(name) {
 }
 
 function _immutableAssign(obj, prop, value) {
-    if (obj[prop] === value) {
+    if (obj == null || obj == undefined) {
+        if (Number.isInteger(Number(prop))) {
+            obj = [];
+        }
+        else {
+            obj = {};
+        }
+    }
+    else if (obj[prop] === value) {
         return obj;
     }
 
@@ -98,23 +107,50 @@ export function eject(proxy) {
 }
 
 // Manual curry workaround
-export function setValue(proxy, newValue = undefined) {
+export function set(proxy, newValue = undefined) {
     if (newValue !== undefined) {
-        return proxy[setValueSymbol](newValue)
+        return eject(proxy).setState(newValue)
     } else {
-        return proxy[setValueSymbol]
+        return eject(proxy).setState
     }
 }
 
-export function getValue(proxy) {
-    return proxy[getValueSymbol]
+export function get(proxy) {
+    return eject(proxy).state
 }
 
-export const overValue = curry(function overValue(proxy, func) {
-    let value = getValue(proxy);
-    return setValue(proxy, func(value))
+export const over = curry(function over(proxy, func) {
+    let value = get(proxy);
+    return set(proxy, func(value))
 })
 
-export function LensProxy(ruleEngineProfunctor) {
-    return new Proxy(ruleEngineProfunctor, handler)
+export const promap = curry(function promap(get, set, proxy) {
+    const lens = eject(proxy);
+    const newLens = promapWithoutMemo(lens)(get, set);
+    return LensProxy(newLens)
+})
+
+export const lmap = curry(function lmap(get, proxy) {
+    const lens = eject(proxy);
+    const newLens = promapWithoutMemo(lens)(get, x => x);
+    return LensProxy(newLens)
+})
+
+export const rmap = curry(function rmap(set, proxy) {
+    const lens = eject(proxy);
+    const newLens = promapWithoutMemo(lens)(x => x, set);
+    return LensProxy(newLens)
+})
+
+export function sequence(proxy) {
+    const xs = (proxy |> get) || []
+    if (!Array.isArray(xs)) {
+        throw new Error(`Cannot sequence lens with value ${xs.toString()}`);
+    }
+    const result = xs.map((_, index) => proxy[index])
+    return result
+}
+
+export function LensProxy(profunctor) {
+    return new Proxy(profunctor, handler)
 }
