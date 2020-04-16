@@ -126,21 +126,6 @@ describe("lens proxy", () => {
         // Assert
     });
 
-    it("can be set like a pojo", () => {
-        // Arrange
-        const initialModel = { a: { b: 0 } };
-        const { result } = renderHook(() => useProfunctorState(initialModel));
-        const lensProxy = LensProxy(result.current);
-
-        // Act
-        act(() => {
-            lensProxy.a.b = 1;
-        });
-
-        // Assert
-        expect(result.current.state.a.b).toBe(1);
-    });
-
     it("promap proxy", () => {
         // Arrange
         const initialModel = { a: { b: "" } }

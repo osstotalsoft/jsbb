@@ -32,14 +32,6 @@ const handler = {
                 return proxy;
             }
         }
-    },
-    set(target, prop, value) {
-        if (isIgnoredProp(prop)) {
-            return false;
-        }
-        const propTarget = getFieldScope(target, prop);
-        propTarget.setState(value);
-        return true;
     }
 }
 
