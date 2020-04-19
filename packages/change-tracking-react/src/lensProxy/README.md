@@ -11,7 +11,7 @@ const SomeComponent = props => {
   const [model, setModel] = useState(initialModel);
 }
 ```
-Our profunctor (lens) is a wrapper around the result of useState hook: [model:TModel, setModel: TModel -> unit] which obeys the profunctor algebraic structure.
+Our profunctor (lens-ish) is a wrapper around the result of useState hook: [model:TModel, setModel: TModel -> unit] which obeys the profunctor algebraic structure.
 
 The main advantage of representing the state as a profunctor is that you can easily move the focus on fields and items by promap-ing.
 
@@ -30,24 +30,31 @@ A value that implements the Profunctor specification must also implement the Fun
 fantasy-land/promap :: Profunctor p => p b c ~> (a -> b, c -> d) -> p a d
 ```
 
-### React state profunctor (lens)
+### React state profunctor (lens-ish)
 ```js
 const SomeComponent = props => {
   const [modelLens] = useChangeTrackingState({a:1, b:2})
 }
 ```
 
-#### get, set, over
+#### get
 get is used to read the value from lens.
-set is used to set the value of a lens.
 ```js
 const SomeComponent = props => {
   const [lens] = useChangeTrackingState(21)
   const value = lens |> get // 21
-  (lens |> set)(value + 1) // sets the model to 22
 }
 ```
 
+#### set
+set is used to set the value of a lens.
+```js
+const SomeComponent = props => {
+  const [lens] = useChangeTrackingState(21)
+  (lens |> set)(value + 1) // sets the model to 22
+}
+```
+#### over
 over - sets the state of a lens using some updater fn.
 ```js
 const SomeComponent = props => {
@@ -56,7 +63,7 @@ const SomeComponent = props => {
 }
 ```
 
-Usage with controlled components:
+#### usage with controlled components
 ```jsx
 const [personlens] = useChangeTrackingState({name:'John', age:23})
 <...>
@@ -106,6 +113,27 @@ const SomeComponent = props => {
   const firstItem = lenses[0] |> get //1
 }
 ```
+
+#### sintax sugar
+
+By using es6 proxy we were able to provide field and array indexer access just like with pojos.
+```js
+const SomeComponent = props => {
+  const [lens] = useChangeTrackingState({name: 'John'})
+  const nameLens = lens.name
+  const name = nameLens |> get // John
+}
+```
+
+```js
+const SomeComponent = props => {
+  const [lens] = useChangeTrackingState([1,2,3])
+  const firstItemLens = lens[0]
+  const firstItem = firstItemLens |> get // 1
+}
+```
+
+
 
 
 

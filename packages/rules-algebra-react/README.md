@@ -98,3 +98,4 @@ const SomeComponent = props => {
   );
 };
 ```
+[Read more about lens operations](../change-tracking-react/src/lensProxy/README.md)

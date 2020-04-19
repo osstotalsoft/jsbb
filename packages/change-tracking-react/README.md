@@ -86,6 +86,8 @@ const SomeComponent = props => {
 };
 ```
 
+[Read more about lens operations](src/lensProxy/README.md)
+
 ## useDirtyInfo hook
 
 A react hook for field change tracking. 
