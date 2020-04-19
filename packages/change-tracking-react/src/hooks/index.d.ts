@@ -46,7 +46,7 @@ export function useChangeTrackingLens(
   initialModel: any,
 ): [
   // Model lens
-  LensProxy,
+  LensProxy<any>,
 
   // DirtyInfo object
   DirtyInfo,
