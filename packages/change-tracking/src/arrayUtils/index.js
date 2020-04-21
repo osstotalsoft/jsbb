@@ -41,7 +41,7 @@ export function toUniqueIdMap(array) {
     }
 
     return array |> reduceIndexed((acc, value, index) => {
-        acc[value[uniqueIdSymbol] || index] = { value, index }
+        acc[(value && value[uniqueIdSymbol]) || index] = { value, index }
         return acc;
     }, {})
 }
