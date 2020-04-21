@@ -1,17 +1,21 @@
 import { ProfunctorState } from "@staltz/use-profunctor-state";
 import { curry } from "ramda";
 
-const targetSymbol = Symbol("target")
 const cacheSymbol = Symbol("cache")
-const ignoredPrefixes = ["@@", "$$"];
+const ignoredPrefixes = ["@@", "$$"]
 
 const handler = {
     ownKeys(_target) {
-        return [];
+        return ["__target"];
+    },
+    getOwnPropertyDescriptor(target, prop) {
+        if (prop === "__target") {
+            return { configurable: true, enumerable: true };
+        }
     },
     get: function (target, prop) {
         switch (prop) {
-            case targetSymbol: {
+            case "__target": {
                 return target;
             }
             default: {
@@ -95,7 +99,7 @@ function promapWithoutMemo(profunctor) {
 }
 
 export function eject(proxy) {
-    return proxy[targetSymbol]
+    return proxy["__target"]
 }
 
 // Manual curry workaround
