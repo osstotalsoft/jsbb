@@ -4,7 +4,7 @@ React extensions for rules-algebra.
 
 ## installation
 ```javascript
-npm install '@totalsoft/rules-algebra-react'
+npm install @totalsoft/rules-algebra-react
 ```
 
 ## info

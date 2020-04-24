@@ -23,7 +23,7 @@ Throughout the process of composition, you start with some simple primitive vali
 
 ## Installation
 ```javascript
-npm install '@totalsoft/pure-validations'
+npm install @totalsoft/pure-validations
 ```
 
 ## Usage

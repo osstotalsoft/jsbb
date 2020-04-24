@@ -51,26 +51,17 @@ set is used to set the value of a lens.
 ```js
 const SomeComponent = props => {
   const [lens] = useChangeTrackingState(21)
-  (lens |> set)(value + 1) // sets the model to 22
+  (lens |> set)(22) // sets the model to 22
 }
 ```
+
 #### over
 over - sets the state of a lens using some updater fn.
 ```js
 const SomeComponent = props => {
   const [lens] = useChangeTrackingState('John')
-  over(lens)(x => x + ' Smith') // sets the model to {name:'John Smith', age:23}
+  over(lens)(x => x + ' Smith') // sets the model to 'John Smith'
 }
-```
-
-#### usage with controlled components
-```jsx
-const [personlens] = useChangeTrackingState({name:'John', age:23})
-<...>
-<TextField
-    value={personLens.name |> get}
-    onChange={personLens.name |> set |> onTextBoxChange}
-/>
 ```
 
 #### promap
@@ -78,7 +69,7 @@ Maps both the getter and the setter of a lens.
 ```js
 const SomeComponent = props => {
   const [lens] = useChangeTrackingState({a:1, b:2})
-  const aLens = lens.promap(R.prop('a'), R.assoc('a'))
+  const aLens = lens |> promap(R.prop('a'), R.assoc('a'))
   console.log(aLens |> get) //1
   (aLens |> set)(0) // sets the model to {a:0, b:2}
 }
@@ -89,7 +80,7 @@ Maps only the getter of a lens.
 ```js
 const SomeComponent = props => {
   const [lens] = useChangeTrackingState(null)
-  const lensOrDefault = modelLens.lmap(x=> x || "default")
+  const lensOrDefault = lens |> lmap(x=> x || "default")
   const value = lensOrDefault |> get //"default"
 }
 ```
@@ -99,7 +90,7 @@ Maps only the setter of a lens.
 ```js
 const SomeComponent = props => {
   const [lens] = useChangeTrackingState(1)
-  const lensOrDefault = modelLens.rmap(x=> x || "default")
+  const lensOrDefault = lens |> rmap(x=> x || "default")
   set(lensOrDefault)(null) //sets the model to "default"
 }
 ```
@@ -109,7 +100,7 @@ Sequence transforms a lens of array into an array of lenses.
 ```js
 const SomeComponent = props => {
   const [lens] = useChangeTrackingState([1,2,3])
-  const lenses = modelLens.sequence
+  const lenses = lens |> sequence
   const firstItem = lenses[0] |> get //1
 }
 ```
@@ -131,6 +122,16 @@ const SomeComponent = props => {
   const firstItemLens = lens[0]
   const firstItem = firstItemLens |> get // 1
 }
+```
+
+#### example usage with controlled components
+```jsx
+const [personlens] = useChangeTrackingState({name:'John', age:23})
+<...>
+<TextField
+    value={personLens.name |> get}
+    onChange={personLens.name |> set |> onTextBoxChange}
+/>
 ```
 
 

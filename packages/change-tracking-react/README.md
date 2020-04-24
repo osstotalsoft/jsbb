@@ -4,7 +4,7 @@ React extensions for the "change-tracking" library.
 
 ## installation
 ```javascript
-npm install '@totalsoft/change-tracking-react'
+npm install @totalsoft/change-tracking-react
 ```
 
 ## info
