@@ -3,7 +3,7 @@ React extensions for pure-validations.
 
 ## installation
 ```javascript
-npm install '@totalsoft/pure-validations-react'
+npm install @totalsoft/pure-validations-react
 ```
 
 ## info

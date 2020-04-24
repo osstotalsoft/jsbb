@@ -3,7 +3,7 @@ Lightweight change tracking library for models including objects and arrays.
 
 ## Installation
 ```javascript
-npm install '@totalsoft/change-tracking'
+npm install @totalsoft/change-tracking
 ```
 
 ## Usage

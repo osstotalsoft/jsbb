@@ -22,7 +22,7 @@ Throughout the process of composition, you start with some simple primitive rule
 
 ## Installation
 ```javascript
-npm install '@totalsoft/rules-algebra'
+npm install @totalsoft/rules-algebra
 ```
 
 ## Usage
