@@ -11,8 +11,6 @@ npm install @totalsoft/rules-algebra-react
 The library provides three hooks:
  - **useRules** - applies the rule engine after updating a value at the given property path
  - **useRulesLens** - applies the rule engine after updating the model through a profunctor lens 
- - **useDirtyInfo** - keeps track of modified properties of a model
-
 
 ## useRules hook
 React hook that applies the business rules and keeps track of user modified values (dirty field info).
@@ -81,19 +79,19 @@ const rules = shape({
 });
 
 const SomeComponent = props => {
-  const [person, dirtyInfo, reset] = useRulesLens(rules, {});
+  const [personLens, dirtyInfo, reset] = useRulesLens(rules, {});
   return (
     <>
-      Full name: {person.fullName |> get}
+      Full name: {personLens.fullName |> get}
       <TextField
-            value={person.firstName |> get}
-            onChange={person.firstName |> set |> onTextBoxChange}
+            value={personLens.firstName |> get}
+            onChange={personLens.firstName |> set |> onTextBoxChange}
       />
       <TextField
-            value={person.lastName |> get}
-            onChange={person.lastName |> set |> onTextBoxChange}
+            value={personLens.lastName |> get}
+            onChange={personLens.lastName |> set |> onTextBoxChange}
       />
-      <DetailsComp personDetails={person.details} />
+      <DetailsComp personDetailsLens={personLens.details} />
     </>
   );
 };
