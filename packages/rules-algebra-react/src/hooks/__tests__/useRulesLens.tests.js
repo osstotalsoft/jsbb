@@ -15,7 +15,7 @@ describe("useRulesLens hook", () => {
         const rule = Rule.of(1);
         const initialModel = { a: { b: "" } };
         const callback = () => {
-            const [rootProf] = useRulesLens(uncrule, initialModel)
+            const [rootProf] = useRulesLens(rule, initialModel)
 
             return { rootProf, fieldProf: rootProf.a.b };
         }
