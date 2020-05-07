@@ -163,4 +163,34 @@ shape({
 const v = [atLeastOne, unique("id"), required |> items] |> concatFailure |> logTo(console);
 ```
 
+### Error message translations
+The library uses [i18next](https://github.com/i18next/i18next) to translate error messages. 
+
+#### Generic messages
+The default messages for the built-in validators can be customized by providing translations for the following keys:
+
+*Obs:* Keep the placeholders in your transated messages - eg. {{min}}, {{max}} or {{selector}}
+
+| Validator  | Translation Key                   | Default message                                  |
+| ---------- | ---------------                   | ----------                                       | 
+| required   | Validations.Generic.Mandatory     | The value is mandatory                           | 
+| atLeastOne | Validations.Generic.AtLeastOne    | There should be at least one item                |
+| matches    | Validations.Generic.Regex         | The value has an invalid format                  |
+| email      | Validations.Generic.Email         | The value is not a valid email address           |
+| between    | Validations.Generic.OutOfRange    | The value must be between {{min}} and {{max}}    |
+| greaterThan| Validations.Generic.Greater       | The value must be greater than {{min}}           |
+| lessThan   | Validations.Generic.Less          | The value must be less than {{max}}              |
+| minLength  | Validations.Generic.MaxCharacters | The length must be less than {{max}}             |
+| maxLength  | Validations.Generic.MinCharacters | The length must be greater than {{min}}          |
+| maxLength  | Validations.Generic.Unique        | The value of {{selector}} must be unique         |
+
+#### Individual messages
+To specify a custom error message to your validator by using the **errorMesage** HoV.
+
+The argument of "errorMessage" can be a i18next translation key.
+
+*Usage example:*
+```javascript
+const personValidator = required |> errorMessage('Validation.PersonNotSelected');
+```
 
