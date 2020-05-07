@@ -182,7 +182,7 @@ The default messages for the built-in validators can be customized by providing 
 | lessThan   | Validations.Generic.Less          | The value must be less than {{max}}              |
 | minLength  | Validations.Generic.MaxCharacters | The length must be less than {{max}}             |
 | maxLength  | Validations.Generic.MinCharacters | The length must be greater than {{min}}          |
-| maxLength  | Validations.Generic.Unique        | The value of {{selector}} must be unique         |
+| unique     | Validations.Generic.Unique        | The value of {{selector}} must be unique         |
 
 #### Individual messages
 To specify a custom error message to your validator by using the **errorMesage** HoV.
