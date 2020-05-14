@@ -97,11 +97,22 @@ describe("dirty info operations:", () => {
         const di = detectChanges(crtModel, prevModel);
 
         // Assert
-        expect(isDirty(di)).toBe(false);
         expect(isDirty(di.b)).toBe(false);
     });
 
-    it("checks that removed property in object does not make it dirty", () => {
+    it("checks that object with new property is dirty", () => {
+        // Arrange
+        const prevModel = {a: 1}
+        const crtModel = {a: 1, b: 2}
+
+        // Act
+        const di = detectChanges(crtModel, prevModel);
+
+        // Assert
+        expect(isDirty(di)).toBe(true);
+    });
+
+    it("checks that removed property in object is not marked as dirty", () => {
         // Arrange
         const prevModel = {a: 1, b: 2}
         const crtModel = {b: 2}
@@ -110,8 +121,19 @@ describe("dirty info operations:", () => {
         const di = detectChanges(crtModel, prevModel);
 
         // Assert
-        expect(isDirty(di)).toBe(false);
         expect(isDirty(di.b)).toBe(false);
+    });
+
+    it("checks that a object with a removed property is dirty", () => {
+        // Arrange
+        const prevModel = {a: 1, b: 2}
+        const crtModel = {b: 2}
+
+        // Act
+        const di = detectChanges(crtModel, prevModel);
+
+        // Assert
+        expect(isDirty(di)).toBe(true);
     });
 
     it("detects changes on array", () => {
@@ -125,9 +147,40 @@ describe("dirty info operations:", () => {
         // Assert
         expect(isDirty(di[0])).toBe(false);
         expect(isDirty(di[1])).toBe(true);
+        expect(isDirty(di)).toBe(true);
     });
 
-    it("checks that reordered object array with UIDs are not dirty", () => {
+    it("detects changes on array with added items", () => {
+        // Arrange
+        const prevModel = [1, 2]
+        const crtModel = [1, 2, 3]
+
+        // Act
+        const di = detectChanges(crtModel, prevModel);
+
+        // Assert
+        expect(isDirty(di[0])).toBe(false);
+        expect(isDirty(di[1])).toBe(false);
+        expect(isDirty(di[2])).toBe(false);
+        expect(isDirty(di)).toBe(true);
+    });
+
+    it("detects changes on array with removed items", () => {
+        // Arrange
+        const prevModel = [1, 2, 3]
+        const crtModel = [1, 2]
+
+        // Act
+        const di = detectChanges(crtModel, prevModel);
+
+        // Assert
+        expect(isDirty(di[0])).toBe(false);
+        expect(isDirty(di[1])).toBe(false);
+        expect(isDirty(di[2])).toBe(false);
+        expect(isDirty(di)).toBe(true);
+    });
+
+    it("checks that reordered object items in array with UIDs are not dirty", () => {
         // Arrange
         const prevModel = ensureArrayUIDs([{a: 1}, {a: 2}])
         const crtModel = [prevModel[1], prevModel[0]]
@@ -152,6 +205,40 @@ describe("dirty info operations:", () => {
         expect(isDirty(di[0])).toBe(false);
         expect(isDirty(di[1])).toBe(false);
     });
+
+    it("checks that UID array with added object item is dirty", () => {
+        // Arrange
+        const prevModel = ensureArrayUIDs([{a: 1}])
+        const crtModel = ensureArrayUIDs([{a : 2 }, ...prevModel])
+
+        // Act
+        const di = detectChanges(crtModel, prevModel);
+
+        // Assert
+        expect(isDirty(di)).toBe(true);        
+    });
+
+    it("checks that UID array with deleted object item is dirty", () => {
+        // Arrange
+        const prevModel = ensureArrayUIDs([{a: 1}, {a: 2}, {a: 3}])
+        const crtModel = [prevModel[0], prevModel[2]]
+        // Act
+        const di = detectChanges(crtModel, prevModel);
+
+        // Assert
+        expect(isDirty(di)).toBe(true);        
+    });  
+    
+    it("checks that UID array with reordered object items is dirty", () => {
+        // Arrange
+        const prevModel = ensureArrayUIDs([{a: 1}, {a: 2}, {a: 3}])
+        const crtModel = [prevModel[0], prevModel[2], prevModel[1]]
+        // Act
+        const di = detectChanges(crtModel, prevModel);
+
+        // Assert
+        expect(isDirty(di)).toBe(true);        
+    }); 
 
     it("checks that deleted object item in array with UIDs does not make others dirty", () => {
         // Arrange

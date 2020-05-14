@@ -104,3 +104,6 @@ Transforms an array with object items that have uids to a map where uids are key
 
 #### findMatchingItem
 Gets the item with the same uid if it has one or the item at the same index otherwise.
+
+#### hasSameItemOrder
+Checks if the items of the provided arrays have the same order based on the uid or value.
