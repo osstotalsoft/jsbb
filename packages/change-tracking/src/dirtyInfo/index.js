@@ -1,5 +1,5 @@
 import get from 'lodash.get';
-import { toUniqueIdMap } from '../arrayUtils';
+import { toUniqueIdMap, hasSameItemOrder } from '../arrayUtils';
 import { curry } from "ramda";
 
 const isDirtySymbol = Symbol("isDirty");
@@ -60,8 +60,7 @@ export const detectChanges = curry(function detectChanges(model, prevModel, prev
                 : updateSingleProperty(prop, false, acc),
             prevDirtyInfo)
 
-
-    return Object.keys(model).length !== Object.keys(prevModel).length ? { ...newDirtyInfo } : newDirtyInfo
+    return Object.keys(model).length !== Object.keys(prevModel).length ? { ...newDirtyInfo, [isDirtySymbol]: true } : newDirtyInfo
 })
 
 export function isPropertyDirty(propertyPath, dirtyInfo) {
@@ -87,7 +86,9 @@ function detectChangesArray(model, prevModel, prevDirtyInfo) {
                 : updateSingleProperty(modelMap[prop].index, false, acc),
             prevDirtyInfo)
 
-    return Object.keys(modelMap).length !== Object.keys(prevModelMap).length ? { ...newDirtyInfo } : newDirtyInfo
+    return Object.keys(modelMap).length !== Object.keys(prevModelMap).length || !hasSameItemOrder(model, prevModel)
+        ? { ...newDirtyInfo, [isDirtySymbol]: true }
+        : newDirtyInfo
 }
 
 function updateSingleProperty(property, propertyDirtyInfo, dirtyInfo) {

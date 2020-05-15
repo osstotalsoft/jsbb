@@ -25,3 +25,9 @@ export function findMatchingItem(currentItem: any, currentIndex: number, otherAr
  * @see https://github.com/osstotalsoft/jsbb/tree/feature-dirty-info-refactoring/packages/change-tracking#touniqueidmap
  */
 export function toUniqueIdMap(array: any[]): {[uid: string]: {value: any, index: number}};
+
+/**
+ * Checks if the items in the provided arrays have the same order based on the uid or value.
+ * @see https://github.com/osstotalsoft/jsbb/tree/feature-dirty-info-refactoring/packages/change-tracking#hasSameItemOrder
+ */
+export function hasSameItemOrder(firstArray: any[], secondArray: any[]) : boolean;

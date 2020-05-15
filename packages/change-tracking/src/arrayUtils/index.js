@@ -35,6 +35,19 @@ export function findMatchingItem(currentItem, currentIndex, otherArray) {
         : otherArray[currentIndex];
 }
 
+export function hasSameItemOrder(firstArray, secondArray) {
+    if (!Array.isArray(firstArray) || !Array.isArray(secondArray) || firstArray.length !== secondArray.length) {
+        return false;
+    }
+
+    return firstArray |> reduceIndexed((acc, firstValue, index) => {
+        const secondValue = secondArray[index];
+        const firstUidOrValue = (firstValue && firstValue[uniqueIdSymbol]) || firstValue;
+        const secondUidOrValue = (secondValue && secondValue[uniqueIdSymbol]) || secondValue;
+        return acc && firstUidOrValue === secondUidOrValue
+    }, true)
+}
+
 export function toUniqueIdMap(array) {
     if (!Array.isArray(array) || array.length === 0) {
         return {};
