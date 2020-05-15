@@ -121,7 +121,7 @@ describe("dirty info operations:", () => {
         const di = detectChanges(crtModel, prevModel);
 
         // Assert
-        expect(isDirty(di.b)).toBe(false);
+        expect(isDirty(di.a)).toBe(false);
     });
 
     it("checks that a object with a removed property is dirty", () => {
