@@ -1,6 +1,6 @@
 {
   "name": "@totalsoft/rules-algebra",
-  "version": "5.0.2",
+  "version": "5.0.3",
   "description": "Business rules api via functional composition",
   "main": "index.js",
   "scripts": {
@@ -25,7 +25,7 @@
     "access": "public"
   },
   "dependencies": {
-    "@totalsoft/change-tracking": "^5.0.2",
+    "@totalsoft/change-tracking": "^5.0.3",
     "@totalsoft/zion": "^5.0.0",
     "daggy": "^1.4.0",
     "fantasy-land": "^4.0.1",
