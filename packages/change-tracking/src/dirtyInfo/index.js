@@ -28,7 +28,7 @@ export const merge = curry(function merge(sourceDirtyInfo, targetDirtyInfo) {
     }
 
     if (typeof sourceDirtyInfo === "boolean") {
-        return sourceDirtyInfo;
+        return sourceDirtyInfo
     }
 
     const result = Object.keys(sourceDirtyInfo)
@@ -37,7 +37,7 @@ export const merge = curry(function merge(sourceDirtyInfo, targetDirtyInfo) {
             (accumulator, property) => updateSingleProperty(property, merge(sourceDirtyInfo[property], targetDirtyInfo[property]), accumulator),
             targetDirtyInfo
         );
-    return result;
+    return result
 })
 
 export const detectChanges = curry(function detectChanges(model, prevModel, prevDirtyInfo = create()) {
