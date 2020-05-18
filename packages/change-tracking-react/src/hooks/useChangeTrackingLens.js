@@ -27,10 +27,10 @@ export function useChangeTrackingLens(initialModel) {
 
         // Reset
         useCallback((newModel = undefined) => {
-            setDirtyInfo(create())
-            if (newModel !== undefined) {
-                profunctor.setState(ensureArrayUIDsDeep(newModel));
-            }
+            profunctor.setState(prevModel => {
+                setDirtyInfo(create())
+                return newModel !== undefined ? ensureArrayUIDsDeep(newModel) : prevModel
+            });
         }, [])
     ]
 }

@@ -2,7 +2,7 @@ import { useProfunctorState } from '@staltz/use-profunctor-state'
 import { LensProxy } from '@totalsoft/change-tracking-react/lensProxy';
 import { useMemo, useCallback, useState } from 'react';
 import { applyRule, logTo } from '@totalsoft/rules-algebra';
-import { create, detectChanges, ensureArrayUIDsDeep} from '@totalsoft/change-tracking'
+import { create, detectChanges, ensureArrayUIDsDeep } from '@totalsoft/change-tracking'
 
 
 
@@ -15,11 +15,10 @@ export function useRulesLens(rules, initialModel, { isLogEnabled = true, logger 
         if (isLogEnabled) {
             newRules = logTo(logger)(newRules)
         }
-        
+
         return newRules
     }, [rules, isLogEnabled, logger, ...deps]); // eslint-disable-line react-hooks/exhaustive-deps
 
-   
     const profunctor = useProfunctorState(ensureArrayUIDsDeep(initialModel));
 
     const rulesEngineProfunctor = profunctor.promap(
@@ -40,10 +39,10 @@ export function useRulesLens(rules, initialModel, { isLogEnabled = true, logger 
 
         // Reset
         useCallback((newModel = undefined) => {
-            setDirtyInfo(create())
-            if (newModel !== undefined) {
-                profunctor.setState(ensureArrayUIDsDeep(newModel));
-            }
+            profunctor.setState(prevModel => {
+                setDirtyInfo(create())
+                return newModel !== undefined ? ensureArrayUIDsDeep(newModel) : prevModel
+            });
         }, [])
     ]
 }
