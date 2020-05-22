@@ -9,13 +9,13 @@ export function eject<TValue>(lens: LensProxy<TValue>): ProfunctorState<TValue>;
  * Sets a new value in the profunctor state
  * @see https://github.com/osstotalsoft/jsbb/tree/master/packages/change-tracking-react/src/lensProxy/README.md#set
  */
-export function set<TValue, TResult>(lens: LensProxy<TValue>, newValue: TResult): void;
+export function set(lens: LensProxy<any>, newValue: any): void;
 
 /**
  * Sets a new value in the profunctor state
  * @see https://github.com/osstotalsoft/jsbb/tree/master/packages/change-tracking-react/src/lensProxy/README.md#set
  */
-export function set<TValue, TResult>(lens: LensProxy<TValue>): (newValue: TResult) => void;
+export function set(lens: LensProxy<any>): (newValue: any) => void;
 
 /**
  * Read the value from the profunctor state
@@ -27,13 +27,13 @@ export function get<TValue>(lens: LensProxy<TValue>): TValue;
  * Sets the value from the profunctor state using an updater fn
  * @see https://github.com/osstotalsoft/jsbb/tree/master/packages/change-tracking-react/src/lensProxy/README.md#over
  */
-export function over<TValue, TResult>(lens: LensProxy<TValue>, func: (value: TValue) => TResult): void;
+export function over<TValue>(lens: LensProxy<TValue>, func: (value: TValue) => any): void;
 
 /**
  * Sets the value from the profunctor state using an updater fn
  * @see https://github.com/osstotalsoft/jsbb/tree/master/packages/change-tracking-react/src/lensProxy/README.md#over
  */
-export function over<TValue, TResult>(lens: LensProxy<TValue>): (func: (value: TValue) => TResult) => void;
+export function over<TValue>(lens: LensProxy<TValue>): (func: (value: TValue) => any) => void;
 
 /**
  * Map both the getter and the setter to retrieve another lens
@@ -61,7 +61,7 @@ export function rmap<TValue, TResult>(set: (newValue: TResult, oldState: TValue)
  * Transforms a lens of array into an array of lenses.
  * @see https://github.com/osstotalsoft/jsbb/tree/master/packages/change-tracking-react/src/lensProxy/README.md#sequence
  */
-export function sequence<TValue>(lens: LensProxy<TValue[]>): LensProxy<TValue>[];
+export function sequence<TValue>(lens: LensProxy<TValue[]>): Array<LensProxy<TValue>>;
 
 export function LensProxy<TValue>(profunctor: ProfunctorState<TValue>): LensProxy<TValue>;
 
@@ -69,6 +69,4 @@ export type Proxy<T> = {
   [k in keyof T]: T[k];
 };
 
-
 export type LensProxy<TValue> = Proxy<ProfunctorState<TValue>>;
-
