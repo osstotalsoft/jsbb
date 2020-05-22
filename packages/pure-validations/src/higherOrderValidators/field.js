@@ -14,7 +14,7 @@ const field = curry(function field(key, validator) {
     validator
     |> _logFieldPath
     |> _filterFieldPath
-    |> contramap((model, ctx) => [model[key], _getFieldContext(model, ctx, key)])
+    |> contramap((model, ctx) => [model ? model[key] : undefined , _getFieldContext(model, ctx, key)])
     |> map(map(ValidationError.moveToField(key)))
   );
 });

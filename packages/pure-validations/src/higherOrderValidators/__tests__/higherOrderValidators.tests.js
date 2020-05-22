@@ -206,6 +206,19 @@ describe("shape validator:", () => {
     expect(validation).toStrictEqual(Failure(ValidationError([], { field1: ValidationError("Wrong") })));
   });
 
+  it("returns failure when object is undefined: ", () => {
+    // Arrange
+    const fieldValidator = Validator.of(Failure(ValidationError("Wrong")));
+    const model = undefined;
+    const validator = shape({ field1: fieldValidator });
+
+    // Act
+    const validation = model |> validate(validator);
+
+    // Assert
+    expect(validation).toStrictEqual(Failure(ValidationError([], { field1: ValidationError("Wrong") })));
+  });
+
   it("returns failure when used with path predicate - predicate false ", () => {
     // Arrange
     const nameValidator = jest.fn(_ => Failure(ValidationError("Wrong")));
