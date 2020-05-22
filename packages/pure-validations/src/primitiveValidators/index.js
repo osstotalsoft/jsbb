@@ -14,7 +14,9 @@ const defaultMessages = {
   "Validations.Generic.Less": "The value must be less than {{max}}",
   "Validations.Generic.MaxCharacters": "The length must be less than {{max}}",
   "Validations.Generic.MinCharacters": "The length must be greater than {{min}}",
-  "Validations.Generic.Unique": "The value of {{selector}} must be unique"
+  "Validations.Generic.Unique": "The value of {{selector}} must be unique",
+  "Validations.Generic.Integer": "The value must be an integer number",
+  "Validations.Generic.Number": "The value must be a number",
 };
 
 function translate(key, args) {
@@ -79,6 +81,20 @@ export function maxLength(max) {
       : Failure(ValidationError(translate("Validations.Generic.MaxCharacters", { max })));
   });
 }
+
+export const isInteger = Validator(function isInteger(value) {
+    return Number.isInteger(value)
+      ? Success
+      : Failure(ValidationError(translate("Validations.Generic.Integer")));
+  });
+
+export const isNumber = Validator(function isNumber(value) {
+  return typeof(value) === "number" && !Number.isNaN(value) && Number.isFinite(value)
+    ? Success
+    : Failure(ValidationError(translate("Validations.Generic.Number")));
+});
+
+export const valid = Validator.of(Success)
 
 export function unique(selector, displayName = null) {
   return Validator(function unique(list) {

@@ -1,7 +1,7 @@
 import { Success, Failure } from "../../validation";
 import ValidationError from "../../validationError";
 import { validate } from "../../validator";
-import { unique, required, email, between, greaterThan, lessThan, minLength, maxLength, matches, atLeastOne } from "../index";
+import { unique, required, email, between, greaterThan, lessThan, minLength, maxLength, matches, atLeastOne, valid, isInteger, isNumber } from "../index";
 import i18next from "i18next";
 
 describe("required validator:", () => {
@@ -266,6 +266,95 @@ describe("length validators:", () => {
   });
 });
 
+describe("valid validator:", () => {
+  it("valid validator success", () => {
+    // Arrange
+    const model = "value";
+    const validator = valid;
+
+    // Act
+    const validation = model |> validate(validator);
+
+    // Assert
+    expect(validation).toStrictEqual(Success);
+  });
+
+});
+
+describe("number validators:", () => {
+  it("isInteger validator success", () => {
+    // Arrange
+    const model = -1;
+    const validator = isInteger;
+
+    // Act
+    const validation = model |> validate(validator);
+
+    // Assert
+    expect(validation).toStrictEqual(Success);
+  });
+
+  it("isInteger validator - null failure", () => {
+    // Arrange
+    const model = null;
+    const validator = isInteger;
+
+    // Act
+    const validation = model |> validate(validator);
+
+    // Assert
+    expect(validation).toStrictEqual(Failure(ValidationError(i18next.t("Validations.Generic.Integer"))));
+  });
+
+  it("isInteger validator failure", () => {
+    // Arrange
+    const model = NaN;
+    const validator = isInteger;
+
+    // Act
+    const validation = model |> validate(validator);
+
+    // Assert
+    expect(validation).toStrictEqual(Failure(ValidationError(i18next.t("Validations.Generic.Integer"))));
+  });
+
+  it("isNumber validator success", () => {
+    // Arrange
+    const model = -1;
+    const validator = isNumber;
+
+    // Act
+    const validation = model |> validate(validator);
+
+    // Assert
+    expect(validation).toStrictEqual(Success);
+  });
+
+  it("isNumber validator - null failure", () => {
+    // Arrange
+    const model = null;
+    const validator = isNumber;
+
+    // Act
+    const validation = model |> validate(validator);
+
+    // Assert
+    expect(validation).toStrictEqual(Failure(ValidationError(i18next.t("Validations.Generic.Number"))));
+  });
+
+  it("isNumber validator failure", () => {
+    // Arrange
+    const model = NaN;
+    const validator = isNumber;
+
+    // Act
+    const validation = model |> validate(validator);
+
+    // Assert
+    expect(validation).toStrictEqual(Failure(ValidationError(i18next.t("Validations.Generic.Number"))));
+  });  
+});
+
 describe("unique validator:", () => {
   it("unique validator success - no selector", () => {
     // Arrange
@@ -363,3 +452,5 @@ describe("unique validator:", () => {
     expect(validation).toStrictEqual(Failure(ValidationError(i18next.t("Validations.Generic.Unique", { selector: "x => x.item.id" }))));
   });
 });
+
+

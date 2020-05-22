@@ -1,4 +1,5 @@
 import Reader from "@totalsoft/zion/data/reader";
+import { checkRules } from "./_utils"
 import { curry } from "ramda";
 import fl from "fantasy-land";
 
@@ -15,5 +16,6 @@ const emptyContext = {
 };
 
 export const applyRule = curry(function applyRule(rule, newModel, prevModel = undefined, ctx = undefined) {
+    checkRules(rule)
     return rule.runReader(newModel, { ...emptyContext, ...ctx, prevModel, document: newModel, prevDocument: prevModel });
 });

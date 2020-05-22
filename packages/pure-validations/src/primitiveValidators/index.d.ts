@@ -18,4 +18,10 @@ export function minLength(min: number): Validator<string>;
 
 export const required: Validator<any>;
 
+export const integer: Validator<any>;
+
+export const number: Validator<any>;
+
+export const valid: Validator<any>;
+
 export function unique(selector: string | string[], displayName: string): Validator<any[]>;

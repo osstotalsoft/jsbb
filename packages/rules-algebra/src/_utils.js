@@ -17,7 +17,7 @@ export function variadicApply(variadicFn) {
 export function checkRules(...readers) {
   readers.forEach(function(reader) {
     if (!Reader.is(reader)) {
-      throw new Error(`Value ${reader.toString()} is not a rule!`);
+      throw new Error(`Value '${reader ? reader.toString() : reader}' is not a rule!`);
     }
   });
 }

@@ -375,4 +375,65 @@ describe("composed validators:", () => {
     // Assert
     expect(validation).toStrictEqual(Failure(ValidationError([], { 0: ValidationError(["Wrong", "Too short"]) })));
   });
+
+  it("validation using undefined validator throws exception:", () => {
+    // Arrange
+    const model = {};
+    const validator = undefined;
+
+    // Act
+    const action = () => model |> validate(validator);
+
+    // Assert
+    expect(action).toThrow(new Error("Value 'undefined' is not a validator!"));
+  });
+
+  it("validation using null validator throws exception:", () => {
+    // Arrange
+    const model = {};
+    const validator = null;
+
+    // Act
+    const action = () => model |> validate(validator);
+
+    // Assert
+    expect(action).toThrow(new Error("Value 'null' is not a validator!"));
+  });
+
+  it("validation using invalid validator throws exception:", () => {
+    // Arrange
+    const model = {};
+    const validator = "wrong";
+
+    // Act
+    const action = () => model |> validate(validator);
+
+    // Assert
+    expect(action).toThrow(new Error("Value 'wrong' is not a validator!"));
+  });
+
+  it("validation using nested undefined validator throws exception:", () => {
+    // Arrange
+    const model = {};
+    const validator = stopOnFirstFailure(shape({ email: undefined }));
+
+    // Act
+    const action = () => model |> validate(validator);
+
+    // Assert
+    expect(action).toThrow(new Error("Value 'undefined' is not a validator!"));
+  });
+
+  it("validation using invalid nested validator throws exception:", () => {
+    // Arrange
+    const model = {};
+    const validator = stopOnFirstFailure(shape({ email: model => !!model }));
+
+    // Act
+    const action = () => model |> validate(validator);
+
+    // Assert
+    expect(action).toThrow(new Error("Value 'model => !!model' is not a validator!"));
+  });
+
 });
