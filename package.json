@@ -25,14 +25,13 @@
     "glob": "^7.1.2",
     "i18next": "^19.1.0",
     "jest": "^24.9.0",
-    "lerna": "^3.16.4",
+    "lerna": "^3.22.0",
     "prettier-eslint": "^9.0.0",
     "react": "^16.9.0",
     "react-i18next": "^11.3.1",
     "rimraf": "^3.0.0",
     "tern": "0.24.2",
-    "ts-toolbelt": "4.9.15",
-    "minimist": "^1.2.5"
+    "ts-toolbelt": "4.9.15"
   },
   "workspaces": [
     "packages/*"

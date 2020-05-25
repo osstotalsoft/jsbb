@@ -437,6 +437,28 @@ describe("composed validators:", () => {
     );
   });
 
+  it("required on a field in a missing nested object with fromModel: ", () => {
+    // Arrange
+    const model = undefined;
+
+    const validator = fromModel(_ => shape({parent: shape({ name: required })}));
+
+    // Act
+    const validation = model |> validate(validator);
+
+    // Assert
+    expect(validation).toStrictEqual(
+      Failure(
+        ValidationError([], {
+          parent: 
+            ValidationError([], {
+              name: ValidationError("Validations.Generic.Mandatory{}")
+            })
+        })
+      )
+    );
+  });
+
   it("validation using undefined validator throws exception:", () => {
     // Arrange
     const model = {};
