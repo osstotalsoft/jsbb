@@ -31,8 +31,7 @@
     "react-i18next": "^11.3.1",
     "rimraf": "^3.0.0",
     "tern": "0.24.2",
-    "ts-toolbelt": "4.9.15",
-    "minimist": "^1.2.5"
+    "ts-toolbelt": "4.9.15"
   },
   "workspaces": [
     "packages/*"
