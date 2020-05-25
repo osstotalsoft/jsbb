@@ -419,7 +419,7 @@ describe("composed validators:", () => {
     // Arrange
     const model = undefined;
 
-    const validator = stopOnFirstFailure(shape({parent: shape({ name: required })}));
+    const validator = shape({parent: shape({ name: required })});
 
     // Act
     const validation = model |> validate(validator);
