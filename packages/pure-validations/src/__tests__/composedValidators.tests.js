@@ -381,7 +381,7 @@ describe("composed validators:", () => {
     const model = {
     };
 
-    const validator = stopOnFirstFailure(shape({ name: required }));
+    const validator = shape({ name: required });
 
     // Act
     const validation = model |> validate(validator);
@@ -400,7 +400,7 @@ describe("composed validators:", () => {
     // Arrange
     const model = undefined;
 
-    const validator = stopOnFirstFailure(shape({ name: required }));
+    const validator = shape({ name: required });
 
     // Act
     const validation = model |> validate(validator);
