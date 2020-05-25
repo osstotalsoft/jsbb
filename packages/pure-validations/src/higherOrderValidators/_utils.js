@@ -17,7 +17,7 @@ export function variadicApply(variadicFn) {
 export function checkValidators(...validators) {
   validators.forEach(function(validator) {
     if (!Reader.is(validator)) {
-      throw new Error(`Value ${validator.toString()} is not a validator!`);
+      throw new Error(`Value '${validator ? validator.toString() : validator}' is not a validator!`);
     }
   });
 }

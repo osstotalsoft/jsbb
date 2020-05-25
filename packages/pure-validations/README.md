@@ -67,6 +67,9 @@ The library provides some out of the box primitive validators that you can use i
  - lessThan
  - minLength
  - maxLength
+ - integer
+ - number
+ - valid
  - unique
 
 ### Higher order validators
@@ -182,6 +185,8 @@ The default messages for the built-in validators can be customized by providing 
 | lessThan   | Validations.Generic.Less          | The value must be less than {{max}}              |
 | minLength  | Validations.Generic.MaxCharacters | The length must be less than {{max}}             |
 | maxLength  | Validations.Generic.MinCharacters | The length must be greater than {{min}}          |
+| integer    | Validations.Generic.Integer       | The value must be an integer number              |
+| number     | Validations.Generic.Number        | The value must be a number                       |
 | unique     | Validations.Generic.Unique        | The value of {{selector}} must be unique         |
 
 #### Individual messages

@@ -1,4 +1,5 @@
 import Reader from "@totalsoft/zion/data/reader";
+import { checkValidators } from "./higherOrderValidators/_utils";
 import { curry } from "ramda";
 import fl from "fantasy-land";
 
@@ -15,6 +16,7 @@ const emptyContext = {
 };
 
 const validate = curry(function validate(validator, model, ctx = undefined) {
+  checkValidators(validator);
   return validator.runReader(model, { ...emptyContext, ...ctx });
 });
 

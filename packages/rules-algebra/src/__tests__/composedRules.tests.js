@@ -405,4 +405,72 @@ describe("composed rules:", () => {
 
         expect(result).toStrictEqual([changedModel[0], { ...changedModel[1], b: 106 }])
     });
+
+    it("aplying an undefined rule throws exception:", () => {
+        // Arrange
+        const originalModel = {}
+        const changedModel = {}
+        
+        const rule = undefined;
+    
+        // Act
+        const action = () => applyRule(rule, changedModel, originalModel);
+    
+        // Assert
+        expect(action).toThrow(new Error("Value 'undefined' is not a rule!"));
+      });
+    
+      it("aplying a null rule throws exception:", () => {
+        // Arrange
+        const originalModel = {}
+        const changedModel = {}
+        
+        const rule = null;
+    
+        // Act
+        const action = () => applyRule(rule, changedModel, originalModel);
+    
+        // Assert
+        expect(action).toThrow(new Error("Value 'null' is not a rule!"));
+      });
+    
+      it("aplying an invalid rule throws exception:", () => {
+        // Arrange
+        const originalModel = {}
+        const changedModel = {}
+        
+        const rule = 'wrong';
+    
+        // Act
+        const action = () => applyRule(rule, changedModel, originalModel);
+    
+        // Assert
+        expect(action).toThrow(new Error("Value 'wrong' is not a rule!"));
+      });
+    
+      it("aplying an undefined inner rule throws exception:", () => {
+        // Arrange
+        const originalModel = {}
+        const changedModel = {};
+        const rule = chainRules(shape({ email: undefined }));
+    
+        // Act
+        const action = () => applyRule(rule, changedModel, originalModel);
+    
+        // Assert
+        expect(action).toThrow(new Error("Value 'undefined' is not a rule!"));
+      });
+    
+      it("aplying an invalid inner rule throws exception:", () => {
+        // Arrange
+        const originalModel = {}
+        const changedModel = {};
+        const rule = chainRules(shape({ email: _doc => "test" }));
+    
+        // Act
+        const action = () => applyRule(rule, changedModel, originalModel);
+    
+        // Assert
+        expect(action).toThrow(new Error("Value '_doc => \"test\"' is not a rule!"));
+      });
 });
