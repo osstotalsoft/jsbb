@@ -1,7 +1,7 @@
 import Reader from "@totalsoft/zion/data/reader";
 import { checkValidators } from "./higherOrderValidators/_utils";
 import { curry } from "ramda";
-import fl from "fantasy-land";
+import * as fl from "fantasy-land";
 
 const Validator = Reader;
 Validator.of = Validator[fl.of];

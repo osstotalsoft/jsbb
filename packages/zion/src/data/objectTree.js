@@ -1,5 +1,5 @@
 import { tagged } from "daggy";
-import fl from "fantasy-land";
+import * as fl from "fantasy-land";
 import Map from './map';
 import { equals, map, concat, curry } from "ramda";
 

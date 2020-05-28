@@ -1,7 +1,7 @@
 import Reader from "@totalsoft/zion/data/reader";
 import { checkRules } from "./_utils"
 import { curry } from "ramda";
-import fl from "fantasy-land";
+import * as fl from "fantasy-land";
 
 export const Rule = Reader;
 Rule.of = Rule[fl.of];

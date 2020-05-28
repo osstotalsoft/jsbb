@@ -1,5 +1,5 @@
 import { taggedSum } from "daggy";
-import fl from "fantasy-land";
+import * as fl from "fantasy-land";
 import { equals, lte } from "ramda";
 
 const Step = taggedSum("Step", {

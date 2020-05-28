@@ -1,5 +1,5 @@
 import { taggedSum } from "daggy";
-import fl from "fantasy-land";
+import * as fl from "fantasy-land";
 
 import { Loop, Done } from "./step";
 import { equals, lte, map, concat } from "ramda";
