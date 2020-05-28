@@ -1,5 +1,5 @@
 import Reader from "@totalsoft/zion/data/reader";
-import fl from "fantasy-land";
+import * as fl from "fantasy-land";
 import { curry, map, lift, reduce } from "ramda";
 import { $do } from "@totalsoft/zion";
 import { checkRules, variadicApply } from "../_utils";

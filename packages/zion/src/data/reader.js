@@ -1,5 +1,5 @@
 import { tagged } from "daggy";
-import fl from "fantasy-land";
+import * as fl from "fantasy-land";
 import { $do } from "../prelude";
 import { concat } from "ramda";
 

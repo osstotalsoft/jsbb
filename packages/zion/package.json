@@ -29,7 +29,7 @@
   "homepage": "https://github.com/osstotalsoft/jsbb#readme",
   "dependencies": {
     "daggy": "^1.4.0",
-    "fantasy-land": "^4.0.1",
+    "fantasy-land": "^4.1.0",
     "immutagen": "^1.0.9",
     "ramda": "^0.26.1"
   }

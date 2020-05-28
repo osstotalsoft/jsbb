@@ -1,4 +1,4 @@
-import fl from "fantasy-land";
+import * as fl from "fantasy-land";
 import immutagen from "immutagen";
 import { chain, reduce, concat, curry, always } from "ramda";
 

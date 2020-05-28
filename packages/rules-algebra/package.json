@@ -28,7 +28,7 @@
     "@totalsoft/change-tracking": "^5.0.6",
     "@totalsoft/zion": "^5.0.0",
     "daggy": "^1.4.0",
-    "fantasy-land": "^4.0.1",
+    "fantasy-land": "^4.1.0",
     "uniqid": "^5.2.0"
   },
   "peerDependencies": {

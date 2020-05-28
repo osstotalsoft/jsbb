@@ -1,5 +1,5 @@
 import { tagged } from "daggy";
-import fl from "fantasy-land";
+import * as fl from "fantasy-land";
 import Maybe from "./maybe";
 import List from "./list";
 import KeyValuePair from "./keyValuePair";

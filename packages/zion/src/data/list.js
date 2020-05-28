@@ -1,5 +1,5 @@
 import { taggedSum } from "daggy";
-import fl from "fantasy-land";
+import * as fl from "fantasy-land";
 import { equals, ap, lift, concat } from "ramda";
 
 //- List is basically the same as `Array`, though much easier for our
