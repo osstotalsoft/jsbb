@@ -1,4 +1,4 @@
-import { ProfunctorState } from "@staltz/use-profunctor-state";
+import * as Z from "@totalsoft/zion"
 import { curry } from "ramda";
 
 const cacheSymbol = Symbol("cache")
@@ -69,33 +69,10 @@ function _immutableAssign(obj, prop, value) {
 }
 
 function getFieldScope(profunctor, fieldName) {
-    return promapWithoutMemo(profunctor)(
+    return profunctor |> Z.promap (
         model => model && model[fieldName],
         (fieldValue, model) => _immutableAssign(model, fieldName, fieldValue)
     )
-}
-
-// HACK: the default promap calls useMemo hook that is not valid in all contexts.
-// For memoization we use custom logic in th proxy (see above)
-function promapWithoutMemo(profunctor) {
-    return function (get, set) {
-        const innerSetState = newInnerStateOrUpdate => {
-            profunctor.setState(prevState => {
-                const innerState = get(prevState);
-                const newInnerState =
-                    typeof newInnerStateOrUpdate === 'function'
-                        ? (newInnerStateOrUpdate)(innerState)
-                        : (newInnerStateOrUpdate);
-                if (newInnerState === innerState) return prevState;
-                return set(newInnerState, prevState);
-            });
-        };
-
-        const innerState = get(profunctor.state);
-        const newProfunctor = new ProfunctorState(innerState, innerSetState);
-        newProfunctor.promap = promapWithoutMemo(newProfunctor);
-        return newProfunctor;
-    }
 }
 
 export function eject(proxy) {
@@ -122,19 +99,20 @@ export const over = curry(function over(proxy, func) {
 
 export const promap = curry(function promap(get, set, proxy) {
     const lens = eject(proxy);
-    const newLens = promapWithoutMemo(lens)(get, set);
+    const newLens = lens |> Z.promap(get, set);
+    if (newLens === lens) return proxy;
     return LensProxy(newLens)
 })
 
 export const lmap = curry(function lmap(get, proxy) {
     const lens = eject(proxy);
-    const newLens = promapWithoutMemo(lens)(get, x => x);
+    const newLens = lens |> Z.lmap(get);
     return LensProxy(newLens)
 })
 
 export const rmap = curry(function rmap(set, proxy) {
     const lens = eject(proxy);
-    const newLens = promapWithoutMemo(lens)(x => x, set);
+    const newLens = lens |> Z.rmap(set);
     return LensProxy(newLens)
 })
 

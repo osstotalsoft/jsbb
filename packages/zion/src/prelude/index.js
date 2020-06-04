@@ -1,6 +1,6 @@
 import * as fl from "fantasy-land";
 import immutagen from "immutagen";
-import { chain, reduce, concat, curry, always } from "ramda";
+import { chain, reduce, concat, curry, always, identity } from "ramda";
 
 function $do(gen) {
   const doNext = (next, typeRep) => input => {
@@ -39,4 +39,19 @@ const fold = curry(function(M, xs) {
   return xs |> reduce((acc, x) => concat(acc, M(x)), M[fl.empty]());
 });
 
-export { $do, pure, contramap, fold };
+// promap :: Profunctor p => (a -> b) -> (c -> d) -> p b c -> p a d
+const promap = curry(function promap(fn1, fn2, profunctor) {
+  return profunctor[fl.promap](fn1, fn2);
+});
+
+// lmap :: Profunctor p => (a -> b) -> p b c -> p a c
+const lmap = curry(function lmap(fn, profunctor) {
+  return profunctor[fl.promap](fn, identity);
+});
+
+// rmap :: Profunctor p => (b -> c) -> p a b -> p a c
+const rmap = curry(function lmap(fn, profunctor) {
+  return profunctor[fl.promap](identity, fn);
+});
+
+export { $do, pure, contramap, fold, promap, lmap, rmap };

@@ -1,4 +1,4 @@
-import { ProfunctorState } from "@staltz/use-profunctor-state";
+export type ProfunctorState<TState> = { state: TState, setState: (prevState: TState) => TState };
 
 /**
  * Provides access to the inner profunctor

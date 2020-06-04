@@ -1,36 +1,30 @@
-import { useProfunctorState } from '@staltz/use-profunctor-state'
-import { useMemo, useCallback, useState } from 'react';
-import { create, detectChanges, ensureArrayUIDsDeep} from '@totalsoft/change-tracking'
-import { LensProxy } from '@totalsoft/change-tracking-react'
-
+import { useStateLens, rmap, over } from '@totalsoft/state-lens-react'
+import { useCallback, useState, useMemo } from 'react';
+import { create, detectChanges, ensureArrayUIDsDeep } from '@totalsoft/change-tracking'
 
 export function useChangeTrackingLens(initialModel) {
     const [dirtyInfo, setDirtyInfo] = useState(create)
-    const profunctor = useProfunctorState(ensureArrayUIDsDeep(initialModel));
-
-    const changeTrackingProfunctor = profunctor.promap(
-        model => model,
-        (changedModel, prevModel) => {
-            const newModel = ensureArrayUIDsDeep(changedModel)
-            const newDirtyInfo = detectChanges(newModel, prevModel, dirtyInfo)
-            setDirtyInfo(newDirtyInfo)
-            return newModel;
-        },
-        [profunctor.state],
-    )
-
-    const changeTrackingLensProxy = useMemo(() => LensProxy(changeTrackingProfunctor), [changeTrackingProfunctor]);
+    const profunctor = useStateLens(() => ensureArrayUIDsDeep(initialModel));
+    const changeTrackingLens = useMemo(() =>
+        profunctor |> rmap(
+            (changedModel, prevModel) => {
+                const newModel = ensureArrayUIDsDeep(changedModel)
+                const newDirtyInfo = detectChanges(newModel, prevModel, dirtyInfo)
+                setDirtyInfo(newDirtyInfo)
+                return newModel;
+            }),
+        [profunctor.state])
 
     return [
-        changeTrackingLensProxy,
+        changeTrackingLens,
         dirtyInfo,
 
         // Reset
         useCallback((newModel = undefined) => {
-            profunctor.setState(prevModel => {
+            over(profunctor, (prevModel => {
                 setDirtyInfo(create())
                 return newModel !== undefined ? ensureArrayUIDsDeep(newModel) : prevModel
-            });
+            }));
         }, [])
     ]
 }

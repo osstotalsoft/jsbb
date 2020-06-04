@@ -1,5 +1,5 @@
 import { renderHook, act } from "@testing-library/react-hooks";
-import { set, get } from "../../lensProxy";
+import { set, get, eject } from "@totalsoft/state-lens-react";
 import { useChangeTrackingLens } from "..";
 import { detectChanges, __clearMocks as clearChangeTrackingMocks } from "@totalsoft/change-tracking";
 
@@ -101,6 +101,7 @@ describe("useChangeTrackingLens hook", () => {
         const model2 = result.current.rootProf;
         
         // Assert
+        expect(eject(model1)).toBe(eject(model2));
         expect(model1).toBe(model2);
         expect(renderCount).toBe(3)
     });
