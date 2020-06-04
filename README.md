@@ -11,6 +11,7 @@
   - [`rules-algebra-react`](./packages/rules-algebra-react#readme)
   - [`change-tracking`](./packages/change-tracking#readme)
   - [`change-tracking-react`](./packages/change-tracking-react#readme)
+  - [`state-lens-react`](./packages/state-lens-react#readme)
 
 ## Bootstrap
 ```javascript
