@@ -85,18 +85,23 @@ describe("lens proxy", () => {
         expect(prof.state.a.b).toBe("OK")
     });
 
-    it.skip("inner field profunctor state", () => {
+    it("inner field profunctor state", () => {
         // Arrange
         const initialModel = { a: { b: "" } };
-        const prof = ProfunctorState(initialModel, function (setter) { this.state = setter })
-        const profProxy = LensProxy(prof)
-        const fieldProfProxy = profProxy.a.b;
+        let prof = undefined
+        let lens = undefined
+        let setState = (setter) => {
+            prof = new ProfunctorState(setter(prof.state), setState)
+            lens = LensProxy(prof)
+        }
+        prof = new ProfunctorState(initialModel, setState)
+        lens = LensProxy(prof)
 
         // Act
-        set(fieldProfProxy, "OK");
+        set(lens.a.b, "OK");
 
         // Assert
-        expect(get(fieldProfProxy)).toBe("OK");
+        expect(get(lens.a.b)).toBe("OK");
     });
 
     it("can be stringified", () => {
