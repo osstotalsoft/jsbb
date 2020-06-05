@@ -6,15 +6,11 @@ const ignoredPrefixes = ["@@", "$$"]
 
 const handler = {
     ownKeys(_target) {
-        return ["__target", "@@values"];
+        return ["__target"];
     },
     getOwnPropertyDescriptor(target, prop) {
         if (prop === "__target") {
             return { configurable: true, enumerable: true };
-        }
-
-        if (prop === "@@values") {
-            return Reflect.getOwnPropertyDescriptor(target, '@@values');
         }
     },
     get: function (target, prop) {
@@ -22,11 +18,13 @@ const handler = {
             case "__target": {
                 return target;
             }
+            case "toJSON": {
+                return function() { return target; }
+            }
             default: {
                 if (isIgnoredProp(prop)) {
                     return target[prop];
                 }
-
                 if (!target[cacheSymbol]) {
                     target[cacheSymbol] = {};
                 }

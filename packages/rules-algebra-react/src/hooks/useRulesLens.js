@@ -25,7 +25,7 @@ export function useRulesLens(rules, initialModel, { isLogEnabled = true, logger 
                 setDirtyInfo(detectChanges(result, prevModel, dirtyInfo))
                 return result;
             }),
-        [profunctor.state, rulesEngine])
+        [profunctor, rulesEngine])
 
    
     return [

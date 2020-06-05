@@ -13,7 +13,7 @@ export function useChangeTrackingLens(initialModel) {
                 setDirtyInfo(newDirtyInfo)
                 return newModel;
             }),
-        [profunctor.state])
+        [profunctor])
 
     return [
         changeTrackingLens,
