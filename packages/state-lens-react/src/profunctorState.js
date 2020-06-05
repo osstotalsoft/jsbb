@@ -1,12 +1,8 @@
 import { tagged } from "daggy";
 import * as fl from "fantasy-land";
+import { identity } from "ramda"
 
 const ProfunctorState = tagged("ProfunctorState", ["state", "setState"]);
-/* Reader */ {
-    ProfunctorState.prototype.runReader = function runReader(...props) {
-        return this.computation(...props);
-    }
-}
 
 /* Profunctor ProfunctorState */ {
     ProfunctorState.prototype[fl.promap] = function (get, set) {
@@ -32,5 +28,10 @@ const ProfunctorState = tagged("ProfunctorState", ["state", "setState"]);
     }
 }
 
+/* Functor ProfunctorState */ {
+    ProfunctorState.prototype[fl.map] = function (f) {
+        return this[fl.promap](identity, f)
+    }
+}
 
 export default ProfunctorState;

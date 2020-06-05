@@ -99,7 +99,7 @@ describe("lens proxy", () => {
         expect(get(fieldProfProxy)).toBe("OK");
     });
 
-    it.skip("can be stringified", () => {
+    it("can be stringified", () => {
         // Arrange
         const initialModel = { a: { b: "" } };
         const prof = ProfunctorState(initialModel, _ => { })
@@ -107,7 +107,6 @@ describe("lens proxy", () => {
 
         // Act
         JSON.stringify(lensProxy);
-
         // Assert
     });
 

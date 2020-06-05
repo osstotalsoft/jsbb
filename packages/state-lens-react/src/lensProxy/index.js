@@ -6,11 +6,15 @@ const ignoredPrefixes = ["@@", "$$"]
 
 const handler = {
     ownKeys(_target) {
-        return ["__target"];
+        return ["__target", "@@values"];
     },
     getOwnPropertyDescriptor(target, prop) {
         if (prop === "__target") {
             return { configurable: true, enumerable: true };
+        }
+
+        if (prop === "@@values") {
+            return Reflect.getOwnPropertyDescriptor(target, '@@values');
         }
     },
     get: function (target, prop) {
