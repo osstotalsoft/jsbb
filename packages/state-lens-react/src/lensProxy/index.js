@@ -1,5 +1,6 @@
 import * as Z from "@totalsoft/zion"
 import { curry } from "ramda";
+import * as R from "ramda";
 
 const cacheSymbol = Symbol("cache")
 const ignoredPrefixes = ["@@", "$$"]
@@ -109,12 +110,14 @@ export const promap = curry(function promap(get, set, proxy) {
 export const lmap = curry(function lmap(get, proxy) {
     const lens = eject(proxy);
     const newLens = lens |> Z.lmap(get);
+    if (newLens === lens) return proxy;
     return LensProxy(newLens)
 })
 
 export const rmap = curry(function rmap(set, proxy) {
     const lens = eject(proxy);
     const newLens = lens |> Z.rmap(set);
+    if (newLens === lens) return proxy;
     return LensProxy(newLens)
 })
 
@@ -126,6 +129,14 @@ export function sequence(proxy) {
     const result = xs.map((_, index) => proxy[index])
     return result
 }
+
+export const compose = curry(function(otherLens, lensProxy) {
+    const lens = eject(lensProxy);
+    const newLens = lens |> Z.promap(R.view(otherLens), R.set(otherLens));
+    if (newLens === lens) return lensProxy;
+    return LensProxy(newLens)
+})
+
 
 export function LensProxy(profunctor) {
     return new Proxy(profunctor, handler)

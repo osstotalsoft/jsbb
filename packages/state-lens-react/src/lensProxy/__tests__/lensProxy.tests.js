@@ -1,5 +1,6 @@
-import { LensProxy, eject, get, set, over, promap, lmap, rmap, sequence } from "..";
+import { LensProxy, eject, get, set, over, promap, lmap, rmap, sequence, compose } from "..";
 import ProfunctorState from "../../profunctorState";
+import * as R from "ramda";
 
 describe("lens proxy", () => {
     it("eject returns inner profunctopr", () => {
@@ -124,6 +125,27 @@ describe("lens proxy", () => {
             x => x.a,
             (fieldValue, model) => ({ ...model, a: fieldValue })
         )
+
+        // Assert
+        const value = proxy |> get
+        expect(value).toBe(initialModel.a)
+
+        // Act
+        set(proxy, otherModel)
+
+        // Assert
+        expect(prof.state.a).toBe(otherModel)
+    });
+
+    it("compose ramda", () => {
+        // Arrange
+        const initialModel = { a: { b: "" } }
+        const otherModel = {};
+        const prof = ProfunctorState(initialModel, setter => { prof.state = setter(prof.state) })
+        const proxy = LensProxy(prof) |> compose(R.lens(
+            R.prop("a"),
+            R.assoc("a")
+        ))
 
         // Assert
         const value = proxy |> get
