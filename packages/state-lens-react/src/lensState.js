@@ -54,19 +54,13 @@ export const over = R.curry(function over(proxy, func) {
     return set(proxy, func(value))
 })
 
-export const promap = R.curry(function promap(get, set, stateLens) {
-    return stateLens |> Z.promap(get, set);
-})
+export const promap = Z.promap;
 
-export const lmap = R.curry(function lmap(get, stateLens) {
-    return stateLens |> Z.lmap(get);
-})
+export const lmap = Z.lmap;
 
-export const rmap = R.curry(function lmap(set, stateLens) {
-    return stateLens |> Z.rmap(set);
-})
+export const rmap = Z.rmap;
 
-export const compose = R.curry(function (otherLens, stateLens) {
+export const pipe = R.curry(function (stateLens, otherLens) {
     if (typeof (otherLens) !== 'function') {
         throw Error("Parameter 'otherLens' is not a Ramda lens")
     }

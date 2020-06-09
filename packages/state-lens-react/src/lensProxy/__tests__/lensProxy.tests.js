@@ -1,4 +1,4 @@
-import { LensProxy, eject, get, set, over, promap, lmap, rmap, sequence, compose } from "..";
+import { LensProxy, eject, get, set, over, promap, lmap, rmap, sequence, pipe } from "..";
 import LensState from "../../lensState";
 import * as R from "ramda";
 
@@ -137,22 +137,23 @@ describe("lens proxy", () => {
         expect(lensState.state.a).toBe(otherModel)
     });
 
-    it("compose ramda", () => {
+    it("pipe with ramda lens", () => {
         // Arrange
         const initialModel = { a: { b: "" } }
         const otherModel = {};
         const lensState = LensState(initialModel, setter => { lensState.state = setter(lensState.state) })
-        const proxy = LensProxy(lensState) |> compose(R.lens(
+        const lensProxy = LensProxy(lensState)
+        const pipedProxy = pipe(lensProxy, R.lens(
             R.prop("a"),
             R.assoc("a")
         ))
 
         // Assert
-        const value = proxy |> get
+        const value = pipedProxy |> get
         expect(value).toBe(initialModel.a)
 
         // Act
-        set(proxy, otherModel)
+        set(pipedProxy, otherModel)
 
         // Assert
         expect(lensState.state.a).toBe(otherModel)

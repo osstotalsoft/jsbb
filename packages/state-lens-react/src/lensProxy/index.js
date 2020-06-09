@@ -1,5 +1,7 @@
 import { curry } from "ramda";
 import * as L from "../lensState"
+import * as fl from "fantasy-land";
+import * as Z from "@totalsoft/zion"
 
 const cacheSymbol = Symbol("cache")
 const ignoredPrefixes = ["@@", "$$"]
@@ -20,6 +22,12 @@ const handler = {
             }
             case "toJSON": {
                 return function () { return target; }
+            }
+            case fl.promap: {
+                return function (get, set) { return target[fl.promap](get, set) |> LensProxy }
+            }
+            case fl.map: {
+                return function (func) { return target[fl.map](func) |> LensProxy }
             }
             default: {
                 if (isIgnoredProp(prop)) {
@@ -69,38 +77,24 @@ export const over = curry(function over(proxy, func) {
     return L.over(eject(proxy), func)
 })
 
-export const promap = curry(function promap(get, set, proxy) {
-    return proxy |> _mapProxy(L.promap(get, set))
-})
+export const promap = Z.promap;
 
-export const lmap = curry(function lmap(get, proxy) {
-    return proxy |> _mapProxy(L.lmap(get))
-})
+export const lmap = Z.lmap;
 
-export const rmap = curry(function rmap(set, proxy) {
-    return proxy |> _mapProxy(L.rmap(set))
-})
+export const rmap = Z.rmap;
 
 export function sequence(proxy) {
-    return proxy |> _seqProxy(L.sequence)
+    const lens = eject(proxy)
+    const newLenses = L.sequence(lens)
+    return newLenses.map(LensProxy)
 }
 
-export const compose = curry(function (otherLens, proxy) {
-    return proxy |> _mapProxy(L.compose(otherLens))
-})
-
-const _mapProxy = curry(function (lensFunc, proxy) {
+export const pipe = curry(function (proxy, otherLens) {
     const lens = eject(proxy)
-    const newLens = lensFunc(lens)
+    const newLens = L.pipe(lens, otherLens)
     return (newLens === lens) ? proxy : LensProxy(newLens)
 })
 
-const _seqProxy = curry(function (lensFunc, proxy) {
-    const lens = eject(proxy)
-    const newLenses = lensFunc(lens)
-    return newLenses.map(LensProxy)
-})
-
-export function LensProxy(profunctor) {
-    return new Proxy(profunctor, handler)
+export function LensProxy(stateLens) {
+    return new Proxy(stateLens, handler)
 }

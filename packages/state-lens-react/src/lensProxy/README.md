@@ -79,7 +79,7 @@ const SomeComponent = props => {
 Maps only the getter of a lens.
 ```js
 const SomeComponent = props => {
-  const [lens] = useChangeTrackingState(null)
+  const [lens] = useStateLens(null)
   const lensOrDefault = lens |> lmap(x=> x || "default")
   const value = lensOrDefault |> get //"default"
 }
@@ -89,7 +89,7 @@ const SomeComponent = props => {
 Maps only the setter of a lens.
 ```js
 const SomeComponent = props => {
-  const [lens] = useChangeTrackingState(1)
+  const [lens] = useStateLens(1)
   const lensOrDefault = lens |> rmap(x=> x || "default")
   set(lensOrDefault)(null) //sets the model to "default"
 }
@@ -99,18 +99,28 @@ const SomeComponent = props => {
 Sequence transforms a lens of array into an array of lenses.
 ```js
 const SomeComponent = props => {
-  const [lens] = useChangeTrackingState([1,2,3])
+  const [lens] = useStateLens([1,2,3])
   const lenses = lens |> sequence
   const firstItem = lenses[0] |> get //1
 }
 ```
+
+#### pipe
+Pipes a lens to a ramda lens. Both the getters and setters are piped.
+```js
+const SomeComponent = props => {
+  const [lens] = useStateLens({a:1, b:2})
+  const aLens = pipe(lens, R.lens(R.prop('a'), R.assoc('a')))
+  console.log(aLens |> get) //1
+  (aLens |> set)(0) // sets the model to {a:0, b:2}
+}
 
 #### sintax sugar
 
 By using es6 proxy we were able to provide field and array indexer access just like with pojos.
 ```js
 const SomeComponent = props => {
-  const [lens] = useChangeTrackingState({name: 'John'})
+  const [lens] = useStateLens({name: 'John'})
   const nameLens = lens.name
   const name = nameLens |> get // John
 }
@@ -118,7 +128,7 @@ const SomeComponent = props => {
 
 ```js
 const SomeComponent = props => {
-  const [lens] = useChangeTrackingState([1,2,3])
+  const [lens] = useStateLens([1,2,3])
   const firstItemLens = lens[0]
   const firstItem = firstItemLens |> get // 1
 }
@@ -126,7 +136,7 @@ const SomeComponent = props => {
 
 #### example usage with controlled components
 ```jsx
-const [personlens] = useChangeTrackingState({name:'John', age:23})
+const [personlens] = useStateLens({name:'John', age:23})
 <...>
 <TextField
     value={personLens.name |> get}

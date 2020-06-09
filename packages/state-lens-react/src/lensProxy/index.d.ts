@@ -63,6 +63,12 @@ export function rmap<TValue, TResult>(set: (newValue: TResult, oldState: TValue)
  */
 export function sequence<TValue>(lens: LensProxy<TValue[]>): Array<LensProxy<TValue>>;
 
+/**
+ * Pipes a lens to a Ramda lens. Both the getters and setters are piped.
+ * @see https://github.com/osstotalsoft/jsbb/tree/master/packages/change-tracking-react/src/lensProxy/README.md#pipe
+ */
+export function pipe(lens: LensProxy<any>, otherLens: any): LensProxy<any>;
+
 export function LensProxy<TValue>(profunctor: LensState<TValue>): LensProxy<TValue>;
 
 export type Proxy<T> = {
