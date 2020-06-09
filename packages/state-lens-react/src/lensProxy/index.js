@@ -1,6 +1,5 @@
-import * as Z from "@totalsoft/zion"
 import { curry } from "ramda";
-import * as R from "ramda";
+import * as L from "../lensState"
 
 const cacheSymbol = Symbol("cache")
 const ignoredPrefixes = ["@@", "$$"]
@@ -20,7 +19,7 @@ const handler = {
                 return target;
             }
             case "toJSON": {
-                return function() { return target; }
+                return function () { return target; }
             }
             default: {
                 if (isIgnoredProp(prop)) {
@@ -32,7 +31,7 @@ const handler = {
                 if (prop in target[cacheSymbol]) {
                     return target[cacheSymbol][prop];
                 }
-                const propLens = getFieldScope(target, prop);
+                const propLens = L.getInnerLens(target, prop);
                 const proxy = LensProxy(propLens);
 
                 target[cacheSymbol][prop] = proxy; // cache value
@@ -53,90 +52,54 @@ function isIgnoredProp(name) {
     return false;
 }
 
-function _immutableAssign(obj, prop, value) {
-    if (obj == null || obj == undefined) {
-        if (Number.isInteger(Number(prop))) {
-            obj = [];
-        }
-        else {
-            obj = {};
-        }
-    }
-    else if (obj[prop] === value) {
-        return obj;
-    }
-
-    return Array.isArray(obj)
-        ? Object.assign([...obj], { [prop]: value })
-        : { ...obj, [prop]: value }
-}
-
-function getFieldScope(profunctor, fieldName) {
-    return profunctor |> Z.promap (
-        model => model && model[fieldName],
-        (fieldValue, model) => _immutableAssign(model, fieldName, fieldValue)
-    )
-}
-
 export function eject(proxy) {
     return proxy["__target"]
 }
 
 // Manual curry workaround
 export function set(proxy, newValue = undefined) {
-    if (newValue !== undefined) {
-        return eject(proxy).setState(newValue)
-    } else {
-        return eject(proxy).setState
-    }
+    return L.set(eject(proxy), newValue)
 }
 
 export function get(proxy) {
-    return eject(proxy).state
+    return L.get(eject(proxy))
 }
 
 export const over = curry(function over(proxy, func) {
-    let value = get(proxy);
-    return set(proxy, func(value))
+    return L.over(eject(proxy), func)
 })
 
 export const promap = curry(function promap(get, set, proxy) {
-    const lens = eject(proxy);
-    const newLens = lens |> Z.promap(get, set);
-    if (newLens === lens) return proxy;
-    return LensProxy(newLens)
+    return proxy |> _mapProxy(L.promap(get, set))
 })
 
 export const lmap = curry(function lmap(get, proxy) {
-    const lens = eject(proxy);
-    const newLens = lens |> Z.lmap(get);
-    if (newLens === lens) return proxy;
-    return LensProxy(newLens)
+    return proxy |> _mapProxy(L.lmap(get))
 })
 
 export const rmap = curry(function rmap(set, proxy) {
-    const lens = eject(proxy);
-    const newLens = lens |> Z.rmap(set);
-    if (newLens === lens) return proxy;
-    return LensProxy(newLens)
+    return proxy |> _mapProxy(L.rmap(set))
 })
 
 export function sequence(proxy) {
-    const xs = (proxy |> get) || []
-    if (!Array.isArray(xs)) {
-        throw new Error(`Cannot sequence lens with value ${xs.toString()}`);
-    }
-    const result = xs.map((_, index) => proxy[index])
-    return result
+    return proxy |> _seqProxy(L.sequence)
 }
 
-export const compose = curry(function(otherLens, lensProxy) {
-    const lens = eject(lensProxy);
-    const newLens = lens |> Z.promap(R.view(otherLens), R.set(otherLens));
-    if (newLens === lens) return lensProxy;
-    return LensProxy(newLens)
+export const compose = curry(function (otherLens, proxy) {
+    return proxy |> _mapProxy(L.compose(otherLens))
 })
 
+const _mapProxy = curry(function (lensFunc, proxy) {
+    const lens = eject(proxy)
+    const newLens = lensFunc(lens)
+    return (newLens === lens) ? proxy : LensProxy(newLens)
+})
+
+const _seqProxy = curry(function (lensFunc, proxy) {
+    const lens = eject(proxy)
+    const newLenses = lensFunc(lens)
+    return newLenses.map(LensProxy)
+})
 
 export function LensProxy(profunctor) {
     return new Proxy(profunctor, handler)

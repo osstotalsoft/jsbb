@@ -16,16 +16,16 @@ export function useRulesLens(rules, initialModel, { isLogEnabled = true, logger 
         return newRules
     }, [rules, isLogEnabled, logger, ...deps]); // eslint-disable-line react-hooks/exhaustive-deps
 
-    const profunctor = useStateLens(() => ensureArrayUIDsDeep(initialModel));
+    const lensState = useStateLens(() => ensureArrayUIDsDeep(initialModel));
 
     const rulesEngineLens = useMemo(() =>
-        profunctor |> rmap(
+        lensState |> rmap(
             (changedModel, prevModel) => {
                 const result = applyRule(rulesEngine, ensureArrayUIDsDeep(changedModel), prevModel)
                 setDirtyInfo(detectChanges(result, prevModel, dirtyInfo))
                 return result;
             }),
-        [profunctor, rulesEngine])
+        [lensState, rulesEngine])
 
    
     return [
@@ -34,7 +34,7 @@ export function useRulesLens(rules, initialModel, { isLogEnabled = true, logger 
 
         // Reset
         useCallback((newModel = undefined) => {
-            over(profunctor, (prevModel => {
+            over(lensState, (prevModel => {
                 setDirtyInfo(create())
                 return newModel !== undefined ? ensureArrayUIDsDeep(newModel) : prevModel
             }));

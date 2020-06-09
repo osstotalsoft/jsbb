@@ -1,102 +1,102 @@
 import { LensProxy, eject, get, set, over, promap, lmap, rmap, sequence, compose } from "..";
-import ProfunctorState from "../../profunctorState";
+import LensState from "../../lensState";
 import * as R from "ramda";
 
 describe("lens proxy", () => {
-    it("eject returns inner profunctopr", () => {
+    it("eject returns inner lensStateunctopr", () => {
         // Arrange
         const initialModel = { a: { b: "" } };
-        const profunctor = ProfunctorState(initialModel, _ => { });
-        const proxy = LensProxy(profunctor)
+        const lensState = LensState(initialModel, _ => { });
+        const proxy = LensProxy(lensState)
 
         // Act
-        const innerProfunctor = eject(proxy);
+        const innerLensState = eject(proxy);
 
         // Assert
-        expect(innerProfunctor).toBe(profunctor)
+        expect(innerLensState).toBe(lensState)
     });
 
-    it("get returns profunctor state", () => {
+    it("get returns lensState state", () => {
         // Arrange
         const initialModel = { a: { b: "" } };
-        const profunctor = ProfunctorState(initialModel, _ => { })
-        const proxy = LensProxy(profunctor)
+        const lensState = LensState(initialModel, _ => { })
+        const proxy = LensProxy(lensState)
 
         // Act
         const value = get(proxy);
 
         // Assert
-        expect(value).toBe(profunctor.state)
+        expect(value).toBe(lensState.state)
     });
 
-    it("set sets the profunctor state", () => {
+    it("set sets the lensState state", () => {
         // Arrange
         const initialModel = { a: { b: "" } };
         const otherModel = {};
-        const prof = ProfunctorState(initialModel, newValue => { prof.state = newValue })
-        const lensProxy = LensProxy(prof);
+        const lensState = LensState(initialModel, newValue => { lensState.state = newValue })
+        const lensProxy = LensProxy(lensState);
 
         // Act
         set(lensProxy)(otherModel);
 
         // Assert
-        expect(otherModel).toBe(prof.state)
+        expect(otherModel).toBe(lensState.state)
     });
 
     it("set on property path containing nulls", () => {
         // Arrange
         const initialModel = { a: null, b: undefined };
-        const prof = ProfunctorState(initialModel, setter => { prof.state = setter(prof.state) })
-        const lensProxy = LensProxy(prof)
+        const lensState = LensState(initialModel, setter => { lensState.state = setter(lensState.state) })
+        const lensProxy = LensProxy(lensState)
 
         // Act
         set(lensProxy.a.x)(1);
         set(lensProxy.b[0])(2);
 
         // Assert
-        expect(prof.state.a.x).toBe(1);
-        expect(prof.state.b[0]).toBe(2);
+        expect(lensState.state.a.x).toBe(1);
+        expect(lensState.state.b[0]).toBe(2);
     });
 
     it("set works just like over", () => {
         // Arrange
         const initialModel = { a: { b: "" } };
-        const prof = ProfunctorState(initialModel, setter => { prof.state = setter(prof.state) })
-        const lensProxy = LensProxy(prof)
+        const lensState = LensState(initialModel, setter => { lensState.state = setter(lensState.state) })
+        const lensProxy = LensProxy(lensState)
         const changeFn = x => x + "OK"
 
         // Act
         set(lensProxy.a.b)(changeFn);
 
         // Assert
-        expect(prof.state.a.b).toBe("OK")
+        expect(lensState.state.a.b).toBe("OK")
     });
 
-    it("over modifies the profunctor state", () => {
+    it("over modifies the lens state", () => {
         // Arrange
         const initialModel = { a: { b: "" } };
-        const prof = ProfunctorState(initialModel, setter => { prof.state = setter(prof.state) })
-        const lensProxy = LensProxy(prof)
+        const lensState = LensState(initialModel, setter => { lensState.state = setter(lensState.state) })
+        const lensProxy = LensProxy(lensState)
         const changeFn = x => x + "OK"
 
         // Act
         over(lensProxy.a.b)(changeFn);
 
         // Assert
-        expect(prof.state.a.b).toBe("OK")
+        expect(lensState.state.a.b).toBe("OK")
     });
 
-    it("inner field profunctor state", () => {
+    it("inner field lens state", () => {
         // Arrange
         const initialModel = { a: { b: "" } };
-        let prof = undefined
+        let lensState = undefined
         let lens = undefined
         let setState = (setter) => {
-            prof = new ProfunctorState(setter(prof.state), setState)
-            lens = LensProxy(prof)
+            lensState = new LensState(setter(lensState.state), setState)
+            lens = LensProxy(lensState)
         }
-        prof = new ProfunctorState(initialModel, setState)
-        lens = LensProxy(prof)
+        lensState = new LensState(initialModel, setState)
+        lens = LensProxy(lensState)
 
         // Act
         set(lens.a.b, "OK");
@@ -108,8 +108,8 @@ describe("lens proxy", () => {
     it("can be stringified", () => {
         // Arrange
         const initialModel = { a: { b: "" } };
-        const prof = ProfunctorState(initialModel, _ => { })
-        const lensProxy = LensProxy(prof)
+        const lensState = LensState(initialModel, _ => { })
+        const lensProxy = LensProxy(lensState)
 
         // Act
         JSON.stringify(lensProxy);
@@ -120,8 +120,8 @@ describe("lens proxy", () => {
         // Arrange
         const initialModel = { a: { b: "" } }
         const otherModel = {};
-        const prof = ProfunctorState(initialModel, setter => { prof.state = setter(prof.state) })
-        const proxy = LensProxy(prof) |> promap(
+        const lensState = LensState(initialModel, setter => { lensState.state = setter(lensState.state) })
+        const proxy = LensProxy(lensState) |> promap(
             x => x.a,
             (fieldValue, model) => ({ ...model, a: fieldValue })
         )
@@ -134,15 +134,15 @@ describe("lens proxy", () => {
         set(proxy, otherModel)
 
         // Assert
-        expect(prof.state.a).toBe(otherModel)
+        expect(lensState.state.a).toBe(otherModel)
     });
 
     it("compose ramda", () => {
         // Arrange
         const initialModel = { a: { b: "" } }
         const otherModel = {};
-        const prof = ProfunctorState(initialModel, setter => { prof.state = setter(prof.state) })
-        const proxy = LensProxy(prof) |> compose(R.lens(
+        const lensState = LensState(initialModel, setter => { lensState.state = setter(lensState.state) })
+        const proxy = LensProxy(lensState) |> compose(R.lens(
             R.prop("a"),
             R.assoc("a")
         ))
@@ -155,14 +155,14 @@ describe("lens proxy", () => {
         set(proxy, otherModel)
 
         // Assert
-        expect(prof.state.a).toBe(otherModel)
+        expect(lensState.state.a).toBe(otherModel)
     });
 
     it("lmap proxy", () => {
         // Arrange
         const initialModel = { a: null }
-        const prof = ProfunctorState(initialModel, setter => { prof.state = setter(prof.state) })
-        const proxy = LensProxy(prof).a |> lmap(x => x || "")
+        const lensState = LensState(initialModel, setter => { lensState.state = setter(lensState.state) })
+        const proxy = LensProxy(lensState).a |> lmap(x => x || "")
 
         // Assert
         const value = proxy |> get
@@ -172,14 +172,14 @@ describe("lens proxy", () => {
         set(proxy, 1)
 
         // Assert
-        expect(prof.state.a).toBe(1)
+        expect(lensState.state.a).toBe(1)
     });
 
     it("rmap proxy", () => {
         // Arrange
         const initialModel = { a: "some" }
-        const prof = ProfunctorState(initialModel, setter => { prof.state = setter(prof.state) })
-        const proxy = LensProxy(prof).a |> rmap(x => x || "other")
+        const lensState = LensState(initialModel, setter => { lensState.state = setter(lensState.state) })
+        const proxy = LensProxy(lensState).a |> rmap(x => x || "other")
 
         // Assert
         const value = proxy |> get
@@ -189,15 +189,15 @@ describe("lens proxy", () => {
         set(proxy, null)
 
         // Assert
-        expect(prof.state.a).toBe("other")
+        expect(lensState.state.a).toBe("other")
     });
 
     it("sequence proxy of array", () => {
         // Arrange
         const initialModel = [1, 2, 3]
 
-        const prof = ProfunctorState(initialModel, setter => { prof.state = setter(prof.state) })
-        const proxy = LensProxy(prof)
+        const lensState = LensState(initialModel, setter => { lensState.state = setter(lensState.state) })
+        const proxy = LensProxy(lensState)
 
         // Act
         const proxies = proxy |> sequence
@@ -208,6 +208,6 @@ describe("lens proxy", () => {
 
 
         // Assert
-        expect(prof.state).toEqual([1, 22, 3])
+        expect(lensState.state).toEqual([1, 22, 3])
     });
 })
