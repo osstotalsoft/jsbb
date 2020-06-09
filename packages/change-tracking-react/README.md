@@ -86,7 +86,7 @@ const SomeComponent = props => {
 };
 ```
 
-[Read more about lens operations](src/lensProxy/README.md)
+[Read more about lens operations](../state-lens-react/src/lensProxy/README.md)
 
 ## useDirtyInfo hook
 

@@ -96,4 +96,4 @@ const SomeComponent = props => {
   );
 };
 ```
-[Read more about lens operations](../change-tracking-react/src/lensProxy/README.md)
+[Read more about lens operations](../state-lens-react/src/lensProxy/README.md)
