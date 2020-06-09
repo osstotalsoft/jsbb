@@ -106,7 +106,7 @@ const SomeComponent = props => {
 ```
 
 #### pipe
-Pipes a lens to a ramda lens. Both the getters and setters are piped.
+Pipes a lens to a Ramda lens. Both the getters and setters are piped.
 ```js
 const SomeComponent = props => {
   const [lens] = useStateLens({a:1, b:2})
@@ -114,7 +114,7 @@ const SomeComponent = props => {
   console.log(aLens |> get) //1
   (aLens |> set)(0) // sets the model to {a:0, b:2}
 }
-
+```
 #### sintax sugar
 
 By using es6 proxy we were able to provide field and array indexer access just like with pojos.
