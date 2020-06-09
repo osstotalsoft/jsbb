@@ -4,8 +4,9 @@ import LensState from '../lensState';
 
 export function useStateLens(initialModel, deps = []) {
     const [state, setState] = useState(initialModel)
-    const memoizedLensState = useMemo(() => LensState(state, setState), [...deps, state])
-    const changeTrackingLensProxy = useMemo(() => LensProxy(memoizedLensState), [memoizedLensState])
+    const lensProxy = useMemo(
+        () => LensState(state, setState) |> LensProxy, 
+        [...deps, state])
 
-    return changeTrackingLensProxy
+    return lensProxy
 }
