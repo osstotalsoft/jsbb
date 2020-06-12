@@ -1,26 +1,26 @@
 import { LensProxy, eject, get, set, over, promap, lmap, rmap, sequence, pipe } from "..";
-import LensState from "../../lensState";
+import StateLens from "../../stateLens";
 import * as R from "ramda";
 
 describe("lens proxy", () => {
-    it("eject returns inner lensState profunctor", () => {
+    it("eject returns inner stateLens profunctor", () => {
         // Arrange
         const initialModel = { a: { b: "" } };
-        const lensState = LensState(initialModel, _ => { })
-        const proxy = LensProxy(lensState)
+        const stateLens = StateLens(initialModel, _ => { })
+        const proxy = LensProxy(stateLens)
 
         // Act
-        const innerLensState = eject(proxy);
+        const innerStateLens = eject(proxy);
 
         // Assert
-        expect(innerLensState).toBe(lensState)
+        expect(innerStateLens).toBe(stateLens)
     });
 
-    it("get returns lensState state", () => {
+    it("get returns stateLens state", () => {
         // Arrange
         const state = { a: { b: "" } };
-        const lensState = LensState(state, _ => { })
-        const proxy = LensProxy(lensState)
+        const stateLens = StateLens(state, _ => { })
+        const proxy = LensProxy(stateLens)
 
         // Act
         const value = get(proxy);
@@ -29,15 +29,15 @@ describe("lens proxy", () => {
         expect(value).toBe(state)
     });
 
-    it("set sets the lensState state", () => {
+    it("set sets the stateLens state", () => {
         // Arrange
         let state = { a: { b: "" } };
         const otherModel = {};
         const setState = value => { state = value }
-        const lensStateProxy = LensState(state, setState) |> LensProxy
+        const stateLensProxy = StateLens(state, setState) |> LensProxy
 
         // Act
-        set(lensStateProxy)(otherModel);
+        set(stateLensProxy)(otherModel);
 
         // Assert
         expect(otherModel).toBe(state)
@@ -47,11 +47,11 @@ describe("lens proxy", () => {
         // Arrange
         let state = { a: null, b: undefined };
         const setState = setter => { state = setter(state) }
-        const lensStateProxy = LensState(state, setState) |> LensProxy
+        const stateLensProxy = StateLens(state, setState) |> LensProxy
 
         // Act
-        set(lensStateProxy.a.x)(1);
-        set(lensStateProxy.b[0])(2);
+        set(stateLensProxy.a.x)(1);
+        set(stateLensProxy.b[0])(2);
 
         // Assert
         expect(state.a.x).toBe(1);
@@ -62,11 +62,11 @@ describe("lens proxy", () => {
         // Arrange
         let state = { a: { b: "" } };
         const setState = setter => { state = setter(state) }
-        const lensStateProxy = LensState(state, setState) |> LensProxy
+        const stateLensProxy = StateLens(state, setState) |> LensProxy
         const changeFn = x => x + "OK"
 
         // Act
-        set(lensStateProxy.a.b)(changeFn);
+        set(stateLensProxy.a.b)(changeFn);
 
         // Assert
         expect(state.a.b).toBe("OK")
@@ -76,11 +76,11 @@ describe("lens proxy", () => {
         // Arrange
         let state = { a: { b: "" } };
         const setState = setter => { state = setter(state) }
-        const lensStateProxy = LensState(state, setState) |> LensProxy
+        const stateLensProxy = StateLens(state, setState) |> LensProxy
         const changeFn = x => x + "OK"
 
         // Act
-        over(lensStateProxy.a.b)(changeFn);
+        over(stateLensProxy.a.b)(changeFn);
 
         // Assert
         expect(state.a.b).toBe("OK")
@@ -91,7 +91,7 @@ describe("lens proxy", () => {
         // Arrange
         const initialModel = { a: { b: "" } };
         const setState = jest.fn()
-        const lens = new LensState(initialModel, setState) |> LensProxy
+        const lens = new StateLens(initialModel, setState) |> LensProxy
         
         // Act
         set(lens.a.b, "OK");      
@@ -106,7 +106,7 @@ describe("lens proxy", () => {
         // Arrange
         let model = { a: { b: "" } };
         const setState = setter => model = setter(model)
-        const lens = new LensState(model, setState) |> LensProxy
+        const lens = new StateLens(model, setState) |> LensProxy
         
         // Act
         set(lens.a.b, "OK");      
@@ -119,10 +119,10 @@ describe("lens proxy", () => {
     it("can be stringified", () => {
         // Arrange
         const initialModel = { a: { b: "" } };
-        const lensStateProxy = LensState(initialModel, _ => { }) |> LensProxy
+        const stateLensProxy = StateLens(initialModel, _ => { }) |> LensProxy
         
         // Act
-        JSON.stringify(lensStateProxy);
+        JSON.stringify(stateLensProxy);
         // Assert
     });
 
@@ -131,8 +131,8 @@ describe("lens proxy", () => {
         let state = { a: { b: "" } }
         const setState = setter => { state = setter(state) }
         const otherModel = {};
-        const lensStateProxy = LensState(state, setState) |> LensProxy
-        const proxy = lensStateProxy |> promap(
+        const stateLensProxy = StateLens(state, setState) |> LensProxy
+        const proxy = stateLensProxy |> promap(
             x => x.a,
             (fieldValue, model) => ({ ...model, a: fieldValue })
         )
@@ -153,9 +153,9 @@ describe("lens proxy", () => {
         let state = { a: { b: "" } }
         const setState = setter => { state = setter(state) }
         const otherModel = {};
-        const lensStateProxy = LensState(state, setState) |> LensProxy
+        const stateLensProxy = StateLens(state, setState) |> LensProxy
         
-        const pipedProxy = pipe(lensStateProxy, R.lens(
+        const pipedProxy = pipe(stateLensProxy, R.lens(
             R.prop("a"),
             R.assoc("a")
         ))
@@ -175,8 +175,8 @@ describe("lens proxy", () => {
         // Arrange
         let state = { a: null }
         const setState = setter => { state = setter(state) }
-        const lensStateProxy = LensState(state, setState) |> LensProxy
-        const innerLensProxy = lensStateProxy.a |> lmap(x => x || "")
+        const stateLensProxy = StateLens(state, setState) |> LensProxy
+        const innerLensProxy = stateLensProxy.a |> lmap(x => x || "")
 
         // Assert
         const value = innerLensProxy |> get
@@ -193,8 +193,8 @@ describe("lens proxy", () => {
         // Arrange
         let state = {a: "some"}
         const setState = setter => { state = setter(state) }
-        const lensStateProxy = LensState(state, setState) |> LensProxy
-        const innerLensProxy = lensStateProxy.a |> rmap(x => x || "other")
+        const stateLensProxy = StateLens(state, setState) |> LensProxy
+        const innerLensProxy = stateLensProxy.a |> rmap(x => x || "other")
 
         // Assert
         const value = innerLensProxy |> get
@@ -211,8 +211,8 @@ describe("lens proxy", () => {
         // Arrange
         let state = [1, 2, 3]
         const setState = setter => { state = setter(state) }
-        const lensState = LensState(state, setState)
-        const proxy = LensProxy(lensState)
+        const stateLens = StateLens(state, setState)
+        const proxy = LensProxy(stateLens)
 
         // Act
         const proxies = proxy |> sequence

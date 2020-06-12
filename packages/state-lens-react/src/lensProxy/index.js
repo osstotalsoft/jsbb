@@ -1,5 +1,5 @@
 import { curry } from "ramda";
-import * as L from "../lensState"
+import * as L from "../stateLens"
 import * as fl from "fantasy-land";
 import * as Z from "@totalsoft/zion"
 

@@ -4,16 +4,16 @@ import { create, detectChanges, ensureArrayUIDsDeep } from '@totalsoft/change-tr
 
 export function useChangeTrackingLens(initialModel) {
     const [dirtyInfo, setDirtyInfo] = useState(create)
-    const lensState = useStateLens(() => ensureArrayUIDsDeep(initialModel));
+    const stateLens = useStateLens(() => ensureArrayUIDsDeep(initialModel));
     const changeTrackingLens = useMemo(() =>
-        lensState |> rmap(
+        stateLens |> rmap(
             (changedModel, prevModel) => {
                 const newModel = ensureArrayUIDsDeep(changedModel)
                 const newDirtyInfo = detectChanges(newModel, prevModel, dirtyInfo)
                 setDirtyInfo(newDirtyInfo)
                 return newModel;
             }),
-        [lensState])
+        [stateLens])
 
     return [
         changeTrackingLens,
@@ -21,7 +21,7 @@ export function useChangeTrackingLens(initialModel) {
 
         // Reset
         useCallback((newModel = undefined) => {
-            over(lensState, (prevModel => {
+            over(stateLens, (prevModel => {
                 setDirtyInfo(create())
                 return newModel !== undefined ? ensureArrayUIDsDeep(newModel) : prevModel
             }));

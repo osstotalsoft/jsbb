@@ -4,10 +4,10 @@ import * as R from "ramda";
 import * as Z from "@totalsoft/zion"
 import { identity } from "ramda"
 
-const LensState = tagged("LensState", ["state", "setState"]);
+const StateLens = tagged("StateLens", ["state", "setState"]);
 
-/* Profunctor LensState */ {
-    LensState.prototype[fl.promap] = function (get, set) {
+/* Profunctor StateLens */ {
+    StateLens.prototype[fl.promap] = function (get, set) {
         const setState = this.setState;
         const innerSetState = function (newInnerStateOrUpdate) {
             setState(prevState => {
@@ -26,12 +26,12 @@ const LensState = tagged("LensState", ["state", "setState"]);
         }
 
         const innerState = get(this.state)
-        return LensState(innerState, innerSetState)
+        return StateLens(innerState, innerSetState)
     }
 }
 
-/* Functor LensState */ {
-    LensState.prototype[fl.map] = function (f) {
+/* Functor StateLens */ {
+    StateLens.prototype[fl.map] = function (f) {
         return this[fl.promap](identity, f)
     }
 }
@@ -102,4 +102,4 @@ function _immutableAssign(obj, prop, value) {
         : { ...obj, [prop]: value }
 }
 
-export default LensState;
+export default StateLens;

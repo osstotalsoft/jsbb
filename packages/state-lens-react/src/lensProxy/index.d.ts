@@ -1,9 +1,9 @@
-export type LensState<TState> = { state: TState, setState: (prevState: TState) => TState };
+export type StateLens<TState> = { state: TState, setState: (prevState: TState) => TState };
 
 /**
  * Provides access to the inner profunctor state
  */
-export function eject<TValue>(lens: LensProxy<TValue>): LensState<TValue>;
+export function eject<TValue>(lens: LensProxy<TValue>): StateLens<TValue>;
 
 /**
  * Sets a new value in the profunctor state
@@ -69,10 +69,10 @@ export function sequence<TValue>(lens: LensProxy<TValue[]>): Array<LensProxy<TVa
  */
 export function pipe(lens: LensProxy<any>, otherLens: any): LensProxy<any>;
 
-export function LensProxy<TValue>(profunctor: LensState<TValue>): LensProxy<TValue>;
+export function LensProxy<TValue>(profunctor: StateLens<TValue>): LensProxy<TValue>;
 
 export type Proxy<T> = {
   [k in keyof T]: T[k];
 };
 
-export type LensProxy<TValue> = Proxy<LensState<TValue>>;
+export type LensProxy<TValue> = Proxy<StateLens<TValue>>;
