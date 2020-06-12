@@ -1,10 +1,10 @@
-# state-lens-react
+# react-state-lens
 React extensions for stateful profunctor lenses.
 
 
 ## installation
 ```javascript
-npm install @totalsoft/state-lens-react
+npm install @totalsoft/react-state-lens
 ```
 
 ## info
@@ -20,7 +20,7 @@ The library provides one hook:
 Usage example:
 
 ```jsx
-import { useStateLens, get, set } from "@totalsoft/state-lens-react";
+import { useStateLens, get, set } from "@totalsoft/react-state-lens";
 
 const onTextBoxChange = onPropertyChange => event => onPropertyChange(event.target.value)
 

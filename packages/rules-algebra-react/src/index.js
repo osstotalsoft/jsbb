@@ -1,2 +1,2 @@
 export * from './hooks'
-export * from "@totalsoft/state-lens-react/lensProxy";
+export * from "@totalsoft/react-state-lens/lensProxy";

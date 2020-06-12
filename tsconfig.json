@@ -20,8 +20,8 @@
         "@totalsoft/pure-validations-react": ["./packages/pure-validations-react/src"],
         "@totalsoft/rules-algebra": ["./packages/rules-algebra/src"],
         "@totalsoft/rules-algebra-react": ["./packages/rules-algebra-react/src"],
-        "@totalsoft/state-lens-react": ["./packages/state-lens-react/src"],
-        "@totalsoft/state-lens-react/lensProxy": ["./packages/state-lens-react/src/lensProxy"],
+        "@totalsoft/react-state-lens": ["./packages/react-state-lens/src"],
+        "@totalsoft/react-state-lens/lensProxy": ["./packages/react-state-lens/src/lensProxy"],
         "@totalsoft/zion": ["./packages/zion/src"],
         "@totalsoft/zion/*": ["./packages/zion/src/*"]
       }

@@ -1,6 +1,6 @@
 import { Rule, Logger } from "@totalsoft/rules-algebra";
 import { DirtyInfo } from "@totalsoft/change-tracking";
-import { LensProxy } from "@totalsoft/state-lens-react";
+import { LensProxy } from "@totalsoft/react-state-lens";
 
 /**
  * React hook that applies the business rules and keeps track of user modified values (dirty field info).

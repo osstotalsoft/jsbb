@@ -30,7 +30,7 @@
   },
   "dependencies": {
     "@totalsoft/change-tracking": "^5.0.6",
-    "@totalsoft/state-lens-react": "^5.0.6"
+    "@totalsoft/react-state-lens": "^5.0.6"
   },
   "peerDependencies": {
     "react": ">= 16.9.0"

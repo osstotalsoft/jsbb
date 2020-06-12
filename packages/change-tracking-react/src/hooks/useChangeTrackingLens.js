@@ -1,4 +1,4 @@
-import { useStateLens, rmap, over } from '@totalsoft/state-lens-react'
+import { useStateLens, rmap, over } from '@totalsoft/react-state-lens'
 import { useCallback, useState, useMemo } from 'react';
 import { create, detectChanges, ensureArrayUIDsDeep } from '@totalsoft/change-tracking'
 

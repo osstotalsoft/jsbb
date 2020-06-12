@@ -1,5 +1,5 @@
 import { DirtyInfo } from "@totalsoft/change-tracking";
-import { LensProxy } from "@totalsoft/state-lens-react";
+import { LensProxy } from "@totalsoft/react-state-lens";
 
 /**
  * Keeps track of modified properties of an external model.
