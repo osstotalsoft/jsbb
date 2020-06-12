@@ -69,7 +69,15 @@ export function sequence<TValue>(lens: LensProxy<TValue[]>): Array<LensProxy<TVa
  */
 export function pipe(lens: LensProxy<any>, otherLens: any): LensProxy<any>;
 
-export function LensProxy<TValue>(profunctor: StateLens<TValue>): LensProxy<TValue>;
+/**
+ * Creates a LensProxy over an existing lens
+ */
+export function LensProxy<TValue>(lens: StateLens<TValue>): LensProxy<TValue>;
+
+/**
+ * Creates a StateLens and a proxy over it
+ */
+export function StateLensProxy<TState>(state: TState, setState: (prevState: TState) => TState): LensProxy<TState>;
 
 export type Proxy<T> = {
   [k in keyof T]: T[k];

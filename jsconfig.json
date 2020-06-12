@@ -4,8 +4,8 @@
       "paths": {
         "@totalsoft/zion": ["./packages/zion/src"],
         "@totalsoft/zion/*": ["./packages/zion/src/*"],
-        "@totalsoft/change-tracking-react": ["./packages/change-tracking-react/src"],
-        "@totalsoft/change-tracking-react/*": ["./packages/change-tracking-react/src/*"]
+        "@totalsoft/react-state-lens": ["./packages/react-state-lens/src"],
+        "@totalsoft/react-state-lens/*": ["./packages/react-state-lens/src/*"]
       }
     }
   }

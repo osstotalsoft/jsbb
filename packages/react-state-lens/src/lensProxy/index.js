@@ -39,11 +39,10 @@ const handler = {
                 if (prop in target[cacheSymbol]) {
                     return target[cacheSymbol][prop];
                 }
-                const propLens = L.getInnerLens(target, prop);
-                const proxy = LensProxy(propLens);
+                const propLensProxy = L.getInnerLens(target, prop) |> LensProxy;
 
-                target[cacheSymbol][prop] = proxy; // cache value
-                return proxy;
+                target[cacheSymbol][prop] = propLensProxy; // cache value
+                return propLensProxy;
             }
         }
     }
@@ -97,4 +96,8 @@ export const pipe = curry(function (proxy, otherLens) {
 
 export function LensProxy(stateLens) {
     return new Proxy(stateLens, handler)
+}
+
+export function StateLensProxy(state, setState) {
+    return new L.StateLens(state, setState) |> Proxy
 }

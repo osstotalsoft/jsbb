@@ -21,12 +21,17 @@ lerna bootstrap
 
 ## Build
 ```javascript
-lerna exec -- yarn build
+lerna run build
+```
+
+## Lint typescript definitions
+```javascript
+lerna run typescript
 ```
 
 ## Test
 ```javascript
-jest
+yarn test
 ```
 
 ## Publish
