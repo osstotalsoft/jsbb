@@ -60,7 +60,7 @@ export const lmap = Z.lmap;
 
 export const rmap = Z.rmap;
 
-export const pipe = R.curry(function (stateLens, otherLens) {
+export const pipe = R.curry(function pipe(stateLens, otherLens) {
     if (typeof (otherLens) !== 'function') {
         throw Error("Parameter 'otherLens' is not a Ramda lens")
     }
