@@ -50,7 +50,7 @@ const lmap = curry(function lmap(fn, profunctor) {
 });
 
 // rmap :: Profunctor p => (b -> c) -> p a b -> p a c
-const rmap = curry(function lmap(fn, profunctor) {
+const rmap = curry(function rmap(fn, profunctor) {
   return profunctor[fl.promap](identity, fn);
 });
 
