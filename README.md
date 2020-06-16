@@ -11,6 +11,7 @@
   - [`rules-algebra-react`](./packages/rules-algebra-react#readme)
   - [`change-tracking`](./packages/change-tracking#readme)
   - [`change-tracking-react`](./packages/change-tracking-react#readme)
+  - [`react-state-lens`](./packages/react-state-lens#readme)
 
 ## Bootstrap
 ```javascript
@@ -20,12 +21,17 @@ lerna bootstrap
 
 ## Build
 ```javascript
-lerna exec -- yarn build
+lerna run build
+```
+
+## Lint typescript definitions
+```javascript
+lerna run typescript
 ```
 
 ## Test
 ```javascript
-jest
+yarn test
 ```
 
 ## Publish

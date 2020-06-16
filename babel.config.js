@@ -6,6 +6,7 @@ module.exports = api => {
     "@totalsoft/zion": "@totalsoft/zion/src",
     "@totalsoft/pure-validations": "@totalsoft/pure-validations/src",
     "@totalsoft/rules-algebra": "@totalsoft/rules-algebra/src",
+    "@totalsoft/react-state-lens": "@totalsoft/react-state-lens/src",
     "@totalsoft/change-tracking": "@totalsoft/change-tracking/src",
     "@totalsoft/change-tracking-react": "@totalsoft/change-tracking-react/src",
     "@totalsoft/change-tracking-react/lensProxy": "@totalsoft/change-tracking-react/src/lensProxy",

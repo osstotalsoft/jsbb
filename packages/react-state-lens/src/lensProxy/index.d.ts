@@ -1,9 +1,9 @@
-import { ProfunctorState } from "@staltz/use-profunctor-state";
+export type StateLens<TState> = { state: TState, setState: (prevState: TState) => TState };
 
 /**
- * Provides access to the inner profunctor
+ * Provides access to the inner profunctor state
  */
-export function eject<TValue>(lens: LensProxy<TValue>): ProfunctorState<TValue>;
+export function eject<TValue>(lens: LensProxy<TValue>): StateLens<TValue>;
 
 /**
  * Sets a new value in the profunctor state
@@ -63,10 +63,24 @@ export function rmap<TValue, TResult>(set: (newValue: TResult, oldState: TValue)
  */
 export function sequence<TValue>(lens: LensProxy<TValue[]>): Array<LensProxy<TValue>>;
 
-export function LensProxy<TValue>(profunctor: ProfunctorState<TValue>): LensProxy<TValue>;
+/**
+ * Pipes a lens to a Ramda lens. Both the getters and setters are piped.
+ * @see https://github.com/osstotalsoft/jsbb/tree/master/packages/change-tracking-react/src/lensProxy/README.md#pipe
+ */
+export function pipe(lens: LensProxy<any>, otherLens: any): LensProxy<any>;
+
+/**
+ * Creates a LensProxy over an existing lens
+ */
+export function LensProxy<TValue>(lens: StateLens<TValue>): LensProxy<TValue>;
+
+/**
+ * Creates a StateLens and a proxy over it
+ */
+export function StateLensProxy<TState>(state: TState, setState: (prevState: TState) => TState): LensProxy<TState>;
 
 export type Proxy<T> = {
   [k in keyof T]: T[k];
 };
 
-export type LensProxy<TValue> = Proxy<ProfunctorState<TValue>>;
+export type LensProxy<TValue> = Proxy<StateLens<TValue>>;

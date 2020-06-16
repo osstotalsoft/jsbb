@@ -1,6 +1,6 @@
 import { renderHook, act } from "@testing-library/react-hooks";
 import { Rule, applyRule, logTo, __clearMocks as clearRulesMocks } from "@totalsoft/rules-algebra";
-import { set, get } from "@totalsoft/change-tracking-react/lensProxy";
+import { set, get } from "@totalsoft/react-state-lens";
 import { useRulesLens } from "..";
 import { detectChanges, __clearMocks as clearChangeTrackingMocks } from "@totalsoft/change-tracking";
 

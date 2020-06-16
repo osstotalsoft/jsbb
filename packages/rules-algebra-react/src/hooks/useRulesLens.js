@@ -1,10 +1,7 @@
-import { useProfunctorState } from '@staltz/use-profunctor-state'
-import { LensProxy } from '@totalsoft/change-tracking-react/lensProxy';
+import { useStateLens, rmap, over } from '@totalsoft/react-state-lens'
 import { useMemo, useCallback, useState } from 'react';
 import { applyRule, logTo } from '@totalsoft/rules-algebra';
 import { create, detectChanges, ensureArrayUIDsDeep } from '@totalsoft/change-tracking'
-
-
 
 export function useRulesLens(rules, initialModel, { isLogEnabled = true, logger = console } = {}, deps = []) {
     const [dirtyInfo, setDirtyInfo] = useState(create)
@@ -19,30 +16,28 @@ export function useRulesLens(rules, initialModel, { isLogEnabled = true, logger 
         return newRules
     }, [rules, isLogEnabled, logger, ...deps]); // eslint-disable-line react-hooks/exhaustive-deps
 
-    const profunctor = useProfunctorState(ensureArrayUIDsDeep(initialModel));
+    const stateLens = useStateLens(() => ensureArrayUIDsDeep(initialModel));
 
-    const rulesEngineProfunctor = profunctor.promap(
-        model => model,
-        (changedModel, prevModel) => {
-            const result = applyRule(rulesEngine, ensureArrayUIDsDeep(changedModel), prevModel)
-            setDirtyInfo(detectChanges(result, prevModel, dirtyInfo))
-            return result;
-        },
-        [profunctor.state, rulesEngine],
-    )
+    const rulesEngineLens = useMemo(() =>
+        stateLens |> rmap(
+            (changedModel, prevModel) => {
+                const result = applyRule(rulesEngine, ensureArrayUIDsDeep(changedModel), prevModel)
+                setDirtyInfo(detectChanges(result, prevModel, dirtyInfo))
+                return result;
+            }),
+        [stateLens, rulesEngine])
 
-    const lens = useMemo(() => LensProxy(rulesEngineProfunctor), [rulesEngineProfunctor]);
-
+   
     return [
-        lens,
+        rulesEngineLens,
         dirtyInfo,
 
         // Reset
         useCallback((newModel = undefined) => {
-            profunctor.setState(prevModel => {
+            over(stateLens, (prevModel => {
                 setDirtyInfo(create())
                 return newModel !== undefined ? ensureArrayUIDsDeep(newModel) : prevModel
-            });
+            }));
         }, [])
     ]
 }
