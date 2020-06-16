@@ -4,7 +4,7 @@ import * as R from "ramda";
 import * as Z from "@totalsoft/zion"
 import { identity } from "ramda"
 
-const StateLens = tagged("StateLens", ["state", "setState"]);
+export const StateLens = tagged("StateLens", ["state", "setState"]);
 
 /* Profunctor StateLens */ {
     StateLens.prototype[fl.promap] = function (get, set) {
@@ -102,4 +102,4 @@ function _immutableAssign(obj, prop, value) {
         : { ...obj, [prop]: value }
 }
 
-export default StateLens;
+export default StateLens
