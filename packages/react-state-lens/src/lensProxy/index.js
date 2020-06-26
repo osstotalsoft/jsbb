@@ -99,5 +99,5 @@ export function LensProxy(stateLens) {
 }
 
 export function StateLensProxy(state, setState) {
-    return new L.StateLens(state, setState) |> Proxy
+    return new L.StateLens(state, setState) |> LensProxy
 }
