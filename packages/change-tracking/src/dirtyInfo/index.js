@@ -57,7 +57,7 @@ export const detectChanges = curry(function detectChanges(model, prevModel, prev
                         ? updateSingleProperty(prop, prevDirtyInfo[prop], acc)
                         : updateSingleProperty(prop, detectChanges(model[prop], prevModel[prop], prevDirtyInfo[prop]), acc)
                 )
-                : updateSingleProperty(prop, false, acc),
+                : updateSingleProperty(prop, model[prop] !== undefined, acc),
             prevDirtyInfo)
 
     return Object.keys(model).length !== Object.keys(prevModel).length ? { ...newDirtyInfo, [isDirtySymbol]: true } : newDirtyInfo
