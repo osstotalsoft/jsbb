@@ -88,10 +88,23 @@ describe("dirty info operations:", () => {
         expect(isPropertyDirty("a.b", di)).toBe(true);
     });
 
-    it("checks that new property in object is not dirty", () => {
+    it("checks that new property in object is dirty", () => {
         // Arrange
         const prevModel = {a: 1}
         const crtModel = {a: 1, b: 2}
+
+        // Act
+        const di = detectChanges(crtModel, prevModel);
+
+        // Assert
+        expect(isDirty(di.b)).toBe(true);
+    });
+
+    
+    it("checks that new undefined property in object is not dirty", () => {
+        // Arrange
+        const prevModel = {a: 1}
+        const crtModel = {a: 1, b: undefined}
 
         // Act
         const di = detectChanges(crtModel, prevModel);
