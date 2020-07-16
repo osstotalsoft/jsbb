@@ -13,8 +13,12 @@ export function ensureArrayUIDsDeep(model) {
         model = model.map(_ensureUniqueId)
     }
 
-    return Object.entries(model)
-        .reduce((acc, [k, v]) => { acc[k] = ensureArrayUIDsDeep(v); return acc; }, model)
+    const newModel = Object.entries(model)
+        .reduce((acc, [k, v]) => { acc[k] = ensureArrayUIDsDeep(v); return acc; }, {})
+
+    const hasSameProps = Object.entries(model).every(([k, v]) => v === model[k])
+
+    return hasSameProps ? model : newModel;
 }
 
 export function ensureArrayUIDs(array) {
@@ -22,7 +26,9 @@ export function ensureArrayUIDs(array) {
         return array;
     }
 
-    return array.map(_ensureUniqueId)
+    const newArray = array.map(_ensureUniqueId)
+    const hasSameElements = newArray.every((value, index) => value === array[index])
+    return hasSameElements ? array : newArray
 }
 
 export function findMatchingItem(currentItem, currentIndex, otherArray) {
@@ -61,7 +67,7 @@ export function toUniqueIdMap(array) {
 
 function _ensureUniqueId(item) {
     if (typeof (item) === "object" && item[uniqueIdSymbol] === undefined) {
-        item[uniqueIdSymbol] = uniqid()
+        return {...item, [uniqueIdSymbol]: uniqid()}
     }
     return item;
 }
