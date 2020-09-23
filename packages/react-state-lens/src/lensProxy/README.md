@@ -41,7 +41,7 @@ const SomeComponent = props => {
 get is used to read the value from lens.
 ```js
 const SomeComponent = props => {
-  const [lens] = useChangeTrackingState(21)
+  const lens = useChangeTrackingState(21)
   const value = lens |> get // 21
 }
 ```
@@ -50,7 +50,7 @@ const SomeComponent = props => {
 set is used to set the value of a lens.
 ```js
 const SomeComponent = props => {
-  const [lens] = useChangeTrackingState(21)
+  const lens = useChangeTrackingState(21)
   (lens |> set)(22) // sets the model to 22
 }
 ```
@@ -59,7 +59,7 @@ const SomeComponent = props => {
 over - sets the state of a lens using some updater fn.
 ```js
 const SomeComponent = props => {
-  const [lens] = useChangeTrackingState('John')
+  const lens = useChangeTrackingState('John')
   over(lens)(x => x + ' Smith') // sets the model to 'John Smith'
 }
 ```
@@ -68,7 +68,7 @@ const SomeComponent = props => {
 Maps both the getter and the setter of a lens.
 ```js
 const SomeComponent = props => {
-  const [lens] = useChangeTrackingState({a:1, b:2})
+  const lens = useChangeTrackingState({a:1, b:2})
   const aLens = lens |> promap(R.prop('a'), R.assoc('a'))
   console.log(aLens |> get) //1
   (aLens |> set)(0) // sets the model to {a:0, b:2}
@@ -79,7 +79,7 @@ const SomeComponent = props => {
 Maps only the getter of a lens.
 ```js
 const SomeComponent = props => {
-  const [lens] = useStateLens(null)
+  const lens = useStateLens(null)
   const lensOrDefault = lens |> lmap(x=> x || "default")
   const value = lensOrDefault |> get //"default"
 }
@@ -89,7 +89,7 @@ const SomeComponent = props => {
 Maps only the setter of a lens.
 ```js
 const SomeComponent = props => {
-  const [lens] = useStateLens(1)
+  const lens = useStateLens(1)
   const lensOrDefault = lens |> rmap(x=> x || "default")
   set(lensOrDefault)(null) //sets the model to "default"
 }
@@ -99,7 +99,7 @@ const SomeComponent = props => {
 Sequence transforms a lens of array into an array of lenses.
 ```js
 const SomeComponent = props => {
-  const [lens] = useStateLens([1,2,3])
+  const lens = useStateLens([1,2,3])
   const lenses = lens |> sequence
   const firstItem = lenses[0] |> get //1
 }
@@ -109,7 +109,7 @@ const SomeComponent = props => {
 Pipes a lens to a Ramda lens. Both the getters and setters are piped.
 ```js
 const SomeComponent = props => {
-  const [lens] = useStateLens({a:1, b:2})
+  const lens = useStateLens({a:1, b:2})
   const aLens = pipe(lens, R.lens(R.prop('a'), R.assoc('a')))
   console.log(aLens |> get) //1
   (aLens |> set)(0) // sets the model to {a:0, b:2}
@@ -120,7 +120,7 @@ const SomeComponent = props => {
 By using es6 proxy we were able to provide field and array indexer access just like with pojos.
 ```js
 const SomeComponent = props => {
-  const [lens] = useStateLens({name: 'John'})
+  const lens = useStateLens({name: 'John'})
   const nameLens = lens.name
   const name = nameLens |> get // John
 }
@@ -128,7 +128,7 @@ const SomeComponent = props => {
 
 ```js
 const SomeComponent = props => {
-  const [lens] = useStateLens([1,2,3])
+  const lens = useStateLens([1,2,3])
   const firstItemLens = lens[0]
   const firstItem = firstItemLens |> get // 1
 }

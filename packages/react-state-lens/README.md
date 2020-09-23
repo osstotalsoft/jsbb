@@ -25,7 +25,7 @@ import { useStateLens, get, set } from "@totalsoft/react-state-lens";
 const onTextBoxChange = onPropertyChange => event => onPropertyChange(event.target.value)
 
 const SomeComponent = props => {
-  const [personLens, dirtyInfo, reset] = useStateLens({});
+  const personLens = useStateLens({});
 
   return (
     <>
