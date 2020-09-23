@@ -1,6 +1,6 @@
 {
   "name": "@totalsoft/react-state-lens",
-  "version": "5.0.11",
+  "version": "5.0.14",
   "description": "React extensions for the \"change-tracking\" library",
   "main": "index.js",
   "scripts": {
