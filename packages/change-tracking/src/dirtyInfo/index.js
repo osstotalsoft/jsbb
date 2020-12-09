@@ -41,14 +41,59 @@ export const merge = curry(function merge(sourceDirtyInfo, targetDirtyInfo) {
 })
 
 export const detectChanges = curry(function detectChanges(model, prevModel, prevDirtyInfo = create()) {
-    if (typeof (model) !== "object" || typeof (prevModel) !== "object" || model === null || prevModel === null) {
-        return model !== prevModel
+    if (model === prevModel) {
+        return false
+    }
+
+    // Both NaN
+    if (model !== model && prevModel !== model) {
+        return false;
+    }
+
+    if (!model || !prevModel) {
+        return true
+    }
+
+    if (typeof model !== 'object' || typeof prevModel !== 'object') {
+        return true;
+    }
+    
+    if (model.constructor !== prevModel.constructor) {
+        return true;
     }
 
     if (Array.isArray(model)) {
         return detectChangesArray(model, prevModel, prevDirtyInfo)
     }
 
+    if (model.constructor === Object) {
+        return detectChangesObject(model, prevModel, prevDirtyInfo)
+    }
+
+    if (model.constructor === RegExp) {
+        return model.source !== prevModel.source || model.flags !== prevModel.flags;
+    }
+
+    if (model.valueOf !== Object.prototype.valueOf) {
+         return model.valueOf() !== prevModel.valueOf();
+    }
+
+    if (model.toString !== Object.prototype.toString) {
+         return model.toString() !== prevModel.toString();
+    }
+     
+    return false
+})
+
+export function isPropertyDirty(propertyPath, dirtyInfo) {
+    return getIsDirty(get(dirtyInfo, propertyPath)) || false;
+}
+
+export function isDirty(dirtyInfo) {
+    return getIsDirty(dirtyInfo) || false;
+}
+
+function detectChangesObject(model, prevModel, prevDirtyInfo) {
     const newDirtyInfo = Object.keys(model)
         .reduce((acc, prop) =>
             prop in prevModel
@@ -61,14 +106,6 @@ export const detectChanges = curry(function detectChanges(model, prevModel, prev
             prevDirtyInfo)
 
     return Object.keys(model).length !== Object.keys(prevModel).length ? { ...newDirtyInfo, [isDirtySymbol]: true } : newDirtyInfo
-})
-
-export function isPropertyDirty(propertyPath, dirtyInfo) {
-    return getIsDirty(get(dirtyInfo, propertyPath)) || false;
-}
-
-export function isDirty(dirtyInfo) {
-    return getIsDirty(dirtyInfo) || false;
 }
 
 function detectChangesArray(model, prevModel, prevDirtyInfo) {
