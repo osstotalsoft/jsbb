@@ -1,6 +1,6 @@
 {
   "name": "@totalsoft/change-tracking-react",
-  "version": "5.0.15",
+  "version": "5.0.16",
   "description": "React extensions for the \"change-tracking\" library",
   "main": "index.js",
   "scripts": {
@@ -29,7 +29,7 @@
     "react-test-renderer": "^16.9.0"
   },
   "dependencies": {
-    "@totalsoft/change-tracking": "^5.0.15",
+    "@totalsoft/change-tracking": "^5.0.16",
     "@totalsoft/react-state-lens": "^5.0.14"
   },
   "peerDependencies": {
