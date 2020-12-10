@@ -76,16 +76,203 @@ describe("dirty info operations:", () => {
         expect(isDirty).toBe(false);
     });
 
-    it("detects changes on object path", () => {
+    it("detects changes on dates", () => {
         // Arrange
-        const prevModel = { a: {b: "initial"}}
-        const crtModel = { a: {b: "modified"}}
+        const prevModel = new Date(2000,1,2)
+        const crtModel = new Date(2000,1,1)
 
         // Act
         const di = detectChanges(crtModel, prevModel);
 
         // Assert
-        expect(isPropertyDirty("a.b", di)).toBe(true);
+        expect(isDirty(di)).toBe(true);
+    });
+
+    it("detects not changed on dates", () => {
+        // Arrange
+        const prevModel = new Date(2000,1,2)
+        const crtModel = new Date(2000,1,2)
+
+        // Act
+        const di = detectChanges(crtModel, prevModel);
+
+        // Assert
+        expect(isDirty(di)).toBe(false);
+    });
+
+    it("detects changes on boxed number", () => {
+        // Arrange
+        const prevModel = new Number(1)
+        const crtModel = new Number(2)
+
+        // Act
+        const di = detectChanges(crtModel, prevModel);
+
+        // Assert
+        expect(isDirty(di)).toBe(true);
+    });
+
+    it("detects not changed on boxed number", () => {
+        // Arrange
+        const prevModel = new Number(1)
+        const crtModel = new Number(1)
+
+        // Act
+        const di = detectChanges(crtModel, prevModel);
+
+        // Assert
+        expect(isDirty(di)).toBe(false);
+    });
+
+    it("detects changes on regex", () => {
+        // Arrange
+        const prevModel = /.*/
+        const crtModel = /.+/
+
+        // Act
+        const di = detectChanges(crtModel, prevModel);
+
+        // Assert
+        expect(isDirty(di)).toBe(true);
+    });
+
+    it("detects not changed on regex", () => {
+        // Arrange
+        const prevModel = /.*/
+        const crtModel = /.*/
+
+        // Act
+        const di = detectChanges(crtModel, prevModel);
+
+        // Assert
+        expect(isDirty(di)).toBe(false);
+    });
+
+    it("detects changes on functions", () => {
+        // Arrange
+        const prevModel = x => x
+        const crtModel = x => x + 1
+
+        // Act
+        const di = detectChanges(crtModel, prevModel);
+
+        // Assert
+        expect(isDirty(di)).toBe(true);
+    });
+
+    it("detects not changed on functions", () => {
+        // Arrange
+        const prevModel = x => x + 1
+        const crtModel = x => x + 1
+
+        // Act
+        const di = detectChanges(crtModel, prevModel);
+
+        // Assert
+        expect(isDirty(di)).toBe(true);
+    });
+
+    it("detects changes on objects with custom constructors", () => {
+        // Arrange
+        function Tree(name) {
+            this.name = name
+        }
+        const prevModel = new Tree("Oak")
+        const crtModel = new Tree("Pine")
+
+        // Act
+        const di = detectChanges(crtModel, prevModel);
+
+        // Assert
+        expect(isDirty(di)).toBe(true);
+    });    
+
+
+    it("detects not changed on object with custom constructor", () => {
+        // Arrange
+        function Tree(name) {
+            this.name = name
+        }
+        const prevModel = new Tree("Oak")
+        const crtModel = new Tree("Oak")
+
+        // Act
+        const di = detectChanges(crtModel, prevModel);
+
+        // Assert
+        expect(isDirty(di)).toBe(false);
+    });
+
+    it("detects changes on object", () => {
+        // Arrange
+        const prevModel = {}
+        const crtModel = { a: 1}
+
+        // Act
+        const di = detectChanges(crtModel, prevModel);
+
+        // Assert
+        expect(isDirty(di)).toBe(true);
+    });
+
+    it("detects not changed on empty object", () => {
+        // Arrange
+        const prevModel = {}
+        const crtModel = {}
+
+        // Act
+        const di = detectChanges(crtModel, prevModel);
+
+        // Assert
+        expect(isDirty(di)).toBe(false);
+    });
+
+    it("detects not changed on NaN", () => {
+        // Arrange
+        const prevModel = NaN
+        const crtModel = NaN
+
+        // Act
+        const di = detectChanges(crtModel, prevModel);
+
+        // Assert
+        expect(isDirty(di)).toBe(false);
+    });
+
+    it("detects not changed on null", () => {
+        // Arrange
+        const prevModel = null
+        const crtModel = null
+
+        // Act
+        const di = detectChanges(crtModel, prevModel);
+
+        // Assert
+        expect(isDirty(di)).toBe(false);
+    });
+
+    it("detects not changed on undefined", () => {
+        // Arrange
+        const prevModel = undefined
+        const crtModel = undefined
+
+        // Act
+        const di = detectChanges(crtModel, prevModel);
+
+        // Assert
+        expect(isDirty(di)).toBe(false);
+    });
+
+    it("detects not changed on empty string", () => {
+        // Arrange
+        const prevModel = ""
+        const crtModel = ""
+
+        // Act
+        const di = detectChanges(crtModel, prevModel);
+
+        // Assert
+        expect(isDirty(di)).toBe(false);
     });
 
     it("checks that new property in object is dirty", () => {
