@@ -172,6 +172,37 @@ describe("dirty info operations:", () => {
         expect(isDirty(di)).toBe(true);
     });
 
+    it("detects changes on objects with custom constructors", () => {
+        // Arrange
+        function Tree(name) {
+            this.name = name
+        }
+        const prevModel = new Tree("Oak")
+        const crtModel = new Tree("Pine")
+
+        // Act
+        const di = detectChanges(crtModel, prevModel);
+
+        // Assert
+        expect(isDirty(di)).toBe(true);
+    });    
+
+
+    it("detects not changed on object with custom constructor", () => {
+        // Arrange
+        function Tree(name) {
+            this.name = name
+        }
+        const prevModel = new Tree("Oak")
+        const crtModel = new Tree("Oak")
+
+        // Act
+        const di = detectChanges(crtModel, prevModel);
+
+        // Assert
+        expect(isDirty(di)).toBe(false);
+    });
+
     it("detects changes on object", () => {
         // Arrange
         const prevModel = {}

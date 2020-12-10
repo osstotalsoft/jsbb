@@ -66,10 +66,6 @@ export const detectChanges = curry(function detectChanges(model, prevModel, prev
         return detectChangesArray(model, prevModel, prevDirtyInfo)
     }
 
-    if (model.constructor === Object) {
-        return detectChangesObject(model, prevModel, prevDirtyInfo)
-    }
-
     if (model.constructor === RegExp) {
         return model.source !== prevModel.source || model.flags !== prevModel.flags;
     }
@@ -82,7 +78,7 @@ export const detectChanges = curry(function detectChanges(model, prevModel, prev
          return model.toString() !== prevModel.toString();
     }
      
-    return false
+    return detectChangesObject(model, prevModel, prevDirtyInfo)
 })
 
 export function isPropertyDirty(propertyPath, dirtyInfo) {
