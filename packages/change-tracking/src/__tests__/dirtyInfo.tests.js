@@ -1,5 +1,5 @@
 import { create, isDirty, update, merge, isPropertyDirty, detectChanges} from "../dirtyInfo";
-import { ensureArrayUIDs } from "../arrayUtils";
+import { ensureArrayUIDs, ensureArrayUIDsDeep } from "../arrayUtils";
 
 describe("dirty info operations:", () => {
     it("creates dirtyInfo: ", () => {
@@ -404,6 +404,29 @@ describe("dirty info operations:", () => {
         // Assert
         expect(isDirty(di[0])).toBe(false);
         expect(isDirty(di[1])).toBe(false);
+    });
+
+    it("checks that new object item in nested array with UIDs is not dirty", () => {
+        // Arrange
+        const prevModel = ensureArrayUIDsDeep({arr: [{a: 1}]})
+        const crtModel = ensureArrayUIDsDeep({arr: [{a : 2 }, ...prevModel.arr]})
+        // Act
+        const di = detectChanges(crtModel, prevModel);
+
+        // Assert
+        expect(isDirty(di.arr[0])).toBe(false);
+        expect(isDirty(di.arr[1])).toBe(false);
+    });
+
+    it("checks if references are preserved by ensureArrayUIDsDeep", () => {
+        // Arrange
+        const prevModel = ensureArrayUIDsDeep({arr: [{a : 2 }, {a : 3}]})
+
+        // Act
+        const model = ensureArrayUIDsDeep(prevModel);
+
+        // Assert
+        expect(prevModel).toBe(model);
     });
 
     it("checks that UID array with added object item is dirty", () => {
