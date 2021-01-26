@@ -29,6 +29,7 @@
     "react-test-renderer": "^16.9.0"
   },
   "dependencies": {
+    "@totalsoft/change-tracking-react": "^5.0.17",
     "@totalsoft/zion": "^5.0.9"
   },
   "peerDependencies": {
