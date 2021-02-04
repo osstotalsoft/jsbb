@@ -418,6 +418,18 @@ describe("dirty info operations:", () => {
         expect(isDirty(di.arr[1])).toBe(false);
     });
 
+    it("checks nested array dirty", () => {
+        // Arrange
+        const prevModel = ensureArrayUIDsDeep({arr: [{a: [{b:2}]}]})
+        const crtModel = ensureArrayUIDsDeep({...prevModel, arr: prevModel.arr})
+        // Act
+        const di = detectChanges(crtModel, prevModel);
+
+        // Assert
+        expect(Array.isArray(crtModel.arr)).toBe(true);
+        expect(isDirty(di)).toBe(false);
+    });
+
     it("checks if references are preserved by ensureArrayUIDsDeep", () => {
         // Arrange
         const prevModel = ensureArrayUIDsDeep({arr: [{a : 2 }, {a : 3}]})

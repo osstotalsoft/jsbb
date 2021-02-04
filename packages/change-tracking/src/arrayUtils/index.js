@@ -11,8 +11,10 @@ export function ensureArrayUIDsDeep(model) {
 
     model = ensureArrayUIDs(model);
 
-    const newModel = Object.entries(model)
-        .reduce((acc, [k, v]) => { acc[k] = ensureArrayUIDsDeep(v); return acc; }, {})
+    let newModel = Object.entries(model).reduce(
+      (acc, [k, v]) => { acc[k] = ensureArrayUIDsDeep(v); return acc; },
+      Array.isArray(model) ? [...model] : { ...model }
+    );
 
     const hasSameProps = Object.entries(newModel).every(([k, v]) => v === model[k])
     return hasSameProps ? model : newModel;
