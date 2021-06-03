@@ -69,7 +69,7 @@ export function toUniqueIdMap(array) {
 }
 
 function _ensureUniqueId(item) {
-    if (typeof (item) === "object" && !Array.isArray(item) && item[uniqueIdSymbol] === undefined) {
+    if (typeof (item) === "object" && item[uniqueIdSymbol] === undefined) {
         return Array.isArray(item) 
             ? Object.assign([...item], { [uniqueIdSymbol]:  uniqid() })
             : {...item, [uniqueIdSymbol]: uniqid()}

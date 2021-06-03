@@ -430,16 +430,16 @@ describe("dirty info operations:", () => {
         expect(isDirty(di)).toBe(false);
     });
 
-    it.only("checks array of array is dirty", () => {
+    it("checks if array of array is dirty", () => {
         // Arrange
         const prevModel = ensureArrayUIDsDeep([[{a:1}], [{b:2}]])
-        const crtModel = ensureArrayUIDsDeep([prevModel[0], prevModel[1]])
+        const crtModel = ensureArrayUIDsDeep([prevModel[0], Object.assign([], prevModel[1])])
         // Act
         const di = detectChanges(crtModel, prevModel);
 
         // Assert
         expect(Array.isArray(crtModel)).toBe(true);
-        expect(Array.isArray(crtModel[0])).toBe(true);
+        expect(Array.isArray(crtModel[1])).toBe(true);
         expect(isDirty(di)).toBe(false);
     });
 
