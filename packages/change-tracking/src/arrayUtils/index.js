@@ -13,7 +13,7 @@ export function ensureArrayUIDsDeep(model) {
 
     let newModel = Object.entries(model).reduce(
       (acc, [k, v]) => { acc[k] = ensureArrayUIDsDeep(v); return acc; },
-      Array.isArray(model) ? [...model] : { ...model }
+      Array.isArray(model) ? _cloneArrayWIthUniqueId(model) : { ...model }
     );
 
     const hasSameProps = Object.entries(newModel).every(([k, v]) => v === model[k])
@@ -26,6 +26,10 @@ export function ensureArrayUIDs(array) {
     }
 
     const newArray = array.map(_ensureUniqueId)
+    if (uniqueIdSymbol in array) {
+        newArray[uniqueIdSymbol] = array[uniqueIdSymbol]
+    }
+
     const hasSameElements = newArray.every((value, index) => value === array[index])
     return hasSameElements ? array : newArray
 }
@@ -66,7 +70,23 @@ export function toUniqueIdMap(array) {
 
 function _ensureUniqueId(item) {
     if (typeof (item) === "object" && item[uniqueIdSymbol] === undefined) {
-        return {...item, [uniqueIdSymbol]: uniqid()}
+        return Array.isArray(item) 
+            ? _addUniqueIdToArray(item)
+            : {...item, [uniqueIdSymbol]: uniqid()}
     }
     return item;
+}
+
+function _addUniqueIdToArray(array) {
+    const newArray = [...array];
+    newArray[uniqueIdSymbol] = uniqid()
+    return newArray
+}
+
+function _cloneArrayWIthUniqueId(array) {
+    const newArray = [...array];
+    if (uniqueIdSymbol in array) {
+        newArray[uniqueIdSymbol] = array[uniqueIdSymbol]
+    }
+    return newArray
 }
