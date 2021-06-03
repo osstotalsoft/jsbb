@@ -430,7 +430,7 @@ describe("dirty info operations:", () => {
         expect(isDirty(di)).toBe(false);
     });
 
-    it("checks array of array is dirty", () => {
+    it.only("checks array of array is dirty", () => {
         // Arrange
         const prevModel = ensureArrayUIDsDeep([[{a:1}], [{b:2}]])
         const crtModel = ensureArrayUIDsDeep([prevModel[0], prevModel[1]])
