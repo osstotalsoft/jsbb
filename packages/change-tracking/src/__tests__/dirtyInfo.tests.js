@@ -421,12 +421,25 @@ describe("dirty info operations:", () => {
     it("checks nested array dirty", () => {
         // Arrange
         const prevModel = ensureArrayUIDsDeep({arr: [{a: [{b:2}]}]})
-        const crtModel = ensureArrayUIDsDeep({...prevModel, arr: prevModel.arr})
+        const crtModel = ensureArrayUIDsDeep({...prevModel, arr: [...prevModel.arr]})
         // Act
         const di = detectChanges(crtModel, prevModel);
 
         // Assert
         expect(Array.isArray(crtModel.arr)).toBe(true);
+        expect(isDirty(di)).toBe(false);
+    });
+
+    it("checks if array of array is dirty", () => {
+        // Arrange
+        const prevModel = ensureArrayUIDsDeep([[{a:1}], [{b:2}]])
+        const crtModel = ensureArrayUIDsDeep([prevModel[0], Object.assign([], prevModel[1])])
+        // Act
+        const di = detectChanges(crtModel, prevModel);
+
+        // Assert
+        expect(Array.isArray(crtModel)).toBe(true);
+        expect(Array.isArray(crtModel[1])).toBe(true);
         expect(isDirty(di)).toBe(false);
     });
 

@@ -98,7 +98,7 @@ function _immutableAssign(obj, prop, value) {
     }
 
     return Array.isArray(obj)
-        ? Object.assign([...obj], { [prop]: value })
+        ? Object.assign([], obj, { [prop]: value })
         : { ...obj, [prop]: value }
 }
 

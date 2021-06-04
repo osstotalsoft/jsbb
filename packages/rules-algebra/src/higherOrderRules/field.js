@@ -25,7 +25,7 @@ const mergeParent = curry(function mergeParent(field, fieldRule) {
         }
 
         return Array.isArray(model)
-            ? Object.assign([...model], { [field]: fieldValue })
+            ? Object.assign([], model, { [field]: fieldValue })
             : { ...model, [field]: fieldValue }
     });
 });
