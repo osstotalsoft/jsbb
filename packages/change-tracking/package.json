@@ -1,6 +1,6 @@
 {
   "name": "@totalsoft/change-tracking",
-  "version": "5.0.19",
+  "version": "5.0.20",
   "description": "Change tracking library for models including objects and arrays",
   "main": "index.js",
   "scripts": {
