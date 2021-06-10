@@ -9,9 +9,8 @@ export function useDirtyInfo() {
 
         // Set dirty path
         useCallback((propertyPath) => {
-            const newDirtyInfo = update(propertyPath, true, dirtyInfo);
-            setDirtyInfo(newDirtyInfo)
-        }, [dirtyInfo]),
+            setDirtyInfo(prevDirtyInfo => update(propertyPath, true, prevDirtyInfo))
+        }, []),
 
         // Reset
         useCallback(() => {
