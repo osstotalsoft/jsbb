@@ -22,7 +22,7 @@ export function useRulesLens(rules, initialModel, { isLogEnabled = true, logger 
         stateLens |> rmap(
             (changedModel, prevModel) => {
                 const result = applyRule(rulesEngine, ensureArrayUIDsDeep(changedModel), prevModel)
-                setDirtyInfo(detectChanges(result, prevModel, dirtyInfo))
+                setDirtyInfo(prevDirtyInfo => detectChanges(result, prevModel, prevDirtyInfo))
                 return result;
             }),
         [stateLens, rulesEngine])

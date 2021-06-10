@@ -18,10 +18,9 @@ export function useChangeTrackingState(initialModel) {
             }
 
             const newModel = ensureArrayUIDsDeep(changedModel)
-            const newDirtyInfo = detectChanges(newModel, model, dirtyInfo)
+            setDirtyInfo(prevDirtyInfo => detectChanges(newModel, model, prevDirtyInfo))
             setModel(newModel)
-            setDirtyInfo(newDirtyInfo)
-        }, [model, dirtyInfo]),
+        }, [model]),
 
         // Reset tracking
         useCallback((newModel = undefined)  => {
