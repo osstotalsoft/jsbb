@@ -40,3 +40,7 @@ lerna publish --contents build patch
 lerna publish --contents build minor
 lerna publish --contents build major
 ``` 
+
+## License
+
+NodeBB is licensed under the [MIT](LICENSE) license.
