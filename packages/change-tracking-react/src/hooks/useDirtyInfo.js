@@ -1,3 +1,6 @@
+// Copyright (c) TotalSoft.
+// This source code is licensed under the MIT license.
+
 import { useState, useCallback } from 'react';
 import { create, update } from '@totalsoft/change-tracking';
 

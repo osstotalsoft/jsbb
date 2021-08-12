@@ -1,3 +1,6 @@
+// Copyright (c) TotalSoft.
+// This source code is licensed under the MIT license.
+
 import { F } from "ts-toolbelt";
 
 export type RuleContext = {

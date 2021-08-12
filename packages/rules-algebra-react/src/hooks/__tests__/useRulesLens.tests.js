@@ -1,3 +1,6 @@
+// Copyright (c) TotalSoft.
+// This source code is licensed under the MIT license.
+
 import { renderHook, act } from "@testing-library/react-hooks";
 import { Rule, applyRule, logTo, __clearMocks as clearRulesMocks } from "@totalsoft/rules-algebra";
 import { set, get } from "@totalsoft/react-state-lens";

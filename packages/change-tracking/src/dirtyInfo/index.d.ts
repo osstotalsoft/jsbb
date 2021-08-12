@@ -1,3 +1,6 @@
+// Copyright (c) TotalSoft.
+// This source code is licensed under the MIT license.
+
 import { F } from "ts-toolbelt";
 /**
  * An object that mimics the structure of the tracked model and specifies the "dirty" status of the properties

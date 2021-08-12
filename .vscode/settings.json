@@ -4,5 +4,6 @@
     "prettier.printWidth": 150,
     "typescript.format.enable": false,
     "licenser.license": "Custom", 
-    "licenser.customHeader": "Copyright (c) TotalSoft.\nThis source code is licensed under the MIT license."
+    "licenser.author": "TotalSoft",
+    "licenser.customHeader": "Copyright (c) @AUTHOR@.\nThis source code is licensed under the MIT license."
 }

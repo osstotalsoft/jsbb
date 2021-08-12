@@ -1,3 +1,6 @@
+// Copyright (c) TotalSoft.
+// This source code is licensed under the MIT license.
+
 const mock = jest.genMockFromModule("@totalsoft/change-tracking");
 
 mock.ensureArrayUIDsDeep = jest.fn(obj => obj);

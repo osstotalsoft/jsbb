@@ -1,3 +1,6 @@
+// Copyright (c) TotalSoft.
+// This source code is licensed under the MIT license.
+
 import { useStateLens, rmap, over } from '@totalsoft/react-state-lens'
 import { useMemo, useCallback, useState } from 'react';
 import { applyRule, logTo } from '@totalsoft/rules-algebra';

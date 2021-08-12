@@ -1,3 +1,6 @@
+// Copyright (c) TotalSoft.
+// This source code is licensed under the MIT license.
+
 import { Validator, Logger, FilterFunc, Success, Failure } from "@totalsoft/pure-validations";
 import { ValidatorContext } from "packages/pure-validations/src/validator";
 

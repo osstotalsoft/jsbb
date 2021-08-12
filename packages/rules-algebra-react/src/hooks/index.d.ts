@@ -1,3 +1,6 @@
+// Copyright (c) TotalSoft.
+// This source code is licensed under the MIT license.
+
 import { Rule, Logger } from "@totalsoft/rules-algebra";
 import { DirtyInfo } from "@totalsoft/change-tracking";
 import { LensProxy } from "@totalsoft/react-state-lens";

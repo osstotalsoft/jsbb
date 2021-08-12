@@ -1,3 +1,6 @@
+// Copyright (c) TotalSoft.
+// This source code is licensed under the MIT license.
+
 import { LensProxy, eject, get, set, over, promap, lmap, rmap, sequence, pipe } from "..";
 import StateLens from "../../stateLens";
 import * as R from "ramda";

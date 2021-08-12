@@ -1,3 +1,6 @@
+// Copyright (c) TotalSoft.
+// This source code is licensed under the MIT license.
+
 import { contramap, $do } from "@totalsoft/zion";
 import Reader from "@totalsoft/zion/data/reader";
 import Maybe from "@totalsoft/zion/data/maybe";

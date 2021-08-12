@@ -1,3 +1,6 @@
+// Copyright (c) TotalSoft.
+// This source code is licensed under the MIT license.
+
 import { DirtyInfo } from "@totalsoft/change-tracking";
 import { LensProxy } from "@totalsoft/react-state-lens";
 

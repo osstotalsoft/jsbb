@@ -1,3 +1,6 @@
+// Copyright (c) TotalSoft.
+// This source code is licensed under the MIT license.
+
 import { Validator } from "../index";
 
 export const atLeastOne: Validator<any[]>;

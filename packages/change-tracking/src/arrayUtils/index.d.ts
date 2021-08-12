@@ -1,3 +1,6 @@
+// Copyright (c) TotalSoft.
+// This source code is licensed under the MIT license.
+
 /**
  * Ensures unique identifiers for object items in arrays.
  * It returns the same object hierarcy as the model but it attaches unique identifiers to array items.

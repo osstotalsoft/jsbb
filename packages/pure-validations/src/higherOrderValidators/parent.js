@@ -1,3 +1,6 @@
+// Copyright (c) TotalSoft.
+// This source code is licensed under the MIT license.
+
 import { contramap } from "@totalsoft/zion";
 import { checkValidators } from "./_utils";
 

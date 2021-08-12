@@ -1,3 +1,6 @@
+// Copyright (c) TotalSoft.
+// This source code is licensed under the MIT license.
+
 import Maybe from "@totalsoft/zion/data/maybe";
 import { $do } from "@totalsoft/zion";
 import { curry } from "ramda";

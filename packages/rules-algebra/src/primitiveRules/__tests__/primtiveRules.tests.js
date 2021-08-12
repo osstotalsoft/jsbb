@@ -1,3 +1,6 @@
+// Copyright (c) TotalSoft.
+// This source code is licensed under the MIT license.
+
 import { applyRule } from "../../rule";
 import { min, max, constant, minimumValue, maximumValue, computed, unchanged, sprintf } from "..";
 

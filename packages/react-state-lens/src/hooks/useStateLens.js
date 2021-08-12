@@ -1,3 +1,6 @@
+// Copyright (c) TotalSoft.
+// This source code is licensed under the MIT license.
+
 import { useMemo, useState } from 'react';
 import { LensProxy } from '../lensProxy'
 import StateLens from '../stateLens';

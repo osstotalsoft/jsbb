@@ -1,3 +1,6 @@
+// Copyright (c) TotalSoft.
+// This source code is licensed under the MIT license.
+
 import { not, equals, isNumber, all, Predicate, propertiesChanged, propertyChanged } from "..";
 import Reader from "@totalsoft/zion/data/reader";
 

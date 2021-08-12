@@ -1,3 +1,6 @@
+// Copyright (c) TotalSoft.
+// This source code is licensed under the MIT license.
+
 /**
  * Sets the value to an inner property of an object corresponding to the given path.
  * The path can be a dot delimeted string or an array

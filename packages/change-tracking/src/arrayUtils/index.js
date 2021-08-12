@@ -1,3 +1,6 @@
+// Copyright (c) TotalSoft.
+// This source code is licensed under the MIT license.
+
 import uniqid from "uniqid"
 import { find, reduce, addIndex } from "ramda";
 

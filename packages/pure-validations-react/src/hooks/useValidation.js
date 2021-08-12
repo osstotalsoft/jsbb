@@ -1,3 +1,6 @@
+// Copyright (c) TotalSoft.
+// This source code is licensed under the MIT license.
+
 import { useState, useCallback, useMemo, useEffect } from 'react';
 import { Success, validate, logTo, filterFields } from '@totalsoft/pure-validations';
 import { ValidationProxy, isValid } from '../validationProxy';

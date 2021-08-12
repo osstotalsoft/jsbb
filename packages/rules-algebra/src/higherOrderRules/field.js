@@ -1,3 +1,6 @@
+// Copyright (c) TotalSoft.
+// This source code is licensed under the MIT license.
+
 import Reader from "@totalsoft/zion/data/reader";
 import { curry } from "ramda";
 import { contramap, $do } from "@totalsoft/zion";

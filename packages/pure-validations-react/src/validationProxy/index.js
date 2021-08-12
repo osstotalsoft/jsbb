@@ -1,3 +1,6 @@
+// Copyright (c) TotalSoft.
+// This source code is licensed under the MIT license.
+
 import { Success, isValid as pureIsValid, getErrors as pureGetErrors, getInner } from '@totalsoft/pure-validations';
 
 const isValidPropSymbol = Symbol("isValid")

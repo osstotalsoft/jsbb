@@ -1,3 +1,6 @@
+// Copyright (c) TotalSoft.
+// This source code is licensed under the MIT license.
+
 import { useStateLens, rmap, over } from '@totalsoft/react-state-lens'
 import { useCallback, useState, useMemo } from 'react';
 import { create, detectChanges, ensureArrayUIDsDeep } from '@totalsoft/change-tracking'

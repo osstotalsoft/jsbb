@@ -1,3 +1,6 @@
+// Copyright (c) TotalSoft.
+// This source code is licensed under the MIT license.
+
 import { checkValidators } from "./_utils";
 import { curry, map } from "ramda"
 import ValidationError from "../validationError";

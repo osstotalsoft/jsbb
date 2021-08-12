@@ -1,3 +1,6 @@
+// Copyright (c) TotalSoft.
+// This source code is licensed under the MIT license.
+
 import * as fl from "fantasy-land";
 import immutagen from "immutagen";
 import { chain, reduce, concat, curry, always, identity } from "ramda";

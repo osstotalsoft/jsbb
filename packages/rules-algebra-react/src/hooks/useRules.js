@@ -1,3 +1,6 @@
+// Copyright (c) TotalSoft.
+// This source code is licensed under the MIT license.
+
 import { useState, useCallback, useMemo } from 'react';
 import { create, detectChanges, ensureArrayUIDsDeep, setInnerProp} from '@totalsoft/change-tracking'
 import { logTo, applyRule } from '@totalsoft/rules-algebra'
