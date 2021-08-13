@@ -1,5 +1,5 @@
 import { contramap, $do } from "@totalsoft/zion";
-import Reader from "@totalsoft/zion/data/reader";
+import { Validator } from "../validator";
 import Maybe from "@totalsoft/zion/data/maybe";
 import { map, curry } from "ramda";
 
@@ -21,7 +21,7 @@ const field = curry(function field(key, validator) {
 
 function _logFieldPath(validator) {
   return $do(function*() {
-    const [, fieldContext] = yield Reader.ask();
+    const [, fieldContext] = yield Validator.ask();
     const validation = yield validator;
     _log(fieldContext, `Validation ${Nothing.is(validation) ? "succeded" : "failed"} for path ${fieldContext.fieldPath.join(".")}`);
     return validation;
@@ -30,7 +30,7 @@ function _logFieldPath(validator) {
 
 function _filterFieldPath(validator) {
   return $do(function*() {
-    const [, fieldContext] = yield Reader.ask();
+    const [, fieldContext] = yield Validator.ask();
     return !fieldContext.fieldFilter(fieldContext) ? Nothing : yield validator;
   });
 }

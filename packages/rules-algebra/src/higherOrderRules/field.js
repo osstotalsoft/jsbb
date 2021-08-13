@@ -1,4 +1,4 @@
-import Reader from "@totalsoft/zion/data/reader";
+import { Rule } from "../rule";
 import { curry } from "ramda";
 import { contramap, $do } from "@totalsoft/zion";
 import { checkRules } from "../_utils";
@@ -17,7 +17,7 @@ export const field = curry(function field(key, rule) {
 
 const mergeParent = curry(function mergeParent(field, fieldRule) {
     return $do(function* () {
-        const [model] = yield Reader.ask();
+        const [model] = yield Rule.ask();
         const fieldValue = yield fieldRule;
 
         if (model[field] === fieldValue) {
@@ -32,7 +32,7 @@ const mergeParent = curry(function mergeParent(field, fieldRule) {
 
 function _logFieldPath(rule) {
     return $do(function* () {
-        const [, fieldContext] = yield Reader.ask();
+        const [, fieldContext] = yield Rule.ask();
         const result = yield rule;
         if (result !== Object(result))
             _log(fieldContext, `Rule result is ${result} for path ${[...fieldContext.scopePath, ...fieldContext.fieldPath].join(".")}`);
@@ -42,7 +42,7 @@ function _logFieldPath(rule) {
 
 function _filterCurrentProp(rule) {
     return $do(function* () {
-        const [model, { prevModel }] = yield Reader.ask();
+        const [model, { prevModel }] = yield Rule.ask();
 
         if (_isPrimitiveValue(model) && model !== prevModel) {
             return model;

@@ -1,57 +1,57 @@
-import { tagged } from "daggy";
 import * as fl from "fantasy-land";
-import { $do } from "../prelude";
-import { concat } from "ramda";
+import immutagen from "immutagen";
+import { chain, reduce, concat, curry, always, identity } from "ramda";
 
-const Reader = tagged("Reader", ["computation"]);
-Reader[fl.of] = x => Reader(_ => x); // Monad, Applicative
-Reader.ask = () => Reader((...props) => props); // Reader
+function $do(gen) {
+  const doNext = (next, typeRep) => input => {
+    const { value, next: nextNext } = next(input);
 
-/* Reader */ {
-  Reader.prototype.runReader = function runReader(...props){
-    return this.computation(...props);
+    if (!nextNext) {
+      return pure(typeRep)(value);
+    }
+
+    return chain(doNext(nextNext, value.constructor), value);
+  };
+  return doNext(immutagen(gen))();
+}
+
+// pure :: Applicative f => TypeRep f -> a -> f a
+const pure = function(A) {
+  if (A[fl.of]) {
+    return A[fl.of];
   }
-}
+  if (A === Array) {
+    return A.of;
+  }
+  if (A === Function) {
+    return always;
+  }
+  throw Error(`TypeRep ${A} is not Applicative`);
+};
 
-/* Functor Reader */ {
-  Reader.prototype[fl.map] = function(f) {
-    return Reader((...props) => f(this.computation(...props)));
-  };
-}
+// contramap :: Contravariant f => (b -> a) -> f a -> f b
+const contramap = curry(function contramap(fn, contravariant) {
+  return contravariant[fl.contramap](fn);
+});
 
-/* Apply Reader */ {
-  Reader.prototype[fl.ap] = function(fn) {
-    return Reader((...props) => fn.computation(...props)(this.computation(...props)));
-  };
-}
+// fold :: Monoid m, Foldable f => (a -> m a) -> f a -> m a
+const fold = curry(function(M, xs) {
+  return xs |> reduce((acc, x) => concat(acc, M(x)), M[fl.empty]());
+});
 
-/* Chain Reader */ {
-  Reader.prototype[fl.chain] = function(f) {
-    return Reader((...props) => f(this.computation(...props)).computation(...props));
-  };
-}
+// promap :: Profunctor p => (a -> b) -> (c -> d) -> p b c -> p a d
+const promap = curry(function promap(fn1, fn2, profunctor) {
+  return profunctor[fl.promap](fn1, fn2);
+});
 
-/* Contravariant Reader */ {
-  Reader.prototype[fl.contramap] = function(f) {
-    return Reader((...props) => this.computation(...f(...props)));
-  };
-}
+// lmap :: Profunctor p => (a -> b) -> p b c -> p a c
+const lmap = curry(function lmap(fn, profunctor) {
+  return profunctor[fl.promap](fn, identity);
+});
 
-/* Contravariant Reader */ {
-  Reader.prototype.toString = function() {
-    return `Reader(${this.computation})`;
-  };
-}
+// rmap :: Profunctor p => (b -> c) -> p a b -> p a c
+const rmap = curry(function rmap(fn, profunctor) {
+  return profunctor[fl.promap](identity, fn);
+});
 
-/* Semigroup a => Semigroup (Reader a) */ {
-  Reader.prototype[fl.concat] = function(that) {
-    const self = this;
-    return $do(function*() {
-      const x1 = yield self;
-      const x2 = yield that;
-      return concat(x1, x2);
-    });
-  };
-}
-
-export default Reader;
+export { $do, pure, contramap, fold, promap, lmap, rmap };

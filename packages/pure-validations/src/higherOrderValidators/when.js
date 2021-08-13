@@ -2,12 +2,12 @@ import Maybe from "@totalsoft/zion/data/maybe";
 import { $do } from "@totalsoft/zion";
 import { curry } from "ramda";
 import { checkValidators } from "./_utils";
-import Reader from "@totalsoft/zion/data/reader";
+import { Validator } from "../validator";
 
 const { Nothing } = Maybe;
 
 const when = curry(function when(predicate, validator) {
-  const predicateReader = ensureReader(predicate);
+  const predicateReader = ensurePredicate(predicate);
   checkValidators(validator);
 
   return $do(function*() {
@@ -16,12 +16,12 @@ const when = curry(function when(predicate, validator) {
   });
 });
 
-function ensureReader(predicate) {
+function ensurePredicate(predicate) {
   if (typeof predicate === "boolean") {
-    return Reader.of(predicate);
+    return Validator.of(predicate);
   }
   if (typeof predicate === "function") {
-    return Reader(predicate);
+    return Validator(predicate);
   }
 
   checkValidators(predicate);

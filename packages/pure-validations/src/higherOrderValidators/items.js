@@ -1,6 +1,6 @@
 import { $do } from "@totalsoft/zion";
 import { concat } from "ramda";
-import Reader from "@totalsoft/zion/data/reader";
+import { Validator } from "../validator";
 import field from "./field";
 import { checkValidators } from "./_utils";
 import { Success } from "../validation";
@@ -8,7 +8,7 @@ import { Success } from "../validation";
 export default function items(itemValidator) {
   checkValidators(itemValidator);
   return $do(function*() {
-    const [items] = yield Reader.ask();
+    const [items] = yield Validator.ask();
     if (items === null || items === undefined) {
       return Success;
     }

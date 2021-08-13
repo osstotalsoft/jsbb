@@ -1,5 +1,5 @@
-import Reader from "@totalsoft/zion/data/reader";
+import { Validator } from "../validator";
 
 export default function readFrom(func) {
-  return Reader(func);
+  return Validator(func);
 }
