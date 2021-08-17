@@ -11,6 +11,14 @@ Reader.ask = () => Reader(ctx => ctx); // Reader
   Reader.prototype.runReader = function runReader(ctx){
     return this.computation(ctx);
   }
+
+  Reader.prototype.local = function(f) {
+    return Reader(ctx => this.computation(f(ctx)));
+  };
+
+  Reader.prototype.toString = function() {
+    return `Reader(${this.computation})`;
+  };
 }
 
 /* Functor Reader */ {
@@ -34,12 +42,6 @@ Reader.ask = () => Reader(ctx => ctx); // Reader
 /* Contravariant Reader */ {
   Reader.prototype[fl.contramap] = function(f) {
     return Reader(ctx => this.computation(f(ctx)));
-  };
-}
-
-/* Contravariant Reader */ {
-  Reader.prototype.toString = function() {
-    return `Reader(${this.computation})`;
   };
 }
 

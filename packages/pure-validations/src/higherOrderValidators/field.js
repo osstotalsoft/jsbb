@@ -1,12 +1,10 @@
 import { contramap, $do } from "@totalsoft/zion";
 import { Validator } from "../validator";
-import Maybe from "@totalsoft/zion/data/maybe";
 import { map, curry } from "ramda";
 
 import ValidationError from "../validationError";
+import { Success, isValid } from "../validation"
 import { checkValidators } from "./_utils";
-
-const { Nothing } = Maybe;
 
 const field = curry(function field(key, validator) {
   checkValidators(validator);
@@ -14,24 +12,24 @@ const field = curry(function field(key, validator) {
     validator
     |> _logFieldPath
     |> _filterFieldPath
-    |> contramap((model, ctx) => [model ? model[key] : undefined , _getFieldContext(model, ctx, key)])
+    |> contramap((model, ctx) => [model ? model[key] : undefined, _getFieldContext(model, ctx, key)])
     |> map(map(ValidationError.moveToField(key)))
   );
 });
 
 function _logFieldPath(validator) {
-  return $do(function*() {
+  return $do(function* () {
     const [, fieldContext] = yield Validator.ask();
     const validation = yield validator;
-    _log(fieldContext, `Validation ${Nothing.is(validation) ? "succeded" : "failed"} for path ${fieldContext.fieldPath.join(".")}`);
+    _log(fieldContext, `Validation ${isValid(validation) ? "succeded" : "failed"} for path ${fieldContext.fieldPath.join(".")}`);
     return validation;
   });
 }
 
 function _filterFieldPath(validator) {
-  return $do(function*() {
+  return $do(function* () {
     const [, fieldContext] = yield Validator.ask();
-    return !fieldContext.fieldFilter(fieldContext) ? Nothing : yield validator;
+    return !fieldContext.fieldFilter(fieldContext) ? Success : yield validator;
   });
 }
 
