@@ -2,11 +2,11 @@ import { curry } from "ramda";
 import { $do } from "@totalsoft/zion";
 import { checkRules } from "../_utils";
 import { unchanged } from "../primitiveRules"
-import { ensureReader } from "../predicates";
+import { ensurePredicate } from "../predicates";
 import { chainRules } from "./";
 
 export const until = curry(function until(predicate, rule) {
-    const predicateReader = ensureReader(predicate);
+    const predicateReader = ensurePredicate(predicate);
     checkRules(rule);
 
     return $do(function* () {

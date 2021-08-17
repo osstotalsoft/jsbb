@@ -1,5 +1,5 @@
-import { ensureReader } from "../predicates";
+import { ensurePredicate } from "../predicates";
 
 export default function readFrom(func) {
-  return ensureReader(func);
+  return ensurePredicate(func);
 }

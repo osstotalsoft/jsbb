@@ -1,4 +1,4 @@
-import Reader from "@totalsoft/zion/data/reader";
+import { Rule } from "./rule";
 
 export function variadicApply(variadicFn) {
   const res = function(...args) {
@@ -14,10 +14,10 @@ export function variadicApply(variadicFn) {
   return res;
 }
 
-export function checkRules(...readers) {
-  readers.forEach(function(reader) {
-    if (!Reader.is(reader)) {
-      throw new Error(`Value '${reader ? reader.toString() : reader}' is not a rule!`);
+export function checkRules(...rules) {
+  rules.forEach(function(rule) {
+    if (!Rule.is(rule)) {
+      throw new Error(`Value '${rule ? rule.toString() : rule}' is not a rule!`);
     }
   });
 }

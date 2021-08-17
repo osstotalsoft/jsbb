@@ -1,12 +1,12 @@
-import Maybe from "@totalsoft/zion/data/maybe";
 import { $do } from "@totalsoft/zion";
 import { concat } from "ramda";
 import { variadicApply, checkValidators } from "./_utils";
+import { isValid } from "../validation"
 
 function _stopOnFirstFailure(f1, f2) {
   return $do(function*() {
     const v1 = yield f1;
-    const result = Maybe.Just.is(v1) ? v1 : concat(v1, yield f2);
+    const result = !isValid(v1) ? v1 : concat(v1, yield f2);
     return result;
   });
 }
