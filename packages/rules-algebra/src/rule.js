@@ -7,35 +7,35 @@ import { concat } from "ramda";
 
 export const Rule = tagged("Rule", ["computation"]);
 Rule[fl.of] = x => Rule(_ => x); // Monad, Applicative
-Rule.ask = () => Rule((...props) => props); // Reader
+Rule.ask = () => Rule((model, ctx) => [model, ctx]); // Reader
 
 /* Rule */ {
-    Rule.prototype.runRule = function runRule(...props){
-    return this.computation(...props);
+    Rule.prototype.runRule = function runRule(model, ctx){
+    return this.computation(model, ctx);
   }
 }
 
 /* Functor Rule */ {
     Rule.prototype[fl.map] = function(f) {
-    return Rule((...props) => f(this.computation(...props)));
+    return Rule((model, ctx) => f(this.computation(model, ctx)));
   };
 }
 
 /* Apply Rule */ {
     Rule.prototype[fl.ap] = function(fn) {
-    return Rule((...props) => fn.computation(...props)(this.computation(...props)));
+    return Rule((model, ctx) => fn.computation(model, ctx)(this.computation(model, ctx)));
   };
 }
 
 /* Chain Rule */ {
     Rule.prototype[fl.chain] = function(f) {
-    return Rule((...props) => f(this.computation(...props)).computation(...props));
+    return Rule((model, ctx) => f(this.computation(model, ctx)).computation(model, ctx));
   };
 }
 
 /* Contravariant Reader */ {
     Rule.prototype[fl.contramap] = function(f) {
-    return Rule((...props) => this.computation(...f(...props)));
+    return Rule((model, ctx) => this.computation(...f(model, ctx)));
   };
 }
 
