@@ -1,13 +1,13 @@
 // Copyright (c) TotalSoft.
 // This source code is licensed under the MIT license.
 
-import Reader from "@totalsoft/zion/data/reader";
+import { Rule } from "../rule";
 import { $do } from "@totalsoft/zion";
 import { checkRules } from "../_utils";
 
 export default function fromModel(ruleFactory) {
   return $do(function* () {
-    const [model] = yield Reader.ask();
+    const [model] = yield Rule.ask();
     if (model === null || model === undefined) {
       return model;
     }

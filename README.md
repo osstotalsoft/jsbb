@@ -26,7 +26,7 @@ lerna run build
 
 ## Lint typescript definitions
 ```javascript
-lerna run typescript
+lerna run tslint
 ```
 
 ## Test

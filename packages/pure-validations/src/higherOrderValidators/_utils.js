@@ -1,7 +1,7 @@
 // Copyright (c) TotalSoft.
 // This source code is licensed under the MIT license.
 
-import Reader from "@totalsoft/zion/data/reader";
+import { Validator } from "../validator";
 
 export function variadicApply(variadicFn) {
   const res = function(...args) {
@@ -19,7 +19,7 @@ export function variadicApply(variadicFn) {
 
 export function checkValidators(...validators) {
   validators.forEach(function(validator) {
-    if (!Reader.is(validator)) {
+    if (!Validator.is(validator)) {
       throw new Error(`Value '${validator ? validator.toString() : validator}' is not a validator!`);
     }
   });

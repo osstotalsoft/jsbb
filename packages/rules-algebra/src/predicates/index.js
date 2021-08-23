@@ -1,18 +1,18 @@
 // Copyright (c) TotalSoft.
 // This source code is licensed under the MIT license.
 
-import Reader from "@totalsoft/zion/data/reader";
+import { Rule } from "../rule";
 import * as fl from "fantasy-land";
 import { curry, map, lift, reduce } from "ramda";
 import { $do } from "@totalsoft/zion";
 import { checkRules, variadicApply } from "../_utils";
 
-export const Predicate = Reader;
-Predicate.of = Reader[fl.of]
+export const Predicate = Rule;
+Predicate.of = Rule[fl.of]
 
 export const propertyChanged = curry(function propertyChanged(selector) {
     return $do(function* () {
-        const [, ctx] = yield Reader.ask();
+        const [, ctx] = yield Rule.ask();
 
         if (ctx.document === null || ctx.document === undefined || ctx.prevDocument === null || ctx.prevDocument === undefined) {
             return ctx.document !== ctx.prevDocument;
@@ -24,7 +24,7 @@ export const propertyChanged = curry(function propertyChanged(selector) {
 
 export const propertiesChanged = curry(function propertyChanged(selector) {
     return $do(function* () {       
-        const [, ctx] = yield Reader.ask();
+        const [, ctx] = yield Rule.ask();
 
         if (ctx.document === null || ctx.document === undefined || ctx.prevDocument === null || ctx.prevDocument === undefined) {
             return ctx.document !== ctx.prevDocument;
@@ -37,38 +37,38 @@ export const propertiesChanged = curry(function propertyChanged(selector) {
     });
 });
 
-//export const equals = lift(x => y => x === y) |> ensureReaderParams
+//export const equals = lift(x => y => x === y) |> ensurePredicateParams
 
 export const equals = curry(function equals(selector1, selector2) {
     return $do(function* () {
-        const [, ctx] = yield Reader.ask();
+        const [, ctx] = yield Rule.ask();
         return selector1(ctx.document) === selector2(ctx.document)
     });
 });
 
 const _and = lift(x => y => x && y);
 export const all = variadicApply(function all(...predicates) {
-    return predicates |> map(ensureReader) |> reduce(_and, Predicate.of(true));
+    return predicates |> map(ensurePredicate) |> reduce(_and, Predicate.of(true));
 });
 
 const _or = lift(x => y => x || y);
 export const any = variadicApply(function any(...predicates) {
-    return predicates |> map(ensureReader) |> reduce(_or, Predicate.of(false));
+    return predicates |> map(ensurePredicate) |> reduce(_or, Predicate.of(false));
 });
 
 export function not(predicate) {
-    return predicate |> ensureReader |> map(x => !x)
+    return predicate |> ensurePredicate |> map(x => !x)
 }
 
 export function isNumber(selector) {
-    return selector |> ensureReader |> map(x => !isNaN(x))
+    return selector |> ensurePredicate |> map(x => !isNaN(x))
 }
 
 function computed(computation) {
     return Predicate((prop, { document, prevDocument }) => computation(document, prevDocument, prop));
 }
 
-export function ensureReader(predicate) {
+export function ensurePredicate(predicate) {
     if (typeof predicate === "boolean") {
         return Predicate.of(predicate);
     }

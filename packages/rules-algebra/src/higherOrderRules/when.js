@@ -5,10 +5,10 @@ import { curry } from "ramda";
 import { $do } from "@totalsoft/zion";
 import { checkRules } from "../_utils";
 import { unchanged } from "../primitiveRules"
-import { ensureReader } from "../predicates";
+import { ensurePredicate } from "../predicates";
 
 export const when = curry(function when(predicate, rule) {
-    const predicateReader = ensureReader(predicate);
+    const predicateReader = ensurePredicate(predicate);
     checkRules(rule);
 
     return $do(function* () {

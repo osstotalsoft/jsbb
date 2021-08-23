@@ -8,41 +8,43 @@ import { concat } from "ramda";
 
 const Reader = tagged("Reader", ["computation"]);
 Reader[fl.of] = x => Reader(_ => x); // Monad, Applicative
-Reader.ask = () => Reader((...props) => props); // Reader
+Reader.ask = () => Reader(ctx => ctx); // Reader
 
 /* Reader */ {
-  Reader.prototype.runReader = function runReader(...props){
-    return this.computation(...props);
+  Reader.prototype.runReader = function runReader(ctx){
+    return this.computation(ctx);
   }
+
+  Reader.prototype.local = function(f) {
+    return Reader(ctx => this.computation(f(ctx)));
+  };
+
+  Reader.prototype.toString = function() {
+    return `Reader(${this.computation})`;
+  };
 }
 
 /* Functor Reader */ {
   Reader.prototype[fl.map] = function(f) {
-    return Reader((...props) => f(this.computation(...props)));
+    return Reader(ctx => f(this.computation(ctx)));
   };
 }
 
 /* Apply Reader */ {
   Reader.prototype[fl.ap] = function(fn) {
-    return Reader((...props) => fn.computation(...props)(this.computation(...props)));
+    return Reader(ctx => fn.computation(ctx)(this.computation(ctx)));
   };
 }
 
 /* Chain Reader */ {
   Reader.prototype[fl.chain] = function(f) {
-    return Reader((...props) => f(this.computation(...props)).computation(...props));
+    return Reader(ctx => f(this.computation(ctx)).computation(ctx));
   };
 }
 
 /* Contravariant Reader */ {
   Reader.prototype[fl.contramap] = function(f) {
-    return Reader((...props) => this.computation(...f(...props)));
-  };
-}
-
-/* Contravariant Reader */ {
-  Reader.prototype.toString = function() {
-    return `Reader(${this.computation})`;
+    return Reader(ctx => this.computation(f(ctx)));
   };
 }
 

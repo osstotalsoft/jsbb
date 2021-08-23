@@ -2,16 +2,16 @@
 // This source code is licensed under the MIT license.
 
 import { not, equals, isNumber, all, Predicate, propertiesChanged, propertyChanged } from "..";
-import Reader from "@totalsoft/zion/data/reader";
+import { Rule } from "../../rule";
 
 describe("predicates:", () => {
   it("not with reader predicate", () => {
     // Arrange
     const model = 6;
-    const predicate = not(Reader(_ => true));
+    const predicate = not(Rule(_ => true));
 
     // Act
-    const newModel = predicate.runReader(model, {});
+    const newModel = predicate.runRule(model, {});
 
     // Assert
     expect(newModel).toBe(false);
@@ -23,7 +23,7 @@ describe("predicates:", () => {
     const predicate = not(() => true);
 
     // Act
-    const newModel = predicate.runReader(model, {});
+    const newModel = predicate.runRule(model, {});
 
     // Assert
     expect(newModel).toBe(false);
@@ -35,7 +35,7 @@ describe("predicates:", () => {
     const predicate = not(true);
 
     // Act
-    const newModel = predicate.runReader(model, {});
+    const newModel = predicate.runRule(model, {});
 
     // Assert
     expect(newModel).toBe(false);
@@ -47,7 +47,7 @@ describe("predicates:", () => {
     const predicate = equals(doc => doc.a + 1, _ => 7);
 
     // Act
-    const newModel = predicate.runReader(model, { document: { a: 6 } });
+    const newModel = predicate.runRule(model, { document: { a: 6 } });
 
     // Assert
     expect(newModel).toBe(true);
@@ -59,7 +59,7 @@ describe("predicates:", () => {
     const predicate = isNumber(doc => doc.a);
 
     // Act
-    const newModel = predicate.runReader(model, { document: { a: 6 } });
+    const newModel = predicate.runRule(model, { document: { a: 6 } });
 
     // Assert
     expect(newModel).toBe(true);
@@ -71,7 +71,7 @@ describe("predicates:", () => {
     const predicate = all([Predicate(_ => true), Predicate(_ => true)]);
 
     // Act
-    const newModel = predicate.runReader(model, {});
+    const newModel = predicate.runRule(model, {});
 
     // Assert
     expect(newModel).toBe(true);
@@ -83,7 +83,7 @@ describe("predicates:", () => {
     const predicate = all([_ => true, _ => true]);
 
     // Act
-    const newModel = predicate.runReader(model, {});
+    const newModel = predicate.runRule(model, {});
 
     // Assert
     expect(newModel).toBe(true);
@@ -95,7 +95,7 @@ describe("predicates:", () => {
     const predicate = all([_ => true, _ => false]);
 
     // Act
-    const newModel = predicate.runReader(model, {});
+    const newModel = predicate.runRule(model, {});
 
     // Assert
     expect(newModel).toBe(false);
@@ -107,7 +107,7 @@ describe("predicates:", () => {
     const predicate = propertyChanged(doc => doc.property);
 
     // Act
-    const newModel = predicate.runReader(model, { document: { property: 1 }, prevDocument: { property: 2 } });
+    const newModel = predicate.runRule(model, { document: { property: 1 }, prevDocument: { property: 2 } });
 
     // Assert
     expect(newModel).toBe(true);
@@ -119,7 +119,7 @@ describe("predicates:", () => {
     const predicate = propertyChanged(doc => doc.property);
 
     // Act
-    const newModel = predicate.runReader(model, { document: { property: 1 }, prevDocument: { property: 1 } });
+    const newModel = predicate.runRule(model, { document: { property: 1 }, prevDocument: { property: 1 } });
 
     // Assert
     expect(newModel).toBe(false);
@@ -131,7 +131,7 @@ describe("predicates:", () => {
     const predicate = propertiesChanged(doc => [doc.property1, doc.property2]);
 
     // Act
-    const newModel = predicate.runReader(model, { document: { property1: 1, property2: 1 }, prevDocument: { property: 2, property2: 1 } });
+    const newModel = predicate.runRule(model, { document: { property1: 1, property2: 1 }, prevDocument: { property: 2, property2: 1 } });
 
     // Assert
     expect(newModel).toBe(true);
@@ -143,7 +143,7 @@ describe("predicates:", () => {
     const predicate = propertiesChanged(doc => [doc.property1, doc.property2]);
 
     // Act
-    const newModel = predicate.runReader(model, { document: { property1: 1, property2: 1 }, prevDocument: { property: 1, property2: 1 } });
+    const newModel = predicate.runRule(model, { document: { property1: 1, property2: 1 }, prevDocument: { property: 1, property2: 1 } });
 
     // Assert
     expect(newModel).toBe(true);

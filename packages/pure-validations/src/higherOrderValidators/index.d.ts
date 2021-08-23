@@ -1,7 +1,6 @@
 // Copyright (c) TotalSoft.
 // This source code is licensed under the MIT license.
 
-import { ValidationError } from "../index";
 import { Validator, ValidatorContext } from "../validator";
 
 /**
@@ -86,10 +85,9 @@ export function logTo<TModel>(logger: Logger, validator: Validator<TModel>): Val
  */
 export function logTo<TModel>(logger: Logger): (validator: Validator<TModel>) => Validator<TModel>;
 
-export type Reader<TContext, TValue> = { computation: (ctx: TContext) => TValue };
-export function parent(reader: Reader<any, any>): Reader<any, any>;
+export function parent(validator: Validator<any>): Validator<any>;
 
-export function readFrom<TContext, TValue>(func: (ctx: TContext) => TValue): Reader<TContext, TValue>;
+export function readFrom<TValue>(func: (ctx: ValidatorContext) => TValue): Validator<TValue>;
 
 /**
  * Used to compose a complex validator from field validators.

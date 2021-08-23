@@ -78,11 +78,9 @@ export function logTo<TModel>(logger: Logger, rule: Rule<TModel>): Rule<TModel>;
  */
 export function logTo<TModel>(logger: Logger): (rule: Rule<TModel>) => Rule<TModel>;
 
-export type Reader<TContext, TValue> = { computation: (ctx: TContext) => TValue };
+export function parent(rule: Rule<any>): Rule<any>;
 
-export function parent(reader: Reader<any, any>): Reader<any, any>;
-
-export function readFrom<TContext, TValue>(func: (ctx: TContext) => TValue): Reader<TContext, TValue>;
+export function readFrom<TValue>(func: (ctx: RuleContext) => TValue): Rule<TValue>;
 
 /**
  * Creates a scope over the given rule where the document is substituted by the current value.

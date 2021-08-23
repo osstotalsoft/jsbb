@@ -1,30 +1,29 @@
 // Copyright (c) TotalSoft.
 // This source code is licensed under the MIT license.
 
-import Maybe from "@totalsoft/zion/data/maybe";
 import { $do } from "@totalsoft/zion";
 import { curry } from "ramda";
 import { checkValidators } from "./_utils";
-import Reader from "@totalsoft/zion/data/reader";
+import { Validator } from "../validator";
+import { Success } from "../validation"
 
-const { Nothing } = Maybe;
 
 const when = curry(function when(predicate, validator) {
-  const predicateReader = ensureReader(predicate);
+  const predicateReader = ensurePredicate(predicate);
   checkValidators(validator);
 
-  return $do(function*() {
+  return $do(function* () {
     const isTrue = yield predicateReader;
-    return isTrue ? yield validator : Nothing;
+    return isTrue ? yield validator : Success;
   });
 });
 
-function ensureReader(predicate) {
+function ensurePredicate(predicate) {
   if (typeof predicate === "boolean") {
-    return Reader.of(predicate);
+    return Validator.of(predicate);
   }
   if (typeof predicate === "function") {
-    return Reader(predicate);
+    return Validator(predicate);
   }
 
   checkValidators(predicate);

@@ -5,7 +5,6 @@ import { Success, Failure } from "../../validation";
 import { Validator, validate } from "../../validator";
 import { field, shape, items, stopOnFirstFailure, concatFailure, when, fromModel, logTo, filterFields } from "../index";
 import ValidationError from "../../validationError";
-import Reader from "@totalsoft/zion/data/reader";
 
 describe("stopOnFirstFailure validator:", () => {
   it("returns success when all return success: ", () => {
@@ -117,7 +116,7 @@ describe("when validator:", () => {
     const model = "testWrong";
     const innerValidation = Failure(ValidationError("Wrong"));
     const innerValidator = Validator.of(innerValidation);
-    const whenValidator = when(Reader.of(true), innerValidator);
+    const whenValidator = when(Validator.of(true), innerValidator);
 
     // Act
     const whenValidation = model |> validate(whenValidator);
@@ -131,7 +130,7 @@ describe("when validator:", () => {
     const model = "testWrong";
     const innerValidation = Failure(ValidationError("Wrong"));
     const innerValidator = Validator.of(innerValidation);
-    const whenValidator = when(Reader.of(false), innerValidator);
+    const whenValidator = when(Validator.of(false), innerValidator);
 
     // Act
     const whenValidation = model |> validate(whenValidator);
