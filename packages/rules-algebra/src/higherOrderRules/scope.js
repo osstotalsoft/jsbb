@@ -1,3 +1,6 @@
+// Copyright (c) TotalSoft.
+// This source code is licensed under the MIT license.
+
 import { contramap } from "@totalsoft/zion";
 
 export default function scope(rule) {

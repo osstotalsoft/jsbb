@@ -1,3 +1,6 @@
+// Copyright (c) TotalSoft.
+// This source code is licensed under the MIT license.
+
 import { contramap, $do } from "@totalsoft/zion";
 import { Validator } from "../validator";
 import { map, curry } from "ramda";

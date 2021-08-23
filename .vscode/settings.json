@@ -2,5 +2,8 @@
     "javascript.validate.enable": false,
     "javascript.format.enable": true,
     "prettier.printWidth": 150,
-    "typescript.format.enable": false
+    "typescript.format.enable": false,
+    "licenser.license": "Custom", 
+    "licenser.author": "TotalSoft",
+    "licenser.customHeader": "Copyright (c) @AUTHOR@.\nThis source code is licensed under the MIT license."
 }

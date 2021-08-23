@@ -1,3 +1,6 @@
+// Copyright (c) TotalSoft.
+// This source code is licensed under the MIT license.
+
 import List from "@totalsoft/zion/data/list";
 import Maybe from "@totalsoft/zion/data/maybe";
 import Map from "@totalsoft/zion/data/map";

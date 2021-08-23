@@ -1,3 +1,6 @@
+// Copyright (c) TotalSoft.
+// This source code is licensed under the MIT license.
+
 import { create, isDirty, update, merge, isPropertyDirty, detectChanges} from "../dirtyInfo";
 import { ensureArrayUIDs, ensureArrayUIDsDeep } from "../arrayUtils";
 

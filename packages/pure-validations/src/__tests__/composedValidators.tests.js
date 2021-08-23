@@ -1,3 +1,6 @@
+// Copyright (c) TotalSoft.
+// This source code is licensed under the MIT license.
+
 import { Success, Failure } from "../validation";
 import { validate, Validator } from "../validator";
 import { required, maxLength, greaterThan, unique, atLeastOne, email } from "../primitiveValidators";

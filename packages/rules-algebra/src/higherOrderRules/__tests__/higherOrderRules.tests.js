@@ -1,3 +1,6 @@
+// Copyright (c) TotalSoft.
+// This source code is licensed under the MIT license.
+
 import { Rule, applyRule } from "../../rule";
 import { chainRules, field, shape, when, scope, items, ifThenElse, until } from "..";
 

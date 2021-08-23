@@ -26,7 +26,7 @@ lerna run build
 
 ## Lint typescript definitions
 ```javascript
-lerna run typescript
+lerna run tslint
 ```
 
 ## Test
@@ -40,3 +40,9 @@ lerna publish --contents build patch
 lerna publish --contents build minor
 lerna publish --contents build major
 ``` 
+
+## License
+NodeBB is licensed under the [MIT](LICENSE) license.
+
+## Contributing
+When using Visual Studio Code please use the extension [`Licenser`](https://marketplace.visualstudio.com/items?itemName=ymotongpoo.licenser) for applying the license header in files.

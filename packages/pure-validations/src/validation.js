@@ -1,3 +1,6 @@
+// Copyright (c) TotalSoft.
+// This source code is licensed under the MIT license.
+
 import Maybe from "@totalsoft/zion/data/maybe";
 import List from "@totalsoft/zion/data/list";
 import ObjectTree from "@totalsoft/zion/data/objectTree";

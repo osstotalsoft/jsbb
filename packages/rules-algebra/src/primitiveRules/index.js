@@ -1,3 +1,6 @@
+// Copyright (c) TotalSoft.
+// This source code is licensed under the MIT license.
+
 import { Rule } from "../rule";
 import { lift, curry, curryN } from "ramda";
 import { propertiesChanged } from "../predicates";

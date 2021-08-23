@@ -1,3 +1,6 @@
+// Copyright (c) TotalSoft.
+// This source code is licensed under the MIT license.
+
 import { renderHook, act } from "@testing-library/react-hooks";
 import { useDirtyFieldValidation } from "../";
 import { Validator, Success, Failure, isValid, validate, __clearMocks } from "@totalsoft/pure-validations";

@@ -1,3 +1,6 @@
+// Copyright (c) TotalSoft.
+// This source code is licensed under the MIT license.
+
 import get from 'lodash.get';
 import { toUniqueIdMap, hasSameItemOrder } from '../arrayUtils';
 import { curry } from "ramda";

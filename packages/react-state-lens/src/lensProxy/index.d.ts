@@ -1,3 +1,6 @@
+// Copyright (c) TotalSoft.
+// This source code is licensed under the MIT license.
+
 export type StateLens<TState> = { state: TState, setState: (prevState: TState) => TState };
 
 /**

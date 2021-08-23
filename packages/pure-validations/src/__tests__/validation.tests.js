@@ -1,3 +1,6 @@
+// Copyright (c) TotalSoft.
+// This source code is licensed under the MIT license.
+
 import { Success, Failure, getErrors, getInner } from "../validation";
 import { concat, empty } from "ramda";
 import ValidationError from "../validationError";

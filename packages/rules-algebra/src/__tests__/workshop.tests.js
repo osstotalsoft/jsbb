@@ -1,3 +1,6 @@
+// Copyright (c) TotalSoft.
+// This source code is licensed under the MIT license.
+
 import { applyRule } from "../";
 import { } from "../higherOrderRules"; // import { when, shape, logTo, scope, chainRules, items, root, parent, fromModel } from "../higherOrderRules";
 import { unchanged } from "../primitiveRules"; // import { constant, computed, maximumValue, unchanged } from "../primitiveRules";

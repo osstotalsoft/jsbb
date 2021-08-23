@@ -1,3 +1,6 @@
+// Copyright (c) TotalSoft.
+// This source code is licensed under the MIT license.
+
 import { Rule } from "../rule";
 import { curry } from "ramda";
 import { contramap, $do } from "@totalsoft/zion";

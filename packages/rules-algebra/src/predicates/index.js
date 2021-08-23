@@ -1,3 +1,6 @@
+// Copyright (c) TotalSoft.
+// This source code is licensed under the MIT license.
+
 import { Rule } from "../rule";
 import * as fl from "fantasy-land";
 import { curry, map, lift, reduce } from "ramda";

@@ -1,3 +1,6 @@
+// Copyright (c) TotalSoft.
+// This source code is licensed under the MIT license.
+
 import { checkRules } from "./_utils"
 import { curry } from "ramda";
 import * as fl from "fantasy-land";

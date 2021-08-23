@@ -1,3 +1,6 @@
+// Copyright (c) TotalSoft.
+// This source code is licensed under the MIT license.
+
 import when from "./when";
 import until from "./until";
 import fromModel from "./fromModel";

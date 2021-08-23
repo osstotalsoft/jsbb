@@ -1,3 +1,6 @@
+// Copyright (c) TotalSoft.
+// This source code is licensed under the MIT license.
+
 import { $do } from "@totalsoft/zion";
 import { curry } from "ramda";
 import { checkValidators } from "./_utils";

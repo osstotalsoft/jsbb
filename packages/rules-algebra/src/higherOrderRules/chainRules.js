@@ -1,3 +1,6 @@
+// Copyright (c) TotalSoft.
+// This source code is licensed under the MIT license.
+
 import { variadicApply, checkRules } from "../_utils";
 import { chain } from "ramda";
 import { contramap } from "@totalsoft/zion";

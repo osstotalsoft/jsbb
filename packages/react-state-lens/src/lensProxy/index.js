@@ -1,3 +1,6 @@
+// Copyright (c) TotalSoft.
+// This source code is licensed under the MIT license.
+
 import { curry } from "ramda";
 import * as L from "../stateLens"
 import * as fl from "fantasy-land";

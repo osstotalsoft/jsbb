@@ -1,3 +1,6 @@
+// Copyright (c) TotalSoft.
+// This source code is licensed under the MIT license.
+
 import { taggedSum } from "daggy";
 import * as fl from "fantasy-land";
 

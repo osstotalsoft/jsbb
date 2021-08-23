@@ -1,3 +1,6 @@
+// Copyright (c) TotalSoft.
+// This source code is licensed under the MIT license.
+
 import { $do } from "../index";
 import Maybe from "../../data/maybe";
 import List from "../../data/list";

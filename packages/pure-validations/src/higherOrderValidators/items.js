@@ -1,3 +1,6 @@
+// Copyright (c) TotalSoft.
+// This source code is licensed under the MIT license.
+
 import { $do } from "@totalsoft/zion";
 import { addIndex, map } from "ramda";
 import { Validator } from "../validator";

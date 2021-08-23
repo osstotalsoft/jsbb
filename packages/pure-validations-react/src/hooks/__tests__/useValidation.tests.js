@@ -1,3 +1,6 @@
+// Copyright (c) TotalSoft.
+// This source code is licensed under the MIT license.
+
 import { renderHook, act } from "@testing-library/react-hooks";
 import { useValidation } from "../";
 import { isValid, Validator, Success, Failure, validate, logTo, filterFields, __clearMocks } from "@totalsoft/pure-validations";

@@ -1,3 +1,6 @@
+// Copyright (c) TotalSoft.
+// This source code is licensed under the MIT license.
+
 import { Rule } from "../index";
 
 export type Selector<TDocument, TValue> = (document: TDocument) => TValue;
