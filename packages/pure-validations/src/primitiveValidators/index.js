@@ -37,7 +37,7 @@ export const atLeastOne = Validator(function atLeastOne(x) {
 });
 
 export const email = Validator(function email(x) {
-  const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+  const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)+)|([^<>()[\]\\.,;:\s@"]{2,})|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]{2,}\.)+[a-zA-Z]{2,}))$/;
   return re.test(String(x).toLowerCase()) ? Success : Failure(ValidationError(translate("Validations.Generic.Email")));
 });
 
