@@ -72,9 +72,33 @@ describe("atLeastOne validator:", () => {
 });
 
 describe("format validators:", () => {
-  it("email validator success", () => {
+  it("email validator success standard", () => {
     // Arrange
     const model = "aa@bb.cc";
+    const validator = email;
+
+    // Act
+    const validation = model |> validate(validator);
+
+    // Assert
+    expect(validation).toStrictEqual(Success);
+  });
+
+  it("email validator success dot username", () => {
+    // Arrange
+    const model = "a.a@bb.cc";
+    const validator = email;
+
+    // Act
+    const validation = model |> validate(validator);
+
+    // Assert
+    expect(validation).toStrictEqual(Success);
+  });
+
+  it("email validator success ip address domain", () => {
+    // Arrange
+    const model = "aa@[1.1.1.1]";
     const validator = email;
 
     // Act
@@ -96,9 +120,33 @@ describe("format validators:", () => {
     expect(validation).toStrictEqual(Failure(ValidationError(i18next.t("Validations.Generic.Email"))));
   });
 
-  it("email validator error - wrong format", () => {
+  it("email validator error - wrong format (missing domain)", () => {
     // Arrange
-    const model = "a@b";
+    const model = "aa@bb";
+    const validator = email;
+
+    // Act
+    const validation = model |> validate(validator);
+
+    // Assert
+    expect(validation).toStrictEqual(Failure(ValidationError(i18next.t("Validations.Generic.Email"))));
+  });
+
+  it("email validator error - wrong format (incomplete domain name - RULE: at least 2 characters per component)", () => {
+    // Arrange
+    const model = "aa@b.cc";
+    const validator = email;
+
+    // Act
+    const validation = model |> validate(validator);
+
+    // Assert
+    expect(validation).toStrictEqual(Failure(ValidationError(i18next.t("Validations.Generic.Email"))));
+  });
+
+  it("email validator error - wrong format (RULE: dot before @ not allowed)", () => {
+    // Arrange
+    const model = "a.@bb.cc";
     const validator = email;
 
     // Act
