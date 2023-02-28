@@ -71,7 +71,7 @@ export function lessThan(max) {
 
 export function minLength(min) {
   return Validator(function minLength(value) {
-    return value === null || value === undefined || value.length > min
+    return value === null || value === undefined || value.length >= min
       ? Success
       : Failure(ValidationError(translate("Validations.Generic.MinCharacters", { min })));
   });
@@ -79,25 +79,23 @@ export function minLength(min) {
 
 export function maxLength(max) {
   return Validator(function maxLength(value) {
-    return value === null || value === undefined || value.length < max
+    return value === null || value === undefined || value.length <= max
       ? Success
       : Failure(ValidationError(translate("Validations.Generic.MaxCharacters", { max })));
   });
 }
 
 export const isInteger = Validator(function isInteger(value) {
-    return Number.isInteger(value)
-      ? Success
-      : Failure(ValidationError(translate("Validations.Generic.Integer")));
-  });
+  return Number.isInteger(value) ? Success : Failure(ValidationError(translate("Validations.Generic.Integer")));
+});
 
 export const isNumber = Validator(function isNumber(value) {
-  return typeof(value) === "number" && !Number.isNaN(value) && Number.isFinite(value)
+  return typeof value === "number" && !Number.isNaN(value) && Number.isFinite(value)
     ? Success
     : Failure(ValidationError(translate("Validations.Generic.Number")));
 });
 
-export const valid = Validator.of(Success)
+export const valid = Validator.of(Success);
 
 export function unique(selector, displayName = null) {
   return Validator(function unique(list) {
@@ -108,11 +106,11 @@ export function unique(selector, displayName = null) {
     let selectorFn;
 
     function buildSelectorFn(propArray) {
-      return x => propArray.reduce((acc, prop) => acc[prop], x);
+      return (x) => propArray.reduce((acc, prop) => acc[prop], x);
     }
 
     if (!selector) {
-      selectorFn = x => x;
+      selectorFn = (x) => x;
     } else if (typeof selector === "string") {
       selectorFn = buildSelectorFn(selector.split("."));
     } else if (selector instanceof Array) {

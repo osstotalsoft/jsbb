@@ -4,7 +4,21 @@
 import { Success, Failure } from "../../validation";
 import ValidationError from "../../validationError";
 import { validate } from "../../validator";
-import { unique, required, email, between, greaterThan, lessThan, minLength, maxLength, matches, atLeastOne, valid, isInteger, isNumber } from "../index";
+import {
+  unique,
+  required,
+  email,
+  between,
+  greaterThan,
+  lessThan,
+  minLength,
+  maxLength,
+  matches,
+  atLeastOne,
+  valid,
+  isInteger,
+  isNumber,
+} from "../index";
 import i18next from "i18next";
 
 describe("required validator:", () => {
@@ -270,7 +284,7 @@ describe("comparison validators:", () => {
 describe("length validators:", () => {
   it("minLength validator success", () => {
     // Arrange
-    const model = "12345";
+    const model = "1234";
     const validator = minLength(4);
 
     // Act
@@ -282,7 +296,7 @@ describe("length validators:", () => {
 
   it("minLength validator error", () => {
     // Arrange
-    const model = "1234";
+    const model = "123";
     const validator = minLength(4);
 
     // Act
@@ -294,7 +308,7 @@ describe("length validators:", () => {
 
   it("maxLength validator success", () => {
     // Arrange
-    const model = "1234";
+    const model = "12345";
     const validator = maxLength(5);
 
     // Act
@@ -306,7 +320,7 @@ describe("length validators:", () => {
 
   it("maxLength validator error", () => {
     // Arrange
-    const model = "1234";
+    const model = "12345";
     const validator = maxLength(4);
 
     // Act
@@ -329,7 +343,6 @@ describe("valid validator:", () => {
     // Assert
     expect(validation).toStrictEqual(Success);
   });
-
 });
 
 describe("number validators:", () => {
@@ -403,7 +416,7 @@ describe("number validators:", () => {
 
     // Assert
     expect(validation).toStrictEqual(Failure(ValidationError(i18next.t("Validations.Generic.Number"))));
-  });  
+  });
 });
 
 describe("unique validator:", () => {
@@ -482,7 +495,7 @@ describe("unique validator:", () => {
   it("unique validator success - nested item function selector", () => {
     // Arrange
     const model = [{ item: { id: 1 } }, { item: { id: 2 } }, { item: { id: 3 } }];
-    const validator = unique(x => x.item.id);
+    const validator = unique((x) => x.item.id);
 
     // Act
     const validation = model |> validate(validator);
@@ -494,7 +507,7 @@ describe("unique validator:", () => {
   it("unique validator error - nested item function selector", () => {
     // Arrange
     const model = [{ item: { id: 1 } }, { item: { id: 2 } }, { item: { id: 1 } }];
-    const validator = unique(x => x.item.id);
+    const validator = unique((x) => x.item.id);
 
     // Act
     const validation = model |> validate(validator);
@@ -503,5 +516,3 @@ describe("unique validator:", () => {
     expect(validation).toStrictEqual(Failure(ValidationError(i18next.t("Validations.Generic.Unique", { selector: "x => x.item.id" }))));
   });
 });
-
-
