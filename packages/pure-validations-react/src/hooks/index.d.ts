@@ -4,6 +4,7 @@
 import { DirtyInfo } from "@totalsoft/change-tracking";
 import { Validator, Logger, FilterFunc, Success, Failure } from "@totalsoft/pure-validations";
 import { ValidatorContext } from "packages/pure-validations/src/validator";
+import { ValidationProxy } from "../validationProxy";
 
 /**
  * React hook for model validation using the @totalsof/pure-validation library.
@@ -16,7 +17,7 @@ export function useValidation<TModel>(
   deps?: any[]
 ): [
   // Validation result
-  Success<TModel> | Failure<TModel>,
+  ValidationProxy<TModel>,
 
   // Validate function
   (model: TModel, context?: ValidatorContext) => boolean,
@@ -36,7 +37,7 @@ export function useDirtyFieldValidation<TModel>(
   deps?: any[]
 ): [
   // Validation result
-  Success<TModel> | Failure<TModel>,
+  ValidationProxy<TModel>,
 
   // Validate function
   (model: TModel, dirtyinfo?: DirtyInfo) => boolean,

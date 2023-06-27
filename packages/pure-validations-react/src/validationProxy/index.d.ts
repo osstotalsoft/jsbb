@@ -3,14 +3,17 @@
 
 import { Success, Failure } from "@totalsoft/pure-validations";
 
-export function eject(validationProxy: ValidationProxy<any>): object;
+// tslint:disable:no-unnecessary-generics
+export function eject<TModel>(validationProxy: ValidationProxy<TModel>): object;
 
-export function getErrors(validationProxy: ValidationProxy<any>, separator: string): string;
+// tslint:disable:no-unnecessary-generics
+export function getErrors<TModel>(validationProxy: ValidationProxy<TModel>, separator: string): string;
 
-export function isValid(validationProxy: ValidationProxy<any>): boolean;
+// tslint:disable:no-unnecessary-generics
+export function isValid<TModel>(validationProxy: ValidationProxy<TModel>): boolean;
 
 export type Proxy<T> = {
-  [k in keyof T]: T[k];
+  [k in keyof T]: ValidationProxy<T[k]>;
 };
 
 export type ValidationProxy<TModel> = Proxy<Success<TModel> | Failure<TModel>>;
