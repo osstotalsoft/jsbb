@@ -1,6 +1,6 @@
 {
   "name": "@totalsoft/pure-validations-react",
-  "version": "5.0.25",
+  "version": "5.0.26",
   "description": "React extensions for the \"pure-validations\" validation api",
   "main": "lib/index.js",
   "scripts": {
