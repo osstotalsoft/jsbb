@@ -12,9 +12,10 @@ export function getErrors<TModel>(validationProxy: ValidationProxy<TModel>, sepa
 // tslint:disable:no-unnecessary-generics
 export function isValid<TModel>(validationProxy: ValidationProxy<TModel>): boolean;
 
-export type Proxy<T> = {
-  [k in keyof T]: ValidationProxy<T[k]>;
-};
-
+export type Proxy<T> = Required<
+  {
+    [k in keyof T]: ValidationProxy<T[k]>;
+  }
+>;
 export type ValidationProxy<TModel> = Proxy<Success<TModel> | Failure<TModel>>;
 export function ValidationProxy<TModel>(validation: Success<TModel> | Failure<TModel>): ValidationProxy<TModel>;
