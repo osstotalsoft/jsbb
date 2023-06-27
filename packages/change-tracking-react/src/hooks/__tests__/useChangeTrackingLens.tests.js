@@ -109,6 +109,44 @@ describe("useChangeTrackingLens hook", () => {
     });
 
 
+    it.only("enforces reference and render economy", () => {
+        // Arrange
+        const initialModel = { a: { b: "", c: "aaa" } };
+        let renderCount = 0;
+
+        const callback = () => {
+            const [rootProf] = useChangeTrackingLens(initialModel)
+            renderCount = renderCount + 1;
+            return { rootProf };
+        }
+
+        // Act
+        const { result } = renderHook(callback);
+        act(() => {
+            set(result.current.rootProf.a.c)("same");          
+            //set(result.current.rootProf.a.c)("diff 1");
+        });
+
+        const rootProf1 = result.current.rootProf
+        act(() => {
+            set(result.current.rootProf.a.c)("same");
+            //set(result.current.rootProf.a.c)("diff 2");
+        });
+        const rootProf2 = result.current.rootProf
+        
+        // Assert
+        expect(renderCount).toBe(5)
+
+        expect(rootProf1.a.b === rootProf2.a.b).toBe(true);
+        expect(rootProf1.a.c === rootProf2.a.c).toBe(false);
+
+        expect(get(rootProf1.a.b)).toBe(get(rootProf2.a.b));
+        expect(set(rootProf1.a.b)).toBe(set(rootProf2.a.b));
+        expect(get(rootProf1.a.c)).not.toBe(get(rootProf2.a.b));
+        expect(set(rootProf1.a.c)).not.toBe(set(rootProf2.a.b));
+    });
+
+
     it("returns initial model when not changed", () => {
         // Arrange
         const initialModel = { a: { b: "" } };

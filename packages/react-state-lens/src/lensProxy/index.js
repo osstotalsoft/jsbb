@@ -27,7 +27,9 @@ const handler = {
                 return function () { return target; }
             }
             case fl.promap: {
-                return function (get, set) { return target[fl.promap](get, set) |> LensProxy }
+                return function (get, set) {
+                    return target[fl.promap](get, set) |> LensProxy
+                }
             }
             case fl.map: {
                 return function (func) { return target[fl.map](func) |> LensProxy }
@@ -64,6 +66,25 @@ function isIgnoredProp(name) {
 
 export function eject(proxy) {
     return proxy["__target"]
+}
+
+export function reuseCache(sourceProxy, targetProxy) {
+    const source = eject(sourceProxy)
+    const target = eject(targetProxy)
+
+    for (const prop in source.state) {
+        if (Object.hasOwn(source.state, prop) && Object.hasOwn(target.state, prop) && cacheSymbol in source && prop in source[cacheSymbol]) {
+            if (source.state[prop] === target.state[prop]) {
+                if (!target[cacheSymbol]) {
+                    target[cacheSymbol] = {};
+                }
+                target[cacheSymbol][prop] = source[cacheSymbol][prop]
+            }
+            else {
+                reuseCache(sourceProxy[prop], targetProxy[prop])
+            }
+        }
+    }
 }
 
 // Manual curry workaround
