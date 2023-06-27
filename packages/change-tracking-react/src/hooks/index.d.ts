@@ -25,18 +25,18 @@ export function useDirtyInfo(): [
  * Returns a stateful model,  stateful dirty info object, a function that sets the model or property value and a function that resets the change tracking.
  * @see https://github.com/osstotalsoft/jsbb/tree/master/packages/change-tracking-react#useChangeTrackingState-hook
  */
-export function useChangeTrackingState(): [
+export function useChangeTrackingState<TModel>(initialModel?: TModel): [
   // Model
-  any,
+  TModel,
 
   // DirtyInfo
   DirtyInfo,
 
   // Set set model or property value
-  (model: any, propertyPath?: string|string[]) => void,
+  (model: TModel, propertyPath?: string | string[]) => void,
 
   // Reset dirty info
-  (newModel?: any) => void
+  (newModel?: TModel) => void
 ];
 
 /**
@@ -45,15 +45,13 @@ export function useChangeTrackingState(): [
  * Returns a stateful profunctor lens with the rule application result, a dirty info object and a function that resets the change tracking.
  * @see https://github.com/osstotalsoft/jsbb/tree/master/packages/change-tracking-react#useChangeTrackingLens-hook
  */
-export function useChangeTrackingLens(
-  initialModel: any,
-): [
+export function useChangeTrackingLens<TModel>(initialModel: TModel): [
   // Model lens
-  LensProxy<any>,
+  LensProxy<TModel>,
 
   // DirtyInfo object
   DirtyInfo,
 
   // Resets the change tracking and optionally sets a new model
-  (newModel?: any) => void
+  (newModel?: TModel) => void
 ];

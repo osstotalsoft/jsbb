@@ -1,6 +1,7 @@
 // Copyright (c) TotalSoft.
 // This source code is licensed under the MIT license.
 
+import { DirtyInfo } from "@totalsoft/change-tracking";
 import { Validator, Logger, FilterFunc, Success, Failure } from "@totalsoft/pure-validations";
 import { ValidatorContext } from "packages/pure-validations/src/validator";
 
@@ -9,8 +10,8 @@ import { ValidatorContext } from "packages/pure-validations/src/validator";
  * Returns a statefull validation result, a function that performs the validation and a function that resets the validation state.
  * @see https://github.com/osstotalsoft/jsbb/tree/master/packages/pure-validations-react#usevalidation-hook
  */
-export function useValidation(
-  rules: Validator<any>,
+export function useValidation<TModel>(
+  rules: Validator<TModel>,
   options?: { isLogEnabled: boolean; logger: Logger; fieldFilterFunc: FilterFunc },
   deps?: any[]
 ): [
@@ -18,7 +19,7 @@ export function useValidation(
   Success | Failure,
 
   // Validate function
-  (model: any, context?: ValidatorContext) => boolean,
+  (model: TModel, context?: ValidatorContext) => boolean,
 
   // Reset validation function
   () => void
@@ -29,8 +30,8 @@ export function useValidation(
  * Returns a statefull validation result, a function that performs the validation and a function that resets the validation state.
  * @see https://github.com/osstotalsoft/jsbb/tree/master/packages/pure-validations-react#usedirtyfieldvalidation-hook
  */
-export function useDirtyFieldValidation(
-  rules: Validator<any>,
+export function useDirtyFieldValidation<TModel>(
+  rules: Validator<TModel>,
   options?: { isLogEnabled: boolean; logger: Logger; fieldFilterFunc: FilterFunc },
   deps?: any[]
 ): [
@@ -38,7 +39,7 @@ export function useDirtyFieldValidation(
   Success | Failure,
 
   // Validate function
-  (model: any, dirtyinfo?: any) => boolean,
+  (model: TModel, dirtyinfo?: DirtyInfo) => boolean,
 
   // Reset validation function
   () => void
