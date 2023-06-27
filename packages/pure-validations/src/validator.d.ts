@@ -16,9 +16,9 @@ export type ValidatorContext = {
 
 export interface Validator<TModel> {}
 export let Validator: {
-  <TModel>(func: (model: TModel, context?: ValidatorContext) => Success | Failure): Validator<TModel>;
-  of(validation: Success | Failure): Validator<any>;
+  <TModel>(func: (model: TModel, context?: ValidatorContext) => Success<TModel> | Failure<TModel>): Validator<TModel>;
+  of<TModel>(validation: Success<TModel> | Failure<TModel>): Validator<TModel>;
 };
 
-export function validate<TModel>(validator: Validator<TModel>, model: TModel, ctx?: ValidatorContext): Success | Failure;
-export function validate<TModel>(validator: Validator<TModel>): F.Curry<(model: TModel, ctx?: ValidatorContext) => Success | Failure>;
+export function validate<TModel>(validator: Validator<TModel>, model: TModel, ctx?: ValidatorContext): Success<TModel> | Failure<TModel>;
+export function validate<TModel>(validator: Validator<TModel>): F.Curry<(model: TModel, ctx?: ValidatorContext) => Success<TModel> | Failure<TModel>>;

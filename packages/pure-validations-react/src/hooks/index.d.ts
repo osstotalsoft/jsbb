@@ -16,7 +16,7 @@ export function useValidation<TModel>(
   deps?: any[]
 ): [
   // Validation result
-  Success | Failure,
+  Success<TModel> | Failure<TModel>,
 
   // Validate function
   (model: TModel, context?: ValidatorContext) => boolean,
@@ -36,7 +36,7 @@ export function useDirtyFieldValidation<TModel>(
   deps?: any[]
 ): [
   // Validation result
-  Success | Failure,
+  Success<TModel> | Failure<TModel>,
 
   // Validate function
   (model: TModel, dirtyinfo?: DirtyInfo) => boolean,
