@@ -6,6 +6,7 @@ import ValidationError from "./validationError";
 export interface Success {}
 export interface Failure {}
 
+export const Success: Success;
 export function Failure(validationError: ValidationError): Failure;
 export function getErrors(validation: Success | Failure): string[];
 export function getInner(path: string[], validation: Success | Failure): Success | Failure;
