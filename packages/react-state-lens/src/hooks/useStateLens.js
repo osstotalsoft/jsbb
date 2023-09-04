@@ -1,9 +1,9 @@
 // Copyright (c) TotalSoft.
 // This source code is licensed under the MIT license.
 
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { LensProxy, reuseCache } from '../lensProxy'
-import StateLens, {set} from '../stateLens';
+import StateLens from '../stateLens';
 
 export function useStateLens(initialModel, deps = []) {
     const [state, setState] = useState(initialModel)

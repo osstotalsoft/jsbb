@@ -3,7 +3,7 @@
 
 import { renderHook, act } from "@testing-library/react-hooks";
 import { render, fireEvent } from "@testing-library/react"
-import { set, get, eject } from "@totalsoft/react-state-lens";
+import { set, get } from "@totalsoft/react-state-lens";
 import { useChangeTrackingLens } from "..";
 import { detectChanges, __clearMocks as clearChangeTrackingMocks } from "@totalsoft/change-tracking";
 import React from "react"
@@ -127,7 +127,7 @@ describe("useChangeTrackingLens hook", () => {
 
         // eslint-disable-next-line no-unused-vars
         function ParentComponent({ initialModel }) {
-            const [rootLens, _] = useChangeTrackingLens(initialModel)
+            const [rootLens] = useChangeTrackingLens(initialModel)
             return (<>
                 <NestedComponent id={0} state={rootLens.first} />
                 <NestedComponent id={1} state={rootLens.second} />

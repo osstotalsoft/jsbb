@@ -137,7 +137,7 @@ describe("useRulesLens hook", () => {
 
         // eslint-disable-next-line no-unused-vars
         function ParentComponent({ initialModel }) {
-            const [rootLens,_] = useRulesLens(rule, initialModel)
+            const [rootLens] = useRulesLens(rule, initialModel)
             return (<>
                 <NestedComponent id={0} state={rootLens.first} />
                 <NestedComponent id={1} state={rootLens.second} />
