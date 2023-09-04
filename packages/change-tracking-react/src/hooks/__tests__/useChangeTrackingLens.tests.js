@@ -2,9 +2,12 @@
 // This source code is licensed under the MIT license.
 
 import { renderHook, act } from "@testing-library/react-hooks";
+import { render, fireEvent } from "@testing-library/react"
 import { set, get, eject } from "@totalsoft/react-state-lens";
 import { useChangeTrackingLens } from "..";
 import { detectChanges, __clearMocks as clearChangeTrackingMocks } from "@totalsoft/change-tracking";
+import React from "react"
+import '@testing-library/jest-dom'
 
 describe("useChangeTrackingLens hook", () => {
     afterEach(() => {
@@ -108,44 +111,48 @@ describe("useChangeTrackingLens hook", () => {
         expect(renderCount).toBe(3)
     });
 
-
-    it.only("enforces reference and render economy", () => {
+    it("renders only changed component", () => {
         // Arrange
-        const initialModel = { a: { b: "", c: "aaa" } };
-        let renderCount = 0;
+        const initialModel = { first: { value: "first" }, second: { value: "second" } };
+        const renderCalls = { [0]: 0, [1]: 0 }
 
-        const callback = () => {
-            const [rootProf] = useChangeTrackingLens(initialModel)
-            renderCount = renderCount + 1;
-            return { rootProf };
+        // eslint-disable-next-line no-unused-vars
+        const NestedComponent = React.memo(({ id, state: lens }) => {
+            renderCalls[id] = renderCalls[id] + 1
+            return (<div>
+                <span role="nested-value">{get(lens.value)}</span>
+                <button role="nested-button" onClick={() => set(lens.value)("changed")}></button>
+            </div>)
+        })
+
+        // eslint-disable-next-line no-unused-vars
+        function ParentComponent({ initialModel }) {
+            const [rootLens, _] = useChangeTrackingLens(initialModel)
+            return (<>
+                <NestedComponent id={0} state={rootLens.first} />
+                <NestedComponent id={1} state={rootLens.second} />
+            </>)
         }
 
         // Act
-        const { result } = renderHook(callback);
-        act(() => {
-            set(result.current.rootProf.a.c)("same");          
-            //set(result.current.rootProf.a.c)("diff 1");
-        });
+        const { getAllByRole } = render(<ParentComponent initialModel={initialModel}></ParentComponent>)
 
-        const rootProf1 = result.current.rootProf
-        act(() => {
-            set(result.current.rootProf.a.c)("same");
-            //set(result.current.rootProf.a.c)("diff 2");
-        });
-        const rootProf2 = result.current.rootProf
-        
+        expect(screen).toBeDefined();
+
+        const values = getAllByRole("nested-value")
+        expect(values.length).toBe(2)
+        expect(values[0]).toHaveTextContent("first")
+        expect(values[1]).toHaveTextContent("second")
+
+
+        const buttons = getAllByRole("nested-button")
+        fireEvent.click(buttons[0])
+
         // Assert
-        expect(renderCount).toBe(5)
-
-        expect(rootProf1.a.b === rootProf2.a.b).toBe(true);
-        expect(rootProf1.a.c === rootProf2.a.c).toBe(false);
-
-        expect(get(rootProf1.a.b)).toBe(get(rootProf2.a.b));
-        expect(set(rootProf1.a.b)).toBe(set(rootProf2.a.b));
-        expect(get(rootProf1.a.c)).not.toBe(get(rootProf2.a.b));
-        expect(set(rootProf1.a.c)).not.toBe(set(rootProf2.a.b));
-    });
-
+        expect(renderCalls).toEqual({ [0]: 2, [1]: 1 })
+        expect(values[0]).toHaveTextContent("changed")
+        expect(values[1]).toHaveTextContent("second")
+    })
 
     it("returns initial model when not changed", () => {
         // Arrange

@@ -22,15 +22,4 @@ export function useStateLens(initialModel, deps = []) {
         [state, ...deps])
 
     return lensProxyMemoized
-
-    // useEffect(() => {})
-
-    // const prevState = useRef(state)
-    // const lensProxy = useRef(StateLens(state, setState) |> LensProxy)
-    // if (state !== prevState.current) {
-    //     set(lensProxy.current, state)
-    //     prevState.current = state
-    // } 
-
-    // return lensProxy.current
 }

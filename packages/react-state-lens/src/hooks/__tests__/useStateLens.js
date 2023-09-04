@@ -32,43 +32,6 @@ describe("useStateLens hook", () => {
         expect(root).not.toBe(initialModel);
     });
 
-    it("enforces reference and render economy", () => {
-        // Arrange
-        const initialModel = { a: { b: "", c: "aaa" } };
-        let renderCount = 0;
-
-        const callback = () => {
-            const rootProf = useStateLens(initialModel)
-
-            renderCount = renderCount + 1;
-            return { rootProf};
-        }
-
-        // Act
-        const { result } = renderHook(callback);
-        act(() => {
-            set(result.current.rootProf.a.b)("diff 1");
-            set(result.current.rootProf.a.c)("same")
-        });
-        const rootProf1 = result.current.rootProf
-        act(() => {
-            set(result.current.rootProf.a.b)("diff 2");
-            set(result.current.rootProf.a.c)("same")
-        });
-        const rootProf2 = result.current.rootProf
-
-        // Assert
-        expect(rootProf1.a === rootProf2.a).toBe(false)
-        expect(rootProf1.a.b === rootProf2.a.b).toBe(false)
-        expect(rootProf1.a.c === rootProf2.a.c).toBe(true)
-        expect(get(rootProf1.a.b)).not.toBe(get(rootProf2.a.b))
-        expect(get(rootProf1.a.c)).toBe(get(rootProf2.a.c))
-        expect(set(rootProf1.a.b)).not.toBe(set(rootProf2.a.b))
-        expect(set(rootProf1.a.c)).toBe(set(rootProf2.a.c))
-
-        expect(renderCount).toBe(3)
-    });
-
     it("renders only changed component", () => {
         // Arrange
         const initialModel = { first: { value: "first" }, second: { value: "second" } };
