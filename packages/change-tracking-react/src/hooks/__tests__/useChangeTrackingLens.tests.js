@@ -2,14 +2,14 @@
 // This source code is licensed under the MIT license.
 
 import { renderHook, act } from "@testing-library/react-hooks";
-import { set, get, eject } from "@totalsoft/react-state-lens";
+import { render, fireEvent } from "@testing-library/react"
+import { set, get } from "@totalsoft/react-state-lens";
 import { useChangeTrackingLens } from "..";
-import { detectChanges, __clearMocks as clearChangeTrackingMocks } from "@totalsoft/change-tracking";
+import React from "react"
+import '@testing-library/jest-dom'
+jest.unmock("@totalsoft/change-tracking")
 
 describe("useChangeTrackingLens hook", () => {
-    afterEach(() => {
-        clearChangeTrackingMocks();
-    });
 
     it("returns model with updated property", () => {
         // Arrange
@@ -19,7 +19,7 @@ describe("useChangeTrackingLens hook", () => {
 
             return { rootProf, fieldProf: rootProf.a.b };
         }
-        
+
         // Act
         const { result } = renderHook(callback);
         act(() => {
@@ -38,7 +38,7 @@ describe("useChangeTrackingLens hook", () => {
         // Arrange
         const initialModel = { a: [1, 2, 3] };
         const callback = () => {
-            const [rootProf] = useChangeTrackingLens( initialModel)
+            const [rootProf] = useChangeTrackingLens(initialModel)
 
             let array = get(rootProf.a)
             let fieldProfs = array.map((item, idx) => rootProf.a[idx]);
@@ -62,22 +62,31 @@ describe("useChangeTrackingLens hook", () => {
 
     it("sets dirty info", () => {
         // Arrange
-        const initialModel = { a: { b: "", c: "Initial" } };
+        const initialModel = { a: { b: "", c: "Initial", d: "" } };
         const callback = () => {
-            const [rootProf, di] = useChangeTrackingLens( initialModel)
+            const [rootProf, di] = useChangeTrackingLens(initialModel)
 
-            return { rootProf, fieldProf: rootProf.a.b, di };
+            return { rootProf, di };
         }
 
         // Act
         const { result } = renderHook(callback);
         act(() => {
-            set(result.current.fieldProf)("OK");
+            set(result.current.rootProf.a.b)("OK");
+        });
+
+        // Act
+        act(() => {
+            set(result.current.rootProf.a.d)("OK");
+        });
+
+        act(() => {
+            set(result.current.rootProf.a.b)("OK1");
         });
 
         // Assert
         const dirtyInfo = result.current.di;
-        expect(dirtyInfo).toStrictEqual(detectChanges({  a: { b: "OK", c: "Initial" } }, initialModel))
+        expect(JSON.stringify(dirtyInfo)).toStrictEqual(JSON.stringify({ a: { b: true, d: true } }, initialModel))
     });
 
 
@@ -102,19 +111,61 @@ describe("useChangeTrackingLens hook", () => {
             set(result.current.fieldProf)("OK");
         });
         const model2 = result.current.rootProf;
-        
+
         // Assert
         expect(model1).toBe(model2);
         expect(renderCount).toBe(3)
     });
 
+    it("renders only changed component", () => {
+        // Arrange
+        const initialModel = { first: { value: "first" }, second: { value: "second" } };
+        const renderCalls = { [0]: 0, [1]: 0 }
+
+        // eslint-disable-next-line no-unused-vars
+        const NestedComponent = React.memo(({ id, state: lens }) => {
+            renderCalls[id] = renderCalls[id] + 1
+            return (<div>
+                <span role="nested-value">{get(lens.value)}</span>
+                <button role="nested-button" onClick={() => set(lens.value)("changed")}></button>
+            </div>)
+        })
+
+        // eslint-disable-next-line no-unused-vars
+        function ParentComponent({ initialModel }) {
+            const [rootLens] = useChangeTrackingLens(initialModel)
+            return (<>
+                <NestedComponent id={0} state={rootLens.first} />
+                <NestedComponent id={1} state={rootLens.second} />
+            </>)
+        }
+
+        // Act
+        const { getAllByRole } = render(<ParentComponent initialModel={initialModel}></ParentComponent>)
+
+        expect(screen).toBeDefined();
+
+        const values = getAllByRole("nested-value")
+        expect(values.length).toBe(2)
+        expect(values[0]).toHaveTextContent("first")
+        expect(values[1]).toHaveTextContent("second")
+
+
+        const buttons = getAllByRole("nested-button")
+        fireEvent.click(buttons[0])
+
+        // Assert
+        expect(renderCalls).toEqual({ [0]: 2, [1]: 1 })
+        expect(values[0]).toHaveTextContent("changed")
+        expect(values[1]).toHaveTextContent("second")
+    })
 
     it("returns initial model when not changed", () => {
         // Arrange
         const initialModel = { a: { b: "" } };
 
         // Act
-        const { result } = renderHook(() => useChangeTrackingLens( initialModel));
+        const { result } = renderHook(() => useChangeTrackingLens(initialModel));
 
         // Assert
         const [model] = result.current;

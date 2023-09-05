@@ -1,21 +1,28 @@
 // Copyright (c) TotalSoft.
 // This source code is licensed under the MIT license.
 
-import { useStateLens, rmap, over } from '@totalsoft/react-state-lens'
-import { useCallback, useState, useMemo } from 'react';
+import { useStateLens, rmap, over, reuseCache } from '@totalsoft/react-state-lens'
+import { useCallback, useState, useMemo, useRef } from 'react';
 import { create, detectChanges, ensureArrayUIDsDeep } from '@totalsoft/change-tracking'
 
 export function useChangeTrackingLens(initialModel) {
     const [dirtyInfo, setDirtyInfo] = useState(create)
     const stateLens = useStateLens(() => ensureArrayUIDsDeep(initialModel));
-    const changeTrackingLens = useMemo(() =>
-        stateLens |> rmap(
-            (changedModel, prevModel) => {
-                const newModel = ensureArrayUIDsDeep(changedModel)
-                const newDirtyInfo = detectChanges(newModel, prevModel, dirtyInfo)
-                setDirtyInfo(newDirtyInfo)
-                return newModel;
-            }),
+    const prevProxy = useRef(null);
+    const changeTrackingLens = useMemo(() => {
+            const proxy = stateLens |> rmap(
+                (changedModel, prevModel) => {
+                    const newModel = ensureArrayUIDsDeep(changedModel)
+                    setDirtyInfo(dirtyInfo => detectChanges(newModel, prevModel, dirtyInfo));
+                    return newModel;
+                })
+
+            if (prevProxy.current) {
+                reuseCache(prevProxy.current, proxy)
+            }
+            prevProxy.current = proxy;
+            return proxy
+        },
         [stateLens])
 
     return [

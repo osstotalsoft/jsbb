@@ -105,6 +105,22 @@ describe("lens proxy", () => {
         expect(setter(initialModel).a.b).toBe("OK");
     });
 
+    it("inner lens equality", () => {
+        // Arrange
+        let model = { a: { b: "", c: "bau" } };
+        const setState = setter => model = setter(model)
+        const lens = new StateLens(model, setState) |> LensProxy
+
+        // Act
+        set(lens.a.b)("OK1"); 
+        const before = set(lens.a.c)
+        set(lens.a.b)("OK");      
+        const after = set(lens.a.c)
+
+        // Assert
+        expect(before).toBe(after);
+    });
+
     it("inner field lens state 3", () => {
         // Arrange
         let model = { a: { b: "" } };
@@ -117,7 +133,6 @@ describe("lens proxy", () => {
         // Assert
         expect(model.a.b).toBe("OK");
     });
-
 
     it("can be stringified", () => {
         // Arrange

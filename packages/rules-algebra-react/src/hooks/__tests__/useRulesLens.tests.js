@@ -2,10 +2,13 @@
 // This source code is licensed under the MIT license.
 
 import { renderHook, act } from "@testing-library/react-hooks";
+import { render, fireEvent } from "@testing-library/react"
 import { Rule, applyRule, logTo, __clearMocks as clearRulesMocks } from "@totalsoft/rules-algebra";
 import { set, get } from "@totalsoft/react-state-lens";
 import { useRulesLens } from "..";
 import { detectChanges, __clearMocks as clearChangeTrackingMocks } from "@totalsoft/change-tracking";
+import React from "react"
+import '@testing-library/jest-dom'
 
 describe("useRulesLens hook", () => {
     afterEach(() => {
@@ -117,6 +120,50 @@ describe("useRulesLens hook", () => {
         expect(model1).toBe(model2);
         expect(get(model1)._ruleValue).toBe(1);
     });
+
+    it("renders only changed component", () => {
+        // Arrange
+        const initialModel = { first: { value: "first" }, second: { value: "second" } };
+        const renderCalls = { [0]: 0, [1]: 0 }
+        const rule = Rule.of(1);
+        // eslint-disable-next-line no-unused-vars
+        const NestedComponent = React.memo(({ id, state: lens }) => {
+            renderCalls[id] = renderCalls[id] + 1
+            return (<div>
+                <span role="nested-value">{get(lens.value)}</span>
+                <button role="nested-button" onClick={() => set(lens.value)("changed")}></button>
+            </div>)
+        })
+
+        // eslint-disable-next-line no-unused-vars
+        function ParentComponent({ initialModel }) {
+            const [rootLens] = useRulesLens(rule, initialModel)
+            return (<>
+                <NestedComponent id={0} state={rootLens.first} />
+                <NestedComponent id={1} state={rootLens.second} />
+            </>)
+        }
+
+        // Act
+        const { getAllByRole } = render(<ParentComponent initialModel={initialModel}></ParentComponent>)
+
+        expect(screen).toBeDefined();
+
+        const values = getAllByRole("nested-value")
+        expect(values.length).toBe(2)
+        expect(values[0]).toHaveTextContent("first")
+        expect(values[1]).toHaveTextContent("second")
+
+
+        const buttons = getAllByRole("nested-button")
+        fireEvent.click(buttons[0])
+
+        // Assert
+        expect(renderCalls).toEqual({ [0]: 2, [1]: 1 })
+        expect(values[0]).toHaveTextContent("changed")
+        expect(values[1]).toHaveTextContent("second")
+    })
+
 
 
     it("returns initial model when rule is not run", () => {

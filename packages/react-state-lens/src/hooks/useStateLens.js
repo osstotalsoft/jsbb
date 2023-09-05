@@ -1,15 +1,25 @@
 // Copyright (c) TotalSoft.
 // This source code is licensed under the MIT license.
 
-import { useMemo, useState } from 'react';
-import { LensProxy } from '../lensProxy'
+import { useMemo, useRef, useState } from 'react';
+import { LensProxy, reuseCache } from '../lensProxy'
 import StateLens from '../stateLens';
 
 export function useStateLens(initialModel, deps = []) {
     const [state, setState] = useState(initialModel)
-    const lensProxy = useMemo(
-        () => StateLens(state, setState) |> LensProxy, 
-        [...deps, state])
+    const prevProxy = useRef(null)
+    
+    const lensProxyMemoized = useMemo(
+        () => { 
+            const proxy = StateLens(state, setState) |> LensProxy 
+            if (prevProxy.current) {
+                reuseCache(prevProxy.current, proxy)
+            }
+            prevProxy.current = proxy;
 
-    return lensProxy
+            return proxy;
+        }, 
+        [state, ...deps])
+
+    return lensProxyMemoized
 }
