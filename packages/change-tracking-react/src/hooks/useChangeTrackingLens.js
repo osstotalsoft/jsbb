@@ -13,8 +13,7 @@ export function useChangeTrackingLens(initialModel) {
             const proxy = stateLens |> rmap(
                 (changedModel, prevModel) => {
                     const newModel = ensureArrayUIDsDeep(changedModel)
-                    const newDirtyInfo = detectChanges(newModel, prevModel, dirtyInfo)
-                    setDirtyInfo(newDirtyInfo)
+                    setDirtyInfo(dirtyInfo => detectChanges(newModel, prevModel, dirtyInfo));
                     return newModel;
                 })
 

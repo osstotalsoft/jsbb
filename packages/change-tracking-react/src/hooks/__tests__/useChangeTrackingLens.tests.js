@@ -5,14 +5,11 @@ import { renderHook, act } from "@testing-library/react-hooks";
 import { render, fireEvent } from "@testing-library/react"
 import { set, get } from "@totalsoft/react-state-lens";
 import { useChangeTrackingLens } from "..";
-import { detectChanges, __clearMocks as clearChangeTrackingMocks } from "@totalsoft/change-tracking";
 import React from "react"
 import '@testing-library/jest-dom'
+jest.unmock("@totalsoft/change-tracking")
 
 describe("useChangeTrackingLens hook", () => {
-    afterEach(() => {
-        clearChangeTrackingMocks();
-    });
 
     it("returns model with updated property", () => {
         // Arrange
@@ -22,7 +19,7 @@ describe("useChangeTrackingLens hook", () => {
 
             return { rootProf, fieldProf: rootProf.a.b };
         }
-        
+
         // Act
         const { result } = renderHook(callback);
         act(() => {
@@ -41,7 +38,7 @@ describe("useChangeTrackingLens hook", () => {
         // Arrange
         const initialModel = { a: [1, 2, 3] };
         const callback = () => {
-            const [rootProf] = useChangeTrackingLens( initialModel)
+            const [rootProf] = useChangeTrackingLens(initialModel)
 
             let array = get(rootProf.a)
             let fieldProfs = array.map((item, idx) => rootProf.a[idx]);
@@ -65,22 +62,31 @@ describe("useChangeTrackingLens hook", () => {
 
     it("sets dirty info", () => {
         // Arrange
-        const initialModel = { a: { b: "", c: "Initial" } };
+        const initialModel = { a: { b: "", c: "Initial", d: "" } };
         const callback = () => {
-            const [rootProf, di] = useChangeTrackingLens( initialModel)
+            const [rootProf, di] = useChangeTrackingLens(initialModel)
 
-            return { rootProf, fieldProf: rootProf.a.b, di };
+            return { rootProf, di };
         }
 
         // Act
         const { result } = renderHook(callback);
         act(() => {
-            set(result.current.fieldProf)("OK");
+            set(result.current.rootProf.a.b)("OK");
+        });
+
+        // Act
+        act(() => {
+            set(result.current.rootProf.a.d)("OK");
+        });
+
+        act(() => {
+            set(result.current.rootProf.a.b)("OK1");
         });
 
         // Assert
         const dirtyInfo = result.current.di;
-        expect(dirtyInfo).toStrictEqual(detectChanges({  a: { b: "OK", c: "Initial" } }, initialModel))
+        expect(JSON.stringify(dirtyInfo)).toStrictEqual(JSON.stringify({ a: { b: true, d: true } }, initialModel))
     });
 
 
@@ -105,7 +111,7 @@ describe("useChangeTrackingLens hook", () => {
             set(result.current.fieldProf)("OK");
         });
         const model2 = result.current.rootProf;
-        
+
         // Assert
         expect(model1).toBe(model2);
         expect(renderCount).toBe(3)
@@ -159,7 +165,7 @@ describe("useChangeTrackingLens hook", () => {
         const initialModel = { a: { b: "" } };
 
         // Act
-        const { result } = renderHook(() => useChangeTrackingLens( initialModel));
+        const { result } = renderHook(() => useChangeTrackingLens(initialModel));
 
         // Assert
         const [model] = result.current;
