@@ -4,4 +4,5 @@
 export * from "./higherOrderRules";
 export * from "./primitiveRules";
 export * from "./predicates";
+export * from "./parser";
 export { Rule, applyRule } from "./rule";

@@ -288,3 +288,52 @@ const predicate1 = any(doc => doc.isEnabled, doc => doc.isValid);
 const predicate2 = [doc => doc.isEnabled, doc => doc.isValid] |> any;
 const predicate2 = [propertyChanged(doc => doc.property1), propertyChanged(doc => doc.property)] |> any;
 ```
+### Parsing
+To support externally defined business rules, the library provides an option specify rules as strings.
+
+#### parse
+Creates a rule from the given string. The string should be valid javascript code (eg. no pipeline operators).
+
+
+All rules-algebra combinators and predicates are included in the parsing scope and can be used in the rule text.
+```javascript
+const ruleText = `
+    items(
+        shape({
+            fullPrice: when(propertyChanged(item => item.price), computed(item => (item.price) * (1 + taxPercent)))
+        })
+    )
+`
+const rule = parse(ruleText)
+```
+
+You can use custom functions and constants by adding them to the parsing scope:
+```javascript
+const ruleText = `
+    items(
+        shape({
+            fullPrice: when(propertyChanged(item => item.price), computed(item => multiply(1 + taxPercent)(item.price)))
+        })
+    )
+`
+const { multiply } = require("ramda")
+const taxPercent = 0.19
+const rule = parse(ruleText, { scope: { multiply, taxPercent } })
+```
+
+Because rules are composable you can parse the rule for only a subset of your model. 
+In the example below the parsed rule needs context from the global model. To make this possible we parse a rule factory function that takes the context as an argument:
+```javascript
+const propValueRuleFactoryText = `(asset) => when(prop => prop.code == "ASSET_TYPE", computed(_ => asset.price < 72000 ? "STD" : "NON_STD"))`
+const propValueRuleFactory = parse(propValueRuleFactoryText)
+
+const rule =
+    fromModel(asset =>
+        shape({
+            properties: items(
+                shape({
+                    value: propValueRuleFactory(asset)
+                })
+            )
+        }))
+```

@@ -199,3 +199,18 @@ The argument of "errorMessage" can be a i18next translation key.
 const personValidator = required |> errorMessage('Validation.PersonNotSelected');
 ```
 
+### Parsing
+To support externally defined validation rules, the library provides an option specify validators as strings.
+
+#### parse
+Creates a validator from the given string. The string should be valid javascript code (eg. no pipeline operators).
+
+All primitive and higher order validators in the library are included in the parsing scope and can be used in the validator text.
+```javascript
+    const lengthValidator = Validator.of(Success);
+    const emailValdator = Validator.of(Success);
+    const model = { email: "test@mail.com" };
+
+    const validatorText = `stopOnFirstFailure(shape({ email: lengthValidator }), shape({ email: emailValdator }))`;
+    const validator = parse(validatorText, { scope : {lengthValidator, emailValdator }});
+`
