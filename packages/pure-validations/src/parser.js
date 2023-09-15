@@ -21,6 +21,6 @@ export function parse(ruleString, { scope = {} } = {}) {
     const assignScope = `const {${Object.keys(augmentedScope).join(", ")}} = $scope`
 
     const fn = Function('$scope', `'use strict';\n${assignScope};\nreturn ${sanitizedRuleString}`)
-    Object.defineProperty(fn, "name", { value: "New Name" });
+    
     return fn(augmentedScope)
 }
