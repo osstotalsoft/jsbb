@@ -6,6 +6,7 @@ import { validate, Validator } from "../validator";
 import { required, maxLength, greaterThan, unique, atLeastOne, email } from "../primitiveValidators";
 import { shape, items, stopOnFirstFailure, when, fromModel, logTo, concatFailure, field, fromRoot } from "../higherOrderValidators";
 import ValidationError from "../validationError";
+import { parse } from "../parser";
 describe("composed validators:", () => {
   it("readme validator: ", () => {
     // Arrange
@@ -516,6 +517,22 @@ describe("composed validators:", () => {
 
     // Assert
     expect(action).toThrow(new Error("Value 'model => !!model' is not a validator!"));
+  });
+
+  it("parses validator ", () => {
+    // Arrange
+    const lengthValidator = Validator.of(Success);
+    const emailValdator = Validator.of(Success);
+    const model = { email: "test@mail.com" };
+
+    const validatorText = `stopOnFirstFailure(shape({ email: lengthValidator }), shape({ email: emailValdator }))`;
+    const validator = parse(validatorText, { scope : {lengthValidator, emailValdator }});
+
+    // Act
+    const validation = model |> validate(validator);
+
+    // Assert
+    expect(validation).toBe(Success);
   });
 
 });

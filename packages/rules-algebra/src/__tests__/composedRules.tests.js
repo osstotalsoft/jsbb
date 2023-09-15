@@ -2,10 +2,11 @@
 // This source code is licensed under the MIT license.
 
 import { applyRule } from "../";
-import { when, shape, logTo, scope, chainRules, items, readFrom, fromParent, parent, fromRoot,root } from "../higherOrderRules";
-import { constant, computed, maximumValue, sprintf} from "../primitiveRules";
+import { when, shape, logTo, scope, chainRules, items, readFrom, fromParent, parent, fromRoot, root, fromModel } from "../higherOrderRules";
+import { constant, computed, maximumValue, sprintf } from "../primitiveRules";
 import { propertyChanged, any, propertiesChanged } from "../predicates";
 import { ensureArrayUIDsDeep } from "@totalsoft/change-tracking";
+import { parse } from "../parser";
 
 jest.unmock("@totalsoft/change-tracking")
 
@@ -51,7 +52,7 @@ describe("composed rules:", () => {
         // Arrange
         const console = { log: () => { } };
         const rule = shape({
-            advancePercent: 
+            advancePercent:
                 [computed(loan => loan.advance * 100 / loan.aquisitionPrice), maximumValue(100)] |> chainRules
                 |> when(propertiesChanged(loan => [loan.advance, loan.aquisitionPrice])),
             approved: constant(false) |> when(propertyChanged(loan => loan.advance)),
@@ -67,29 +68,29 @@ describe("composed rules:", () => {
             advance: 10,
             approved: true,
             persons: [
-                { name: "Doe", surname: "John" }, 
-                { name: "Klaus", surname: "John"}
+                { name: "Doe", surname: "John" },
+                { name: "Klaus", surname: "John" }
             ]
         } |> ensureArrayUIDsDeep
 
-        const changedLoan = { 
-            ...originalLoan, 
-            advance: 20, 
+        const changedLoan = {
+            ...originalLoan,
+            advance: 20,
             isCompanyLoan: false,
             persons: [
                 { ...originalLoan.persons[0], name: "Smith" },
                 { ...originalLoan.persons[1], surname: "Santa" },
-            ] 
+            ]
         }
 
         // Act
         const result = applyRule(rule, changedLoan, originalLoan)
 
         // Assert
-        expect(result).toStrictEqual({ 
-            ...changedLoan, 
-            advancePercent: 20, 
-            approved: false, 
+        expect(result).toStrictEqual({
+            ...changedLoan,
+            advancePercent: 20,
+            approved: false,
             persons: [
                 { ...changedLoan.persons[0], fullName: "John Smith", isCompanyRep: false },
                 { ...changedLoan.persons[1], fullName: "Santa Klaus", isCompanyRep: false }
@@ -281,7 +282,7 @@ describe("composed rules:", () => {
             )
         })
 
-        const originalModel = ensureArrayUIDsDeep({ a: 1, children: [{  b: 2 }] })
+        const originalModel = ensureArrayUIDsDeep({ a: 1, children: [{ b: 2 }] })
         const changedModel = { a: 3, children: [{ ...originalModel.children[0] }] }
 
         // Act
@@ -292,7 +293,7 @@ describe("composed rules:", () => {
 
     });
 
-    
+
     it("items with unique ids and using root scope:", () => {
         // Arrange
         const rule = shape({
@@ -303,7 +304,7 @@ describe("composed rules:", () => {
             )
         })
 
-        const originalModel = ensureArrayUIDsDeep({ a: 1, children: [{  b: 2 }] })
+        const originalModel = ensureArrayUIDsDeep({ a: 1, children: [{ b: 2 }] })
         const changedModel = { a: 3, children: [{ ...originalModel.children[0] }] }
 
         // Act
@@ -413,67 +414,115 @@ describe("composed rules:", () => {
         // Arrange
         const originalModel = {}
         const changedModel = {}
-        
+
         const rule = undefined;
-    
+
         // Act
         const action = () => applyRule(rule, changedModel, originalModel);
-    
+
         // Assert
         expect(action).toThrow(new Error("Value 'undefined' is not a rule!"));
-      });
-    
-      it("aplying a null rule throws exception:", () => {
+    });
+
+    it("aplying a null rule throws exception:", () => {
         // Arrange
         const originalModel = {}
         const changedModel = {}
-        
+
         const rule = null;
-    
+
         // Act
         const action = () => applyRule(rule, changedModel, originalModel);
-    
+
         // Assert
         expect(action).toThrow(new Error("Value 'null' is not a rule!"));
-      });
-    
-      it("aplying an invalid rule throws exception:", () => {
+    });
+
+    it("aplying an invalid rule throws exception:", () => {
         // Arrange
         const originalModel = {}
         const changedModel = {}
-        
+
         const rule = 'wrong';
-    
+
         // Act
         const action = () => applyRule(rule, changedModel, originalModel);
-    
+
         // Assert
         expect(action).toThrow(new Error("Value 'wrong' is not a rule!"));
-      });
-    
-      it("aplying an undefined inner rule throws exception:", () => {
+    });
+
+    it("aplying an undefined inner rule throws exception:", () => {
         // Arrange
         const originalModel = {}
         const changedModel = {};
         const rule = chainRules(shape({ email: undefined }));
-    
+
         // Act
         const action = () => applyRule(rule, changedModel, originalModel);
-    
+
         // Assert
         expect(action).toThrow(new Error("Value 'undefined' is not a rule!"));
-      });
-    
-      it("aplying an invalid inner rule throws exception:", () => {
+    });
+
+    it("aplying an invalid inner rule throws exception:", () => {
         // Arrange
         const originalModel = {}
         const changedModel = {};
         const rule = chainRules(shape({ email: _doc => "test" }));
-    
+
         // Act
         const action = () => applyRule(rule, changedModel, originalModel);
-    
+
         // Assert
         expect(action).toThrow(new Error("Value '_doc => \"test\"' is not a rule!"));
-      });
+    });
+
+    it("applies parsed rule", () => {
+        // Arrange
+        const ruleText = `
+            items(
+                shape({
+                    fullPrice: when(propertyChanged(item => item.price), computed(item => multiply(1 + taxPercent)(item.price)))
+                })
+            )
+        `
+
+        const { multiply } = require("ramda")
+        const taxPercent = 0.19
+        const rule = parse(ruleText, { scope: { multiply, taxPercent } })
+
+        const originalModel = [{ price: 1, fullPrice: 1.19 }]
+        const changedModel = [{ ...originalModel[0], price: 100 }]
+
+        // Act
+        const result = applyRule(rule, changedModel, originalModel)
+        // Assert
+        expect(result).toStrictEqual([{ price: 100, fullPrice: 119 }])
+
+    });
+
+    it("applies parsed sub-rule with context", () => {
+        const propValueRuleFactoryText = `(asset) => when(prop => prop.code == "ASSET_TYPE", computed(_ => asset.price < 72000 && asset.assetType == "VEH_Passenger" ? "STD" : "NON_STD"))`
+        const propValueRuleFactory = parse(propValueRuleFactoryText)
+
+        const rule =
+            fromModel(asset =>
+                shape({
+                    properties: items(
+                        shape({
+                            value: propValueRuleFactory(asset)
+                        })
+                    )
+                }))
+
+        const originalModel = { price: 100, assetType: "VEH_Passenger", properties: [{ value: 'STD', code: "ASSET_TYPE" }, { value: 'unchanged', code: "OTHER" }] }
+        const changedModel = { ...originalModel, price: 73000, properties: [...originalModel.properties] }
+
+        // Act
+        const result = applyRule(rule, changedModel, originalModel)
+        // Assert
+        expect(result).toStrictEqual({ assetType: "VEH_Passenger", price: 73000, properties: [{ value: 'NON_STD', code: "ASSET_TYPE" }, { value: 'unchanged', code: "OTHER" }] })
+
+    });
 });
