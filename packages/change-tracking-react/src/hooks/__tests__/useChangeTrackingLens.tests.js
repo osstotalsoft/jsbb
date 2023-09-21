@@ -34,6 +34,29 @@ describe("useChangeTrackingLens hook", () => {
         expect(root).not.toBe(initialModel);
     });
 
+    it("updates property to null", () => {
+        // Arrange
+        const initialModel = { a: { b: "OK" } };
+        const callback = () => {
+            const [rootProf] = useChangeTrackingLens(initialModel)
+
+            return { rootProf, fieldProf: rootProf.a.b };
+        }
+
+        // Act
+        const { result } = renderHook(callback);
+        act(() => {
+            set(result.current.fieldProf)(null);
+        });
+
+        // Assert
+        const root = get(result.current.rootProf);
+        const field = get(result.current.fieldProf);
+        expect(field).toBe(null);
+        expect(root.a.b).toBe(null);
+        expect(root).not.toBe(initialModel);
+    });
+
     it("returns model with rule applied to it inside loop", () => {
         // Arrange
         const initialModel = { a: [1, 2, 3] };
