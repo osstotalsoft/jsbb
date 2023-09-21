@@ -1,6 +1,6 @@
 {
   "name": "@totalsoft/rules-algebra",
-  "version": "5.0.22",
+  "version": "5.0.32",
   "description": "Business rules api via functional composition",
   "main": "index.js",
   "scripts": {
