@@ -202,8 +202,6 @@ describe("useChangeTrackingLens hook", () => {
         function ParentComponent({ initialModel }) {
             const [rootLens] = useChangeTrackingLens(initialModel)
             return (<>
-                {/* <NestedComponent id={0} state={rootLens.root.items[0]} />
-                <NestedComponent id={1} state={rootLens.root.items[1]} /> */}
                  {rootLens.root.items
                     |> sequence
                     |> map(v => <NestedComponent key={v.id |> get} state={v} id={v.id |> get} />)}
@@ -227,8 +225,8 @@ describe("useChangeTrackingLens hook", () => {
 
         // // Assert
         expect(renderCalls).toEqual({ [0]: 2, [1]: 1 })
-        // expect(values[0]).toHaveTextContent("changed")
-        // expect(values[1]).toHaveTextContent("second")
+        expect(values[0]).toHaveTextContent("changed")
+        expect(values[1]).toHaveTextContent("second")
     })
 
     it("returns initial model when not changed", () => {
