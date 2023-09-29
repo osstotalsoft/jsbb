@@ -16,17 +16,17 @@
 ## Bootstrap
 ```javascript
 yarn install
-lerna bootstrap
+yarn lerna bootstrap
 ```
 
 ## Build
 ```javascript
-lerna run build
+yarn lerna run build
 ```
 
 ## Lint typescript definitions
 ```javascript
-lerna run tslint
+yarn lerna run tslint
 ```
 
 ## Test
@@ -36,9 +36,9 @@ yarn test
 
 ## Publish
 ```javascript
-lerna publish --contents build patch
-lerna publish --contents build minor
-lerna publish --contents build major
+yarn lerna publish --contents build patch
+yarn lerna publish --contents build minor
+yarn lerna publish --contents build major
 ``` 
 
 ## License
