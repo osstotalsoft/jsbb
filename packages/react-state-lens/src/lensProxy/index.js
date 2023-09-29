@@ -10,13 +10,15 @@ const cacheSymbol = Symbol("cache")
 const ignoredPrefixes = ["@@", "$$"]
 
 const handler = {
-    ownKeys(_target) {
-        return ["__target"];
+    ownKeys(target) {
+        return [...Reflect.ownKeys(target), "__target"]
     },
     getOwnPropertyDescriptor(target, prop) {
         if (prop === "__target") {
             return { configurable: true, enumerable: true };
         }
+        
+        return Reflect.getOwnPropertyDescriptor(target, prop)         
     },
     get: function (target, prop) {
         switch (prop) {
