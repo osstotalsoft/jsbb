@@ -109,9 +109,12 @@ export const lmap = Z.lmap;
 export const rmap = Z.rmap;
 
 export function sequence(proxy) {
-    const lens = eject(proxy)
-    const newLenses = L.sequence(lens)
-    return newLenses.map(LensProxy)
+    const xs = (proxy |> get) || []
+    if (!Array.isArray(xs)) {
+        throw new Error(`Cannot sequence lens with value ${xs.toString()}`);
+    }
+
+    return xs.map((_, index) => proxy[index]);
 }
 
 export const pipe = curry(function (proxy, otherLens) {
