@@ -75,7 +75,7 @@ export function reuseCache(sourceProxy, targetProxy) {
     const target = eject(targetProxy)
    
     for (const prop in source.state) {
-        if (Object.hasOwn(source.state, prop) && cacheSymbol in source && prop in source[cacheSymbol] && Object.hasOwn(target.state, prop)) {
+        if (Object.hasOwn(source.state, prop) && cacheSymbol in source && prop in source[cacheSymbol] && target.state && Object.hasOwn(target.state, prop)) {
             if (source.state[prop] === target.state[prop]) {
                 if (!target[cacheSymbol]) {
                     target[cacheSymbol] = {};

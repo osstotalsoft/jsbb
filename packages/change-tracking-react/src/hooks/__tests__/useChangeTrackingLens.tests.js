@@ -58,6 +58,27 @@ describe("useChangeTrackingLens hook", () => {
         expect(root).not.toBe(initialModel);
     });
 
+    it("updates object property to null", () => {
+        // Arrange
+        const initialModel = { a: { b: {c : "OK"} } };
+        const callback = () => {
+            const [prof] = useChangeTrackingLens(initialModel)
+            return { prof };
+        }
+
+        // Act
+        const { result } = renderHook(callback);
+        act(() => {
+            get(result.current.prof.a.b.c);
+            set(result.current.prof.a.b)(null);
+        });
+
+        // Assert
+        const root = get(result.current.prof);
+        expect(root.a.b).toBe(null);
+        expect(root).not.toBe(initialModel);
+    });
+
     it("returns model with rule applied to it inside loop", () => {
         // Arrange
         const initialModel = { a: [1, 2, 3] };
