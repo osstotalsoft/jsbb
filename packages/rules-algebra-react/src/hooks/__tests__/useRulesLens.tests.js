@@ -6,14 +6,15 @@ import { render, fireEvent } from "@testing-library/react"
 import { Rule, applyRule, logTo, __clearMocks as clearRulesMocks } from "@totalsoft/rules-algebra";
 import { set, get } from "@totalsoft/react-state-lens";
 import { useRulesLens } from "..";
-import { detectChanges, __clearMocks as clearChangeTrackingMocks } from "@totalsoft/change-tracking";
+import { detectChanges, isPropertyDirty } from "@totalsoft/change-tracking";
 import React from "react"
 import '@testing-library/jest-dom'
+
+jest.unmock("@totalsoft/change-tracking")
 
 describe("useRulesLens hook", () => {
     afterEach(() => {
         clearRulesMocks();
-        clearChangeTrackingMocks();
     });
 
     it("returns model with rule applied to it", () => {
@@ -188,9 +189,9 @@ describe("useRulesLens hook", () => {
         const initialModel = { a: { b: "" } };
 
         const callback = () => {
-            const [rootProf, , resetFunc] = useRulesLens(rule, initialModel)
+            const [rootProf, dirtyInfo , resetFunc] = useRulesLens(rule, initialModel)
 
-            return { rootProf, fieldProf: rootProf.a.b, resetFunc };
+            return { rootProf, fieldProf: rootProf.a.b, resetFunc, dirtyInfo };
         }
 
         // Act
@@ -199,17 +200,52 @@ describe("useRulesLens hook", () => {
             const { fieldProf } = result.current;
             set(fieldProf, "OK")
         });
-        const { rootProf: rootProf1 } = result.current;
+        const { rootProf: rootProf1, dirtyInfo: dirtyInfo1 } = result.current;
         act(() => {
             const { resetFunc } = result.current;
             resetFunc(initialModel);
         });
 
         // Assert
-        const { rootProf: rootProf2 } = result.current;
+        const { rootProf: rootProf2, dirtyInfo: dirtyInfo2 } = result.current;
         expect(get(rootProf1)).not.toBe(initialModel);
         expect(get(rootProf2)).toBe(initialModel);
+        expect(isPropertyDirty("a.b", dirtyInfo1)).toBe(true);
+        expect(isPropertyDirty("a.b", dirtyInfo2)).toBe(false);
     });
+
+
+    it("returns current model after reset without parameter", () => {
+        // Arrange
+        const rule = Rule.of(1);
+        const initialModel = { a: { b: "" } };
+
+        const callback = () => {
+            const [rootProf, dirtyInfo , resetFunc] = useRulesLens(rule, initialModel)
+
+            return { rootProf, fieldProf: rootProf.a.b, resetFunc, dirtyInfo };
+        }
+
+        // Act
+        const { result } = renderHook(callback);
+        act(() => {
+            const { fieldProf } = result.current;
+            set(fieldProf, "OK")
+        });
+        const { rootProf: rootProf1, dirtyInfo: dirtyInfo1 } = result.current;
+        act(() => {
+            const { resetFunc } = result.current;
+            resetFunc();
+        });
+
+        // Assert
+        const { rootProf: rootProf2, dirtyInfo: dirtyInfo2 } = result.current;
+        expect(get(rootProf1)).not.toBe(initialModel);
+        expect(get(rootProf2)).toBe(get(rootProf1));
+        expect(isPropertyDirty("a.b", dirtyInfo1)).toBe(true);
+        expect(isPropertyDirty("a.b", dirtyInfo2)).toBe(false);
+    });
+
 
 
 

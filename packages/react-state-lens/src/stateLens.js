@@ -52,9 +52,8 @@ export function get(stateLens) {
     return stateLens.state
 }
 
-export const over = R.curry(function over(proxy, func) {
-    let value = get(proxy);
-    return set(proxy, func(value))
+export const over = R.curry(function over(proxy, func) {   
+    return set(proxy, prev => func(prev))
 })
 
 export const promap = Z.promap;

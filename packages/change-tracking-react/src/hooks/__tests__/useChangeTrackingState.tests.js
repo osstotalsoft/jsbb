@@ -107,6 +107,28 @@ describe("useChangeTrackingState hook", () => {
         expect(model2).toBe(initialModel);
     });
 
+    it("returns current model after reset without parameter", () => {
+        // Arrange
+        const initialModel = { a: { b: "" } };
+
+        // Act
+        const { result } = renderHook(() => useChangeTrackingState(initialModel));
+        act(() => {
+            const [, , updateField] = result.current;
+            updateField("OK", "a.b");
+        });
+        const [model1] = result.current;
+        act(() => {
+            const [, , , reset] = result.current;
+            reset();
+        });
+
+        // Assert
+        const [model2] = result.current;
+        expect(model1).not.toBe(initialModel);
+        expect(model2).toBe(model1);
+    });
+
     it("should minimize the number of renders", () => {
         // Arrange
         const initialModel = { a: { b: "" } };

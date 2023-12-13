@@ -86,6 +86,8 @@ const SomeComponent = props => {
 };
 ```
 
+Note: The `reset` function clears the dirty info object. If an object is passed as parameter, the model is set to that object, otherwise the current model is kept unchanged.
+
 [Read more about lens operations](../react-state-lens/src/lensProxy/README.md)
 
 ## useDirtyInfo hook
@@ -128,3 +130,5 @@ const SomeComponent = props => {
   );
 };
 ```
+
+Note: The `reset` function clears the dirty info object. If an object is passed as parameter, the model is set to that object, otherwise the current model is kept unchanged.
