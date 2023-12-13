@@ -1,6 +1,6 @@
 {
   "name": "@totalsoft/react-state-lens",
-  "version": "5.0.34",
+  "version": "5.0.35",
   "description": "React extensions for the \"change-tracking\" library",
   "main": "index.js",
   "scripts": {
@@ -32,7 +32,7 @@
     "react-test-renderer": "^16.9.0"
   },
   "dependencies": {
-    "@totalsoft/change-tracking-react": "^5.0.34",
+    "@totalsoft/change-tracking-react": "^5.0.35",
     "@totalsoft/zion": "^5.0.22"
   },
   "peerDependencies": {
