@@ -4,6 +4,7 @@
 import { renderHook, act } from "@testing-library/react-hooks";
 import { render, fireEvent } from "@testing-library/react"
 import { set, get, sequence } from "@totalsoft/react-state-lens";
+import { isPropertyDirty } from "@totalsoft/change-tracking"
 import { useChangeTrackingLens } from "..";
 import { map } from 'ramda'
 import React from "react"
@@ -269,9 +270,9 @@ describe("useChangeTrackingLens hook", () => {
         const initialModel = { a: { b: "" } };
 
         const callback = () => {
-            const [rootProf, , resetFunc] = useChangeTrackingLens(initialModel)
+            const [rootProf, dirtyInfo, resetFunc] = useChangeTrackingLens(initialModel)
 
-            return { rootProf, fieldProf: rootProf.a.b, resetFunc };
+            return { rootProf, fieldProf: rootProf.a.b, resetFunc, dirtyInfo };
         }
 
         // Act
@@ -280,16 +281,48 @@ describe("useChangeTrackingLens hook", () => {
             const { fieldProf } = result.current;
             set(fieldProf, "OK")
         });
-        const { rootProf: rootProf1 } = result.current;
+        const { rootProf: rootProf1, dirtyInfo: dirtyInfo1 } = result.current;
         act(() => {
             const { resetFunc } = result.current;
             resetFunc(initialModel);
         });
 
         // Assert
-        const { rootProf: rootProf2 } = result.current;
+        const { rootProf: rootProf2, dirtyInfo: dirtyInfo2 } = result.current;
         expect(get(rootProf1)).not.toBe(initialModel);
         expect(get(rootProf2)).toBe(initialModel);
+        expect(isPropertyDirty("a.b", dirtyInfo1)).toBe(true);
+        expect(isPropertyDirty("a.b", dirtyInfo2)).toBe(false);
+    });
+
+    it("returns current model after reset without parameter", () => {
+        // Arrange
+        const initialModel = { a: { b: "" } };
+
+        const callback = () => {
+            const [rootProf, dirtyInfo, resetFunc] = useChangeTrackingLens(initialModel)
+
+            return { rootProf, fieldProf: rootProf.a.b, resetFunc, dirtyInfo };
+        }
+
+        // Act
+        const { result } = renderHook(callback);
+        act(() => {
+            const { fieldProf } = result.current;
+            set(fieldProf, "OK")
+        });
+        const { rootProf: rootProf1, dirtyInfo: dirtyInfo1 } = result.current;
+        act(() => {
+            const { resetFunc } = result.current;
+            resetFunc();
+        });
+
+        // Assert
+        const { rootProf: rootProf2, dirtyInfo: dirtyInfo2 } = result.current;
+        expect(get(rootProf1)).not.toBe(initialModel);
+        expect(get(rootProf2)).toBe(get(rootProf1));
+        expect(isPropertyDirty("a.b", dirtyInfo1)).toBe(true);
+        expect(isPropertyDirty("a.b", dirtyInfo2)).toBe(false);
     });
 
     it("should minimize the number of renders", () => {

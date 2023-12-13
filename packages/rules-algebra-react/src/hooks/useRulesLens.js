@@ -41,10 +41,10 @@ export function useRulesLens(rules, initialModel, { isLogEnabled = true, logger 
 
         // Reset
         useCallback((newModel = undefined) => {
+            setDirtyInfo(create())            
             over(stateLens, (prevModel => {
-                setDirtyInfo(create())
                 return newModel !== undefined ? ensureArrayUIDsDeep(newModel) : prevModel
-            }));
+            }));            
         }, [])
     ]
 }
