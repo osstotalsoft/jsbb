@@ -86,7 +86,7 @@ const SomeComponent = props => {
 };
 ```
 
-Note: The `reset` function clears the dirty info object. If an object is passed as parameter, the model is set to that object, otherwise the current model is kept unchanged.
+Note: The `reset` function clears the dirty info object. If an object is passed as parameter, the model is set to that object, otherwise the current model is kept unchanged. It could also receive an updater function which takes the pending state and compute the next state from it.
 
 [Read more about lens operations](../react-state-lens/src/lensProxy/README.md)
 
