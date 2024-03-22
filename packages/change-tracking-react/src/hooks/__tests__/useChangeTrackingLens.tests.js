@@ -379,4 +379,36 @@ describe("useChangeTrackingLens hook", () => {
         expect(dirtyInfo1).toBe(dirtyInfo2);
         expect(reset1).toBe(reset2);
     });
+
+    it("reset with function parameter", () => {
+      // Arrange
+      const initialModel = { a: { b: "" } };
+  
+      const callback = () => {
+        const [rootProf, dirtyInfo, resetFunc] = useChangeTrackingLens(initialModel);
+  
+        return { rootProf, fieldProf: rootProf.a.b, resetFunc, dirtyInfo };
+      };
+  
+      // Act
+      const { result } = renderHook(callback);
+      const { dirtyInfo: dirtyInfo1 } = result.current;
+      act(() => {
+        const { resetFunc } = result.current;
+        resetFunc((prev) => {
+          return {
+            ...prev,
+            c: "",
+          };
+        });
+      });
+  
+      const newRootProf = { ...initialModel, c: "" };
+  
+      // Assert
+      const { rootProf: rootProf2, dirtyInfo: dirtyInfo2 } = result.current;
+      expect(get(rootProf2)).toStrictEqual(newRootProf);
+      expect(isPropertyDirty("a.b", dirtyInfo1)).toBe(false);
+      expect(isPropertyDirty("a.b", dirtyInfo2)).toBe(false);
+    });
 });

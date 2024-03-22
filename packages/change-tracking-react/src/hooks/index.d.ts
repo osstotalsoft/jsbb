@@ -53,5 +53,5 @@ export function useChangeTrackingLens<TModel>(initialModel: TModel): [
   DirtyInfo,
 
   // Resets the change tracking and optionally sets a new model
-  (newModel?: TModel) => void
+  (newModel?: TModel | ((param?: TModel) => TModel)) => void
 ];

@@ -33,7 +33,11 @@ export function useChangeTrackingLens(initialModel) {
         useCallback((newModel = undefined) => {
             setDirtyInfo(create())
             over(stateLens, (prevModel => {
-                return newModel !== undefined ? ensureArrayUIDsDeep(newModel) : prevModel
+                return newModel !== undefined
+                ? typeof newModel == "function"
+                  ? ensureArrayUIDsDeep(newModel(prevModel))
+                  : ensureArrayUIDsDeep(newModel)
+                : prevModel;
             }));
         }, [])
     ]
