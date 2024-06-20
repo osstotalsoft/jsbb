@@ -3,7 +3,8 @@
 
 import get from 'lodash.get';
 import { toUniqueIdMap, hasSameItemOrder } from '../arrayUtils';
-import { curry } from "ramda";
+import { curry, equals, isNil } from "ramda";
+import { defaultVal } from '../objectUtils';
 
 const isDirtySymbol = Symbol("isDirty");
 
@@ -53,8 +54,10 @@ export const detectChanges = curry(function detectChanges(model, prevModel, prev
         return false;
     }
 
-    if (!model || !prevModel) {
-        return true
+    // one of them is null or undefined and the other is not
+    if (isNil(model) || isNil(prevModel)) {
+        const defaultValue = defaultVal(typeof (model || prevModel));
+        return equals(model || defaultValue, prevModel || defaultValue) || detectChanges(model || defaultValue, prevModel || defaultValue, prevDirtyInfo);
     }
 
     if (typeof model !== 'object' || typeof prevModel !== 'object') {
@@ -101,7 +104,7 @@ function detectChangesObject(model, prevModel, prevDirtyInfo) {
                         ? updateSingleProperty(prop, prevDirtyInfo[prop], acc)
                         : updateSingleProperty(prop, detectChanges(model[prop], prevModel[prop], prevDirtyInfo[prop]), acc)
                 )
-                : updateSingleProperty(prop, model[prop] !== undefined, acc),
+                : updateSingleProperty(prop, detectChanges(model[prop], prevModel[prop], prevDirtyInfo[prop]), acc),
             prevDirtyInfo)
 
     return Object.keys(model).length !== Object.keys(prevModel).length ? { ...newDirtyInfo, [isDirtySymbol]: true } : newDirtyInfo
