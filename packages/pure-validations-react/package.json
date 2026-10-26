@@ -28,6 +28,7 @@
   },
   "homepage": "https://github.com/osstotalsoft/jsbb#readme",
   "dependencies": {
+    "@babel/runtime": "^8.0.8",
     "@totalsoft/change-tracking-react": "^5.0.37",
     "@totalsoft/pure-validations": "^5.0.32",
     "lodash.get": "^4.4.2"

@@ -25,6 +25,7 @@
     "access": "public"
   },
   "dependencies": {
+    "@babel/runtime": "^8.0.8",
     "uniqid": "^5.2.0"
   }
 }

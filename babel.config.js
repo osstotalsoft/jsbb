@@ -24,7 +24,7 @@ module.exports = api => {
   //     ]
   //   : [];
 
-  const defaultPlugins = [["@babel/plugin-proposal-pipeline-operator", { proposal: "minimal" }], "@babel/plugin-transform-optional-chaining"];
+  const defaultPlugins = [["@babel/plugin-proposal-pipeline-operator", { proposal: "fsharp" }], "@babel/plugin-transform-optional-chaining"];
 
   // const plugins = api.env("test")
   //   ? [
@@ -47,14 +47,16 @@ module.exports = api => {
           [
             "@babel/preset-env",
             {
-              modules: "commonjs"
+              modules: "commonjs",
+              // keep Babel 7's default (transpile for all browsers); Babel 8 defaults to browserslist "defaults"
+              targets: ">= 0%"
             }
           ]
         ],
         plugins: [["@babel/plugin-transform-runtime"]]
       },
       esm: {
-        plugins: [["@babel/plugin-transform-runtime", { useESModules: true }]]
+        plugins: [["@babel/plugin-transform-runtime"]]
       },
       test: {
         presets: [

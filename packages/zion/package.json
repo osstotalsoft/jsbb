@@ -28,6 +28,7 @@
   },
   "homepage": "https://github.com/osstotalsoft/jsbb#readme",
   "dependencies": {
+    "@babel/runtime": "^8.0.8",
     "daggy": "^1.4.0",
     "fantasy-land": "^4.1.0",
     "immutagen": "^1.0.9",

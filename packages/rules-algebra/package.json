@@ -25,6 +25,7 @@
     "access": "public"
   },
   "dependencies": {
+    "@babel/runtime": "^8.0.8",
     "@totalsoft/change-tracking": "^5.0.37",
     "@totalsoft/zion": "^5.0.22",
     "daggy": "^1.4.0",

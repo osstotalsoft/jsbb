@@ -29,6 +29,7 @@
     "react-test-renderer": "^16.9.0"
   },
   "dependencies": {
+    "@babel/runtime": "^8.0.8",
     "@totalsoft/change-tracking": "^5.0.37",
     "@totalsoft/react-state-lens": "^5.0.37"
   },

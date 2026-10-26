@@ -32,6 +32,7 @@
     "react-test-renderer": "^16.9.0"
   },
   "dependencies": {
+    "@babel/runtime": "^8.0.8",
     "@totalsoft/change-tracking-react": "^5.0.37",
     "@totalsoft/zion": "^5.0.22"
   },
