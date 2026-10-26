@@ -1,7 +1,7 @@
 // Copyright (c) TotalSoft.
 // This source code is licensed under the MIT license.
 
-const mock = jest.genMockFromModule("@totalsoft/rules-algebra");
+const mock = jest.createMockFromModule("@totalsoft/rules-algebra");
 
 mock.Rule = {
   of: value => ({ value })

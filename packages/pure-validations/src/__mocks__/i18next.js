@@ -1,7 +1,7 @@
 // Copyright (c) TotalSoft.
 // This source code is licensed under the MIT license.
 
-const i18nextMock = jest.genMockFromModule("i18next");
+const i18nextMock = jest.createMockFromModule("i18next");
 i18nextMock.t = (text, props = {}) => {
   // eslint-disable-next-line no-unused-vars
   const { defaultValue, ...rest } = props;

@@ -16,7 +16,6 @@
 ## Bootstrap
 ```javascript
 yarn install
-yarn lerna bootstrap
 ```
 
 ## Build
