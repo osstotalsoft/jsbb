@@ -1,6 +1,6 @@
 {
   "name": "@totalsoft/pure-validations",
-  "version": "5.0.32",
+  "version": "5.1.0",
   "description": "Validation api via functional composition",
   "main": "index.js",
   "scripts": {
