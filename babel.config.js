@@ -24,7 +24,7 @@ module.exports = api => {
   //     ]
   //   : [];
 
-  const defaultPlugins = [["@babel/plugin-proposal-pipeline-operator", { proposal: "minimal" }], "@babel/plugin-proposal-optional-chaining"];
+  const defaultPlugins = [["@babel/plugin-proposal-pipeline-operator", { proposal: "minimal" }], "@babel/plugin-transform-optional-chaining"];
 
   // const plugins = api.env("test")
   //   ? [
@@ -73,7 +73,18 @@ module.exports = api => {
             "babel-plugin-module-resolver",
             {
               root: ["./"],
-              alias: defaultAlias
+              alias: defaultAlias,
+              transformFunctions: [
+                "require",
+                "jest.createMockFromModule",
+                "jest.mock",
+                "jest.unmock",
+                "jest.doMock",
+                "jest.dontMock",
+                "jest.setMock",
+                "jest.requireActual",
+                "jest.requireMock"
+              ]
             }
           ]
         ]

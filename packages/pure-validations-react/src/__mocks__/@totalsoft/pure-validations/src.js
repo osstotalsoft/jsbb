@@ -1,7 +1,7 @@
 // Copyright (c) TotalSoft.
 // This source code is licensed under the MIT license.
 
-const mock = jest.genMockFromModule("@totalsoft/pure-validations");
+const mock = jest.createMockFromModule("@totalsoft/pure-validations");
 
 mock.Success = { value: true, toString: () => "Success" };
 mock.Failure = () => ({ value: false, toString: () => "Failure" });

@@ -1,7 +1,7 @@
 // Copyright (c) TotalSoft.
 // This source code is licensed under the MIT license.
 
-const mock = jest.genMockFromModule("@totalsoft/change-tracking");
+const mock = jest.createMockFromModule("@totalsoft/change-tracking");
 
 mock.ensureArrayUIDsDeep = jest.fn(obj => obj);
 mock.setInnerProp = jest.fn((obj, _propPath, _value) => obj._innerProp === _value ? obj : ({ ...obj, _innerProp: _value }));

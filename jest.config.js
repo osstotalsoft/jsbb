@@ -1,4 +1,6 @@
 module.exports = {
     "verbose": true,
-    testPathIgnorePatterns: ["<rootDir>/build/"]
+    testEnvironment: "jsdom",
+    testPathIgnorePatterns: ["<rootDir>/build/"],
+    modulePathIgnorePatterns: ["<rootDir>/build/", "<rootDir>/packages/[^/]+/build/"]
 }
