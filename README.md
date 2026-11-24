@@ -34,14 +34,21 @@ yarn test
 ```
 
 ## Publish
-```javascript
-yarn lerna publish --contents build patch
-yarn lerna publish --contents build minor
-yarn lerna publish --contents build major
+```shell
+npm set //registry.npmjs.org/:_authToken=<your-granular-token>
+yarn lerna publish patch -- --no-verify-access
+```
+OR
+```shell
+yarn lerna publish minor -- --no-verify-access
+```
+OR
+```shell
+yarn lerna publish major -- --no-verify-access
 ``` 
 
 ## License
-NodeBB is licensed under the [MIT](LICENSE) license.
+JSBB is licensed under the [MIT](LICENSE) license.
 
 ## Contributing
 When using Visual Studio Code please use the extension [`Licenser`](https://marketplace.visualstudio.com/items?itemName=ymotongpoo.licenser) for applying the license header in files.
