@@ -21,6 +21,18 @@ export function useDirtyInfo(): [
 ];
 
 /**
+ * Options for the reset function returned by useChangeTrackingState and useChangeTrackingLens.
+ */
+export interface ResetOptions {
+  /**
+   * When true, the reset only sets the model and keeps the dirty info as it is:
+   * no property is marked dirty and the existing dirty flags are not cleared.
+   * Useful for merging server-side changes into a model the user is editing. Defaults to false.
+   */
+  keepDirtyInfo?: boolean;
+}
+
+/**
  * Provides a stateful model with change tracking.
  * Returns a stateful model,  stateful dirty info object, a function that sets the model or property value and a function that resets the change tracking.
  * @see https://github.com/osstotalsoft/jsbb/tree/master/packages/change-tracking-react#useChangeTrackingState-hook
@@ -35,8 +47,9 @@ export function useChangeTrackingState<TModel>(initialModel?: TModel): [
   // Set set model or property value
   (model: TModel, propertyPath?: string | string[]) => void,
 
-  // Reset dirty info
-  (newModel?: TModel) => void
+  // Reset dirty info and optionally set a new model (or compute it from the pending model with an updater fn).
+  // With { keepDirtyInfo: true } only the model is set and the dirty info is kept as it is.
+  (newModel?: TModel | ((param?: TModel) => TModel), options?: ResetOptions) => void
 ];
 
 /**
@@ -52,6 +65,7 @@ export function useChangeTrackingLens<TModel>(initialModel: TModel): [
   // DirtyInfo object
   DirtyInfo,
 
-  // Resets the change tracking and optionally sets a new model
-  (newModel?: TModel | ((param?: TModel) => TModel)) => void
+  // Resets the change tracking and optionally sets a new model.
+  // With { keepDirtyInfo: true } only the model is set and the dirty info is kept as it is.
+  (newModel?: TModel | ((param?: TModel) => TModel), options?: ResetOptions) => void
 ];

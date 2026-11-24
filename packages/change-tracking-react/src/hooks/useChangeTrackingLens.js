@@ -29,9 +29,11 @@ export function useChangeTrackingLens(initialModel) {
         changeTrackingLens,
         dirtyInfo,
 
-        // Reset
-        useCallback((newModel = undefined) => {
-            setDirtyInfo(create())
+        // Reset (with { keepDirtyInfo: true }: set the model without touching the dirty info)
+        useCallback((newModel = undefined, options = undefined) => {
+            if (!options?.keepDirtyInfo) {
+                setDirtyInfo(create())
+            }
             over(stateLens, (prevModel => {
                 return newModel !== undefined
                 ? typeof newModel == "function"
