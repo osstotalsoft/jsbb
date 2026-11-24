@@ -444,4 +444,184 @@ describe("useChangeTrackingLens hook", () => {
     const [, dirtyInfo] = result.current;
     expect(isPropertyDirty("child.grandchild", dirtyInfo)).toBe(true);
   });
+
+  describe("reset with keepDirtyInfo", () => {
+    const callback = (initialModel) => () => {
+      const [rootProf, dirtyInfo, reset] = useChangeTrackingLens(initialModel);
+      return { rootProf, aProf: rootProf.a, bProf: rootProf.a.b, dirtyInfo, reset };
+    };
+
+    it("keeps the existing dirty flags and passes the pending model to the updater", () => {
+      // Arrange
+      const initialModel = { a: { b: "", d: "" }, status: "Draft" };
+      const { result } = renderHook(callback(initialModel));
+      act(() => {
+        set(result.current.bProf, "OK");
+      });
+      const { dirtyInfo: dirtyInfo1 } = result.current;
+
+      // Act
+      act(() => {
+        result.current.reset((prev) => ({ ...prev, status: "Active" }), { keepDirtyInfo: true });
+      });
+
+      // Assert
+      const { rootProf, dirtyInfo: dirtyInfo2 } = result.current;
+      expect(get(rootProf)).toStrictEqual({ a: { b: "OK", d: "" }, status: "Active" });
+      expect(dirtyInfo2).toBe(dirtyInfo1);
+      expect(isPropertyDirty("a.b", dirtyInfo2)).toBe(true);
+      expect(isPropertyDirty("status", dirtyInfo2)).toBe(false);
+    });
+
+    it("does not mark a clean model dirty (value form)", () => {
+      // Arrange
+      const initialModel = { a: { b: "" }, status: "Draft" };
+      const { result } = renderHook(callback(initialModel));
+      const { dirtyInfo: dirtyInfo1 } = result.current;
+
+      // Act
+      act(() => {
+        result.current.reset({ ...initialModel, status: "Active" }, { keepDirtyInfo: true });
+      });
+
+      // Assert
+      const { rootProf, dirtyInfo: dirtyInfo2 } = result.current;
+      expect(get(rootProf.status)).toBe("Active");
+      expect(dirtyInfo2).toBe(dirtyInfo1);
+      expect(isDirty(dirtyInfo2)).toBe(false);
+    });
+
+    it("marks only the edited field on a later tracked edit", () => {
+      // Arrange
+      const initialModel = { a: { b: "", d: "" }, status: "Draft" };
+      const { result } = renderHook(callback(initialModel));
+      act(() => {
+        result.current.reset((prev) => ({ ...prev, status: "Active" }), { keepDirtyInfo: true });
+      });
+
+      // Act
+      act(() => {
+        set(result.current.rootProf.a.d, "OK");
+      });
+
+      // Assert
+      const { rootProf, dirtyInfo } = result.current;
+      expect(get(rootProf)).toStrictEqual({ a: { b: "", d: "OK" }, status: "Active" });
+      expect(isPropertyDirty("a.d", dirtyInfo)).toBe(true);
+      expect(isPropertyDirty("a.b", dirtyInfo)).toBe(false);
+      expect(isPropertyDirty("status", dirtyInfo)).toBe(false);
+    });
+
+    it("keeps the dirty flag of a dirty field it overwrites", () => {
+      // Arrange
+      const initialModel = { a: { b: "" } };
+      const { result } = renderHook(callback(initialModel));
+      act(() => {
+        set(result.current.bProf, "OK");
+      });
+
+      // Act
+      act(() => {
+        result.current.reset((prev) => ({ ...prev, a: { ...prev.a, b: "server" } }), { keepDirtyInfo: true });
+      });
+
+      // Assert
+      const { bProf, dirtyInfo } = result.current;
+      expect(get(bProf)).toBe("server");
+      expect(isPropertyDirty("a.b", dirtyInfo)).toBe(true);
+    });
+
+    it("keeps the dirty info when called without a new model", () => {
+      // Arrange
+      const initialModel = { a: { b: "" } };
+      const { result } = renderHook(callback(initialModel));
+      act(() => {
+        set(result.current.bProf, "OK");
+      });
+      const { rootProf: rootProf1, dirtyInfo: dirtyInfo1 } = result.current;
+
+      // Act
+      act(() => {
+        result.current.reset(undefined, { keepDirtyInfo: true });
+      });
+
+      // Assert
+      const { rootProf: rootProf2, dirtyInfo: dirtyInfo2 } = result.current;
+      expect(get(rootProf2)).toBe(get(rootProf1));
+      expect(dirtyInfo2).toBe(dirtyInfo1);
+    });
+
+    it("still clears the dirty info when keepDirtyInfo is false", () => {
+      // Arrange
+      const initialModel = { a: { b: "" } };
+      const { result } = renderHook(callback(initialModel));
+      act(() => {
+        set(result.current.bProf, "OK");
+      });
+
+      // Act
+      act(() => {
+        result.current.reset(undefined, { keepDirtyInfo: false });
+      });
+
+      // Assert
+      expect(isDirty(result.current.dirtyInfo)).toBe(false);
+    });
+
+    it("reuses the cached lenses of the unchanged branches", () => {
+      // Arrange
+      const initialModel = { a: { b: "" }, status: "Draft" };
+      const { result } = renderHook(callback(initialModel));
+      const { rootProf: rootProf1, aProf: aProf1, bProf: bProf1 } = result.current;
+
+      // Act
+      act(() => {
+        result.current.reset((prev) => ({ ...prev, status: "Active" }), { keepDirtyInfo: true });
+      });
+
+      // Assert
+      const { rootProf: rootProf2, aProf: aProf2, bProf: bProf2 } = result.current;
+      expect(rootProf2).not.toBe(rootProf1);
+      expect(aProf2).toBe(aProf1);
+      expect(bProf2).toBe(bProf1);
+    });
+
+    it("tracks later edits of array items it added", () => {
+      // Arrange
+      const initialModel = { items: [{ id: 1, value: "a" }] };
+      const { result } = renderHook(useChangeTrackingLens.bind(null, initialModel));
+      act(() => {
+        const [, , reset] = result.current;
+        reset((prev) => ({ ...prev, items: [...prev.items, { id: 2, value: "b" }] }), { keepDirtyInfo: true });
+      });
+
+      // Act
+      act(() => {
+        const [lens] = result.current;
+        set(lens.items[1].value, "c");
+      });
+
+      // Assert
+      const [lens, dirtyInfo] = result.current;
+      expect(get(lens.items[1].value)).toBe("c");
+      expect(isPropertyDirty("items.1.value", dirtyInfo)).toBe(true);
+      expect(isPropertyDirty("items.0.value", dirtyInfo)).toBe(false);
+      expect(isPropertyDirty("items.1.id", dirtyInfo)).toBe(false);
+    });
+
+    it("keeps the reset function reference stable", () => {
+      // Arrange
+      const initialModel = { a: { b: "" } };
+      const { result } = renderHook(callback(initialModel));
+      const { reset: reset1 } = result.current;
+
+      // Act
+      act(() => {
+        reset1((prev) => ({ ...prev, c: "" }), { keepDirtyInfo: true });
+      });
+
+      // Assert
+      expect(result.current.reset).toBe(reset1);
+    });
+  });
 });

@@ -25,11 +25,13 @@ export function useChangeTrackingState(initialModel) {
             setModel(newModel)
         }, [model]),
 
-        // Reset tracking
-        useCallback((newModel = undefined)  => {
-            setDirtyInfo(create())
+        // Reset tracking (with { keepDirtyInfo: true }: set the model without touching the dirty info)
+        useCallback((newModel = undefined, options = undefined) => {
+            if (!options?.keepDirtyInfo) {
+                setDirtyInfo(create())
+            }
             if (newModel !== undefined) {
-                setModel(ensureArrayUIDsDeep(newModel));
+                setModel(prevModel => ensureArrayUIDsDeep(typeof newModel == "function" ? newModel(prevModel) : newModel));
             }
         }, [])
     ]

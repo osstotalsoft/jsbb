@@ -52,6 +52,12 @@ const SomeComponent = props => {
   );
 };
 ```
+Note: The `reset` function clears the dirty info object. If an object is passed as parameter, the model is set to that object, otherwise the current model is kept unchanged. It could also receive an updater function which takes the pending state and compute the next state from it. Pass `{ keepDirtyInfo: true }` as the second parameter to set the model without touching the dirty info (see [useChangeTrackingLens](#setting-the-model-without-touching-the-dirty-info)); prefer the updater form then, so that the merge is applied to the pending model and does not overwrite the user's latest edits:
+
+```jsx
+reset(prev => ({ ...prev, status: liveStatus }), { keepDirtyInfo: true });
+```
+
 ## useChangeTrackingLens hook
 Provides a stateful model with change tracking using a profunctor lens.
 
@@ -87,6 +93,22 @@ const SomeComponent = props => {
 ```
 
 Note: The `reset` function clears the dirty info object. If an object is passed as parameter, the model is set to that object, otherwise the current model is kept unchanged. It could also receive an updater function which takes the pending state and compute the next state from it.
+
+### Setting the model without touching the dirty info
+`reset` accepts an optional second parameter `{ keepDirtyInfo: true }`. With it, `reset` only sets the model (from a value or an updater function) and keeps the dirty info as it is: no property is marked dirty and the dirty flags of the user's unsaved edits are not cleared. This is useful for merging server-side changes (e.g. a status pushed by a subscription) into a model the user is editing, without making the form dirty.
+
+```jsx
+const [tenantLens, dirtyInfo, reset] = useChangeTrackingLens(tenant);
+
+useEffect(() => {
+  reset(prev => ({ ...prev, status: liveStatus }), { keepDirtyInfo: true });
+}, [liveStatus, reset]);
+```
+
+Notes:
+- The dirty flags are not recomputed: a property that was already dirty stays dirty (even if the new value equals the original one), and a clean property stays clean.
+- Later edits made through the lens are tracked as usual, relative to the model that includes the merged values.
+- Dirty flags of array items are kept by index, so use it for values that do not reorder, insert or remove items of an array the user has edited.
 
 [Read more about lens operations](../react-state-lens/src/lensProxy/README.md)
 
