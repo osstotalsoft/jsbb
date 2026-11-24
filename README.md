@@ -36,16 +36,23 @@ yarn test
 ## Publish
 ```shell
 npm set //registry.npmjs.org/:_authToken=<your-granular-token>
-yarn lerna publish patch -- --no-verify-access
+yarn lerna publish patch --contents build -- --no-verify-access
 ```
 OR
 ```shell
-yarn lerna publish minor -- --no-verify-access
+yarn lerna publish minor --contents build -- --no-verify-access
 ```
 OR
 ```shell
-yarn lerna publish major -- --no-verify-access
+yarn lerna publish major --contents build -- --no-verify-access
 ``` 
+
+`--contents build` is required: each package is published from its `build` folder (the package root has no `index.js` and `build` is git-ignored).
+
+If the publish fails after the version commit and tag were pushed, publish the versions that are not on npm yet:
+```shell
+yarn lerna publish from-package --contents build -- --no-verify-access
+```
 
 ## License
 JSBB is licensed under the [MIT](LICENSE) license.
